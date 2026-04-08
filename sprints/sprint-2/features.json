@@ -94,10 +94,11 @@
     "id": "F-027",
     "name": "Bedrock/Vertex explicit errors",
     "description": "Adicionar cases 'bedrock' e 'vertex' em resolveModelEnv() (registry.ts) lancando erro explicito de provider nao suportado. Substituir o default generico por exhaustive check com 'never'.",
-    "status": "pending",
+    "status": "passing",
     "priority": 6,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-08T23:59:45Z",
     "dependencies": [],
     "tests": [
       "resolveModelEnv() tem case 'bedrock' que lanca Error com mensagem de nao suportado",

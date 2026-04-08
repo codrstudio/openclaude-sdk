@@ -37,8 +37,18 @@ export function resolveModelEnv(
         CLAUDE_CODE_USE_GITHUB: "1",
         OPENAI_MODEL: modelId,
       }
-    default:
-      return { OPENAI_MODEL: modelId }
+    case "bedrock":
+      throw new Error(
+        `Provider type 'bedrock' is not supported by openclaude-sdk`,
+      )
+    case "vertex":
+      throw new Error(
+        `Provider type 'vertex' is not supported by openclaude-sdk`,
+      )
+    default: {
+      const _exhaustive: never = provider.type
+      throw new Error(`Unknown provider type: ${_exhaustive}`)
+    }
   }
 }
 
