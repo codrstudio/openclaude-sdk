@@ -254,8 +254,9 @@ export function spawnAndStream(
           try {
             const parsed = JSON.parse(trimmed) as SDKMessage
             yield parsed
-          } catch {
-            // Linha nao-JSON — debug output do CLI, ignorar
+          } catch (err) {
+            if (err instanceof SyntaxError) continue
+            throw err
           }
         }
       } catch (err) {
