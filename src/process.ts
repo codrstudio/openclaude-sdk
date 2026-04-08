@@ -144,7 +144,7 @@ export function buildCliArgs(options: Options = {}): string[] {
 // Spawn do processo e stream de eventos JSONL
 // ---------------------------------------------------------------------------
 
-export async function* spawnAndStream(
+export function spawnAndStream(
   command: string,
   args: string[],
   prompt: string,
@@ -154,7 +154,11 @@ export async function* spawnAndStream(
     signal?: AbortSignal
     timeoutMs?: number
   } = {},
-): AsyncGenerator<SDKMessage> {
+): {
+  stream: AsyncGenerator<SDKMessage>
+  writeStdin: (data: string) => void
+  close: () => void
+} {
   const childEnv = {
     ...process.env,
     ...(options.env as Record<string, string>),
@@ -196,48 +200,60 @@ export async function* spawnAndStream(
   proc.stdin?.write(prompt)
   proc.stdin?.end()
 
-  // Coletar stderr (nao bloqueia)
-  let stderr = ""
-  proc.stderr?.on("data", (chunk: Buffer) => {
-    stderr += chunk.toString()
-  })
+  function writeStdin(data: string): void {
+    proc.stdin?.write(data)
+  }
 
-  // Parse JSONL do stdout
-  if (proc.stdout) {
-    const rl = createInterface({ input: proc.stdout })
+  function close(): void {
+    proc.kill("SIGTERM")
+  }
 
-    try {
-      for await (const line of rl) {
-        if (options.signal?.aborted) break
+  async function* streamGen(): AsyncGenerator<SDKMessage> {
+    // Coletar stderr (nao bloqueia)
+    let stderr = ""
+    proc.stderr?.on("data", (chunk: Buffer) => {
+      stderr += chunk.toString()
+    })
 
-        const trimmed = line.trim()
-        if (!trimmed) continue
+    // Parse JSONL do stdout
+    if (proc.stdout) {
+      const rl = createInterface({ input: proc.stdout })
 
-        try {
-          const parsed = JSON.parse(trimmed) as SDKMessage
-          yield parsed
-        } catch {
-          // Linha nao-JSON — debug output do CLI, ignorar
+      try {
+        for await (const line of rl) {
+          if (options.signal?.aborted) break
+
+          const trimmed = line.trim()
+          if (!trimmed) continue
+
+          try {
+            const parsed = JSON.parse(trimmed) as SDKMessage
+            yield parsed
+          } catch {
+            // Linha nao-JSON — debug output do CLI, ignorar
+          }
+        }
+      } catch (err) {
+        if (!options.signal?.aborted) {
+          throw new Error(`Stream read error: ${err}`)
         }
       }
-    } catch (err) {
-      if (!options.signal?.aborted) {
-        throw new Error(`Stream read error: ${err}`)
-      }
+    }
+
+    // Aguardar exit do processo
+    await new Promise<void>((resolve) => {
+      proc.on("exit", () => resolve())
+      proc.on("error", () => resolve())
+    })
+
+    if (timer) clearTimeout(timer)
+    if (sigintFallbackTimer) clearTimeout(sigintFallbackTimer)
+    options.signal?.removeEventListener("abort", onAbort)
+
+    if (stderr && !options.signal?.aborted) {
+      process.stderr.write(`[openclaude stderr] ${stderr.substring(0, 500)}\n`)
     }
   }
 
-  // Aguardar exit do processo
-  await new Promise<void>((resolve) => {
-    proc.on("exit", () => resolve())
-    proc.on("error", () => resolve())
-  })
-
-  if (timer) clearTimeout(timer)
-  if (sigintFallbackTimer) clearTimeout(sigintFallbackTimer)
-  options.signal?.removeEventListener("abort", onAbort)
-
-  if (stderr && !options.signal?.aborted) {
-    process.stderr.write(`[openclaude stderr] ${stderr.substring(0, 500)}\n`)
-  }
+  return { stream: streamGen(), writeStdin, close }
 }

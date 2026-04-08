@@ -52,14 +52,15 @@ export function query(params: {
   const args = [...prependArgs, ...buildCliArgs(options)]
   const abortController = options.abortController ?? new AbortController()
 
-  const generator = spawnAndStream(command, args, prompt, {
+  const { stream, writeStdin } = spawnAndStream(command, args, prompt, {
     cwd: options.cwd,
     env: options.env as Record<string, string>,
     signal: abortController.signal,
   })
 
-  // Decorar o generator com metodos extras da interface Query
-  const query: Query = Object.assign(generator, {
+  // Decorar o stream com metodos extras da interface Query
+  const query: Query = Object.assign(stream, {
+    _writeStdin: writeStdin,
     async interrupt(): Promise<void> {
       abortController.abort()
     },
