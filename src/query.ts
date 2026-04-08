@@ -56,7 +56,7 @@ export function query(params: {
 
   const { stream, writeStdin } = spawnAndStream(command, args, prompt, {
     cwd: options.cwd,
-    env: options.env as Record<string, string>,
+    env: options.env,
     signal: abortController.signal,
     permissionMode: options.permissionMode,
   })
@@ -71,6 +71,14 @@ export function query(params: {
       abortController.abort()
     },
     respondToPermission(response: PermissionResponse): void {
+      if (!response.toolUseId) {
+        throw new Error("respondToPermission: toolUseId must not be empty")
+      }
+      if (response.behavior !== "allow" && response.behavior !== "deny") {
+        throw new Error(
+          `respondToPermission: behavior must be 'allow' or 'deny', got '${response.behavior}'`,
+        )
+      }
       const payload = JSON.stringify({
         tool_use_id: response.toolUseId,
         behavior: response.behavior,
@@ -138,7 +146,8 @@ export async function collectMessages(
       if (msg.subtype === "success") {
         result = msg.result ?? null
       } else {
-        const errMsg = msg.errors?.join(", ") ?? msg.subtype
+        const subtype: string = msg.subtype
+        const errMsg = msg.errors?.join(", ") ?? subtype
         const errParams = { message: errMsg, sessionId, costUsd, durationMs }
         switch (msg.subtype) {
           case "error_max_turns":
@@ -149,12 +158,15 @@ export async function collectMessages(
             throw new ExecutionError(errParams)
           case "error_max_structured_output_retries":
             throw new StructuredOutputError(errParams)
+          default:
+            throw new ExecutionError({ ...errParams, message: `Unknown result subtype: ${subtype}` })
         }
       }
     }
 
     if (msg.type === "assistant" && msg.error) {
       const errParams = { message: msg.error, sessionId, costUsd, durationMs }
+      const errType: string = msg.error
       switch (msg.error) {
         case "authentication_failed":
           throw new AuthenticationError(errParams)
@@ -166,6 +178,8 @@ export async function collectMessages(
           throw new InvalidRequestError(errParams)
         case "server_error":
           throw new ServerError(errParams)
+        default:
+          throw new ServerError({ ...errParams, message: `Unknown assistant error: ${errType}` })
       }
     }
   }

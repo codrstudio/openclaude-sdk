@@ -2,7 +2,7 @@
 // Session management — espelha @anthropic-ai/claude-agent-sdk
 // ---------------------------------------------------------------------------
 
-import { readdir, stat, readFile } from "node:fs/promises"
+import { readdir, stat, readFile, appendFile } from "node:fs/promises"
 import { join, resolve } from "node:path"
 import { homedir } from "node:os"
 import type {
@@ -20,7 +20,11 @@ import type {
 
 /** Encode cwd para nome de diretorio de sessao (replica logica do CLI) */
 function encodeCwd(dir: string): string {
-  return resolve(dir).replace(/[^a-zA-Z0-9]/g, "-")
+  const normalized = resolve(dir)
+  return normalized
+    .replace(/-/g, "_h_")            // hifens literais → _h_
+    .replace(/[/\\:]/g, "_s_")       // separadores de path → _s_
+    .replace(/[^a-zA-Z0-9_]/g, "_")  // demais caracteres especiais → _
 }
 
 function getProjectsDir(): string {
@@ -254,7 +258,6 @@ export async function renameSession(
 
   const filePath = join(baseDir, `${sessionId}.jsonl`)
   const entry = JSON.stringify({ type: "custom_title", title: title.trim() })
-  const { appendFile } = await import("node:fs/promises")
   await appendFile(filePath, "\n" + entry)
 }
 
@@ -273,6 +276,5 @@ export async function tagSession(
 
   const filePath = join(baseDir, `${sessionId}.jsonl`)
   const entry = JSON.stringify({ type: "tag", tag })
-  const { appendFile } = await import("node:fs/promises")
   await appendFile(filePath, "\n" + entry)
 }

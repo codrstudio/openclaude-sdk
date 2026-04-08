@@ -28,6 +28,20 @@ export function resolveExecutable(options?: Options): {
 }
 
 // ---------------------------------------------------------------------------
+// Filtrar valores undefined de um env parcial
+// ---------------------------------------------------------------------------
+
+function filterEnv(env: Record<string, string | undefined>): Record<string, string> {
+  const result: Record<string, string> = {}
+  for (const [key, value] of Object.entries(env)) {
+    if (value !== undefined) {
+      result[key] = value
+    }
+  }
+  return result
+}
+
+// ---------------------------------------------------------------------------
 // Construir args do CLI a partir de Options
 // ---------------------------------------------------------------------------
 
@@ -71,12 +85,12 @@ export function buildCliArgs(options: Options = {}): string[] {
 
   // Allowed tools
   if (options.allowedTools && options.allowedTools.length > 0) {
-    args.push("--allowedTools", options.allowedTools.join(","))
+    args.push("--allowed-tools", options.allowedTools.join(","))
   }
 
   // Disallowed tools
   if (options.disallowedTools && options.disallowedTools.length > 0) {
-    args.push("--disallowedTools", options.disallowedTools.join(","))
+    args.push("--disallowed-tools", options.disallowedTools.join(","))
   }
 
   // Model
@@ -161,8 +175,8 @@ export function spawnAndStream(
   close: () => void
 } {
   const childEnv = {
-    ...process.env,
-    ...(options.env as Record<string, string>),
+    ...filterEnv(process.env as Record<string, string | undefined>),
+    ...(options.env ? filterEnv(options.env) : {}),
   }
 
   const proc: ChildProcess = spawn(command, args, {
@@ -209,6 +223,9 @@ export function spawnAndStream(
   }
 
   function writeStdin(data: string): void {
+    if (proc.exitCode !== null || proc.killed) {
+      throw new Error("writeStdin: process has already exited")
+    }
     proc.stdin?.write(data)
   }
 
@@ -237,8 +254,9 @@ export function spawnAndStream(
           try {
             const parsed = JSON.parse(trimmed) as SDKMessage
             yield parsed
-          } catch {
-            // Linha nao-JSON — debug output do CLI, ignorar
+          } catch (err) {
+            if (err instanceof SyntaxError) continue
+            throw err
           }
         }
       } catch (err) {
