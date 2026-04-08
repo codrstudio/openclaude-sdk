@@ -77,6 +77,23 @@ export function buildCliArgs(options: Options = {}): string[] {
     }
   }
 
+  // Effort
+  if (options.effort) {
+    args.push("--effort", options.effort)
+  }
+
+  // Thinking
+  if (options.thinking?.type === "enabled") {
+    args.push("--thinking", "enabled")
+  } else if (options.thinking?.type === "disabled") {
+    args.push("--thinking", "disabled")
+  }
+
+  // Max budget
+  if (options.maxBudgetUsd != null) {
+    args.push("--max-budget-usd", String(options.maxBudgetUsd))
+  }
+
   // Debug
   if (options.debug) {
     args.push("--debug")
