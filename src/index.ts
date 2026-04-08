@@ -6,6 +6,21 @@
 export { query, collectMessages } from "./query.js"
 export type { Query } from "./query.js"
 
+// Errors
+export {
+  OpenClaudeError,
+  AuthenticationError,
+  BillingError,
+  RateLimitError,
+  InvalidRequestError,
+  ServerError,
+  MaxTurnsError,
+  MaxBudgetError,
+  ExecutionError,
+  StructuredOutputError,
+  isRecoverable,
+} from "./errors.js"
+
 // Registry
 export {
   createOpenRouterRegistry,
