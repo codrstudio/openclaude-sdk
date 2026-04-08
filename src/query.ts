@@ -71,6 +71,14 @@ export function query(params: {
       abortController.abort()
     },
     respondToPermission(response: PermissionResponse): void {
+      if (!response.toolUseId) {
+        throw new Error("respondToPermission: toolUseId must not be empty")
+      }
+      if (response.behavior !== "allow" && response.behavior !== "deny") {
+        throw new Error(
+          `respondToPermission: behavior must be 'allow' or 'deny', got '${response.behavior}'`,
+        )
+      }
       const payload = JSON.stringify({
         tool_use_id: response.toolUseId,
         behavior: response.behavior,
