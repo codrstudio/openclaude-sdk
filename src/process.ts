@@ -223,6 +223,9 @@ export function spawnAndStream(
   }
 
   function writeStdin(data: string): void {
+    if (proc.exitCode !== null || proc.killed) {
+      throw new Error("writeStdin: process has already exited")
+    }
     proc.stdin?.write(data)
   }
 
