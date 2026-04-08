@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 import type { SDKMessage, SDKSystemMessage } from "./types/messages.js"
-import type { Options } from "./types/options.js"
+import type { Options, PermissionResponse } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
 import { resolveModelEnv } from "./registry.js"
@@ -28,6 +28,8 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   interrupt(): Promise<void>
   /** Fecha a query e mata o processo */
   close(): void
+  /** Responde a uma solicitacao de permissao de ferramenta */
+  respondToPermission(response: PermissionResponse): void
 }
 
 // ---------------------------------------------------------------------------
@@ -67,6 +69,14 @@ export function query(params: {
     },
     close(): void {
       abortController.abort()
+    },
+    respondToPermission(response: PermissionResponse): void {
+      const payload = JSON.stringify({
+        tool_use_id: response.toolUseId,
+        behavior: response.behavior,
+        message: response.message,
+      })
+      writeStdin(payload + "\n")
     },
   })
 
