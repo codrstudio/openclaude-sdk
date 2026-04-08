@@ -138,7 +138,8 @@ export async function collectMessages(
       if (msg.subtype === "success") {
         result = msg.result ?? null
       } else {
-        const errMsg = msg.errors?.join(", ") ?? msg.subtype
+        const subtype: string = msg.subtype
+        const errMsg = msg.errors?.join(", ") ?? subtype
         const errParams = { message: errMsg, sessionId, costUsd, durationMs }
         switch (msg.subtype) {
           case "error_max_turns":
@@ -149,6 +150,8 @@ export async function collectMessages(
             throw new ExecutionError(errParams)
           case "error_max_structured_output_retries":
             throw new StructuredOutputError(errParams)
+          default:
+            throw new ExecutionError({ ...errParams, message: `Unknown result subtype: ${subtype}` })
         }
       }
     }
