@@ -56,6 +56,7 @@ export function query(params: {
     cwd: options.cwd,
     env: options.env as Record<string, string>,
     signal: abortController.signal,
+    permissionMode: options.permissionMode,
   })
 
   // Decorar o stream com metodos extras da interface Query

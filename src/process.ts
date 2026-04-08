@@ -153,6 +153,7 @@ export function spawnAndStream(
     env?: Record<string, string | undefined>
     signal?: AbortSignal
     timeoutMs?: number
+    permissionMode?: string
   } = {},
 ): {
   stream: AsyncGenerator<SDKMessage>
@@ -197,8 +198,15 @@ export function spawnAndStream(
   }
 
   // Enviar prompt via stdin
-  proc.stdin?.write(prompt)
-  proc.stdin?.end()
+  // Em plan mode (nem bypassPermissions nem dontAsk), manter stdin aberto para
+  // receber respostas de permissao posteriores via writeStdin()
+  const closeAfterPrompt =
+    options.permissionMode === "bypassPermissions" ||
+    options.permissionMode === "dontAsk"
+  proc.stdin?.write(prompt + "\n")
+  if (closeAfterPrompt) {
+    proc.stdin?.end()
+  }
 
   function writeStdin(data: string): void {
     proc.stdin?.write(data)
