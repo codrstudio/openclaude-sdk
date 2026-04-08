@@ -12,7 +12,15 @@ import type { Options } from "./types/options.js"
 // ---------------------------------------------------------------------------
 
 export function buildCliArgs(options: Options = {}): string[] {
-  const args = ["-p", "-", "--verbose", "--output-format", "stream-json"]
+  const args = ["-p", "-", "--verbose"]
+
+  // Output format
+  if (options.outputFormat?.type === "json_schema") {
+    args.push("--output-format", "json-schema")
+    args.push("--json-schema", JSON.stringify(options.outputFormat.schema))
+  } else {
+    args.push("--output-format", "stream-json")
+  }
 
   // Permissions
   if (options.allowDangerouslySkipPermissions) {
