@@ -72,6 +72,23 @@ export function query(params: {
 }
 
 // ---------------------------------------------------------------------------
+// continueSession() — resume uma sessao existente
+// ---------------------------------------------------------------------------
+
+export function continueSession(params: {
+  sessionId: string
+  prompt: string
+  model?: string
+  registry?: ProviderRegistry
+  options?: Options
+}): Query {
+  const { sessionId, prompt, model, registry, options } = params
+  // resume always set to sessionId; user options merged but resume overridden
+  const mergedOptions: Options = { ...options, resume: sessionId }
+  return query({ prompt, model, registry, options: mergedOptions })
+}
+
+// ---------------------------------------------------------------------------
 // Helpers de conveniencia
 // ---------------------------------------------------------------------------
 

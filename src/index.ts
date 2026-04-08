@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 // Funcao principal
-export { query, collectMessages } from "./query.js"
+export { query, collectMessages, continueSession } from "./query.js"
 export type { Query } from "./query.js"
 
 // Errors
