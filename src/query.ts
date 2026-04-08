@@ -158,6 +158,7 @@ export async function collectMessages(
 
     if (msg.type === "assistant" && msg.error) {
       const errParams = { message: msg.error, sessionId, costUsd, durationMs }
+      const errType: string = msg.error
       switch (msg.error) {
         case "authentication_failed":
           throw new AuthenticationError(errParams)
@@ -169,6 +170,8 @@ export async function collectMessages(
           throw new InvalidRequestError(errParams)
         case "server_error":
           throw new ServerError(errParams)
+        default:
+          throw new ServerError({ ...errParams, message: `Unknown assistant error: ${errType}` })
       }
     }
   }

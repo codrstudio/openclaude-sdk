@@ -76,10 +76,11 @@
     "id": "F-026",
     "name": "Assistant error default case",
     "description": "Adicionar caso default ao switch de msg.error em collectMessages() (query.ts) lancando ServerError com mensagem incluindo o tipo de erro desconhecido.",
-    "status": "pending",
+    "status": "passing",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-08T23:59:30Z",
     "dependencies": [],
     "tests": [
       "Switch de msg.error em collectMessages() tem caso default",
