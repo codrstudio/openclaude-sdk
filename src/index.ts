@@ -38,7 +38,7 @@ export {
 } from "./sessions.js"
 
 // Process internals (para uso avancado)
-export { buildCliArgs, spawnAndStream } from "./process.js"
+export { buildCliArgs, spawnAndStream, resolveExecutable } from "./process.js"
 
 // ---------------------------------------------------------------------------
 // Tipos — Provider/Model Registry

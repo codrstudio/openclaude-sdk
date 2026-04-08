@@ -74,6 +74,9 @@ export function createOpenRouterRegistry(config: {
 // resolveCommand() — sempre "openclaude" (nao usamos claude CLI)
 // ---------------------------------------------------------------------------
 
+/**
+ * @deprecated Use resolveExecutable() from process.ts instead.
+ */
 export function resolveCommand(
   _registry: ProviderRegistry,
   _modelId: string,

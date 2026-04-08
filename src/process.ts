@@ -8,6 +8,26 @@ import type { SDKMessage } from "./types/index.js"
 import type { Options } from "./types/options.js"
 
 // ---------------------------------------------------------------------------
+// Resolver executavel do CLI considerando a plataforma
+// ---------------------------------------------------------------------------
+
+export function resolveExecutable(options?: Options): {
+  command: string
+  prependArgs: string[]
+} {
+  const base = options?.pathToClaudeCodeExecutable || "openclaude"
+
+  if (process.platform === "win32") {
+    return {
+      command: process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe",
+      prependArgs: ["/c", base],
+    }
+  }
+
+  return { command: base, prependArgs: [] }
+}
+
+// ---------------------------------------------------------------------------
 // Construir args do CLI a partir de Options
 // ---------------------------------------------------------------------------
 
