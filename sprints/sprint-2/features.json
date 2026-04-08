@@ -1,0 +1,223 @@
+[
+  {
+    "id": "F-022",
+    "name": "filterEnv helper",
+    "description": "Criar funcao filterEnv() em process.ts que filtra valores undefined de Record<string, string | undefined> e aplicar no spread de childEnv em spawnAndStream(), removendo o cast inseguro 'as Record<string, string>'.",
+    "status": "pending",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "filterEnv() existe como funcao local (nao exportada) em process.ts",
+      "childEnv em spawnAndStream() usa filterEnv(options.env) em vez de cast",
+      "O cast 'as Record<string, string>' foi removido de process.ts",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
+  },
+  {
+    "id": "F-023",
+    "name": "Remove env cast in query.ts",
+    "description": "Remover o cast 'as Record<string, string>' de options.env em query.ts, passando options.env diretamente para spawnAndStream() que agora aplica filterEnv() internamente.",
+    "status": "pending",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-022"],
+    "tests": [
+      "Nenhum cast 'as Record<string, string>' existe em query.ts para options.env",
+      "options.env e passado diretamente sem transformacao em query.ts",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
+  },
+  {
+    "id": "F-024",
+    "name": "Kebab-case CLI flags",
+    "description": "Corrigir buildCliArgs() em process.ts: trocar --allowedTools por --allowed-tools e --disallowedTools por --disallowed-tools. Os nomes das propriedades TypeScript permanecem em camelCase.",
+    "status": "pending",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "buildCliArgs() usa '--allowed-tools' (kebab-case) no args.push",
+      "buildCliArgs() usa '--disallowed-tools' (kebab-case) no args.push",
+      "Nenhuma ocorrencia de '--allowedTools' ou '--disallowedTools' existe em process.ts",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
+  },
+  {
+    "id": "F-025",
+    "name": "Result subtype default case",
+    "description": "Adicionar caso default ao switch de msg.subtype em collectMessages() (query.ts) lancando ExecutionError com mensagem incluindo o subtype desconhecido.",
+    "status": "pending",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Switch de msg.subtype em collectMessages() tem caso default",
+      "Default lanca ExecutionError com mensagem contendo o subtype desconhecido",
+      "Cases existentes nao foram alterados",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-009-error-handling-completeness.md"
+  },
+  {
+    "id": "F-026",
+    "name": "Assistant error default case",
+    "description": "Adicionar caso default ao switch de msg.error em collectMessages() (query.ts) lancando ServerError com mensagem incluindo o tipo de erro desconhecido.",
+    "status": "pending",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Switch de msg.error em collectMessages() tem caso default",
+      "Default lanca ServerError com mensagem contendo o erro desconhecido",
+      "Cases existentes nao foram alterados",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-009-error-handling-completeness.md"
+  },
+  {
+    "id": "F-027",
+    "name": "Bedrock/Vertex explicit errors",
+    "description": "Adicionar cases 'bedrock' e 'vertex' em resolveModelEnv() (registry.ts) lancando erro explicito de provider nao suportado. Substituir o default generico por exhaustive check com 'never'.",
+    "status": "pending",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "resolveModelEnv() tem case 'bedrock' que lanca Error com mensagem de nao suportado",
+      "resolveModelEnv() tem case 'vertex' que lanca Error com mensagem de nao suportado",
+      "Default usa pattern 'const _exhaustive: never = provider.type' para exhaustive check",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-010-provider-registry-hardening.md"
+  },
+  {
+    "id": "F-028",
+    "name": "Registry input validation",
+    "description": "Adicionar validacao no inicio de createOpenRouterRegistry(): lancar Error se apiKey for vazio ou se models for array vazio.",
+    "status": "pending",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "createOpenRouterRegistry() lanca Error se config.apiKey for vazio/falsy",
+      "createOpenRouterRegistry() lanca Error se config.models for array vazio",
+      "Validacao ocorre antes de qualquer outra logica da funcao",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-010-provider-registry-hardening.md"
+  },
+  {
+    "id": "F-029",
+    "name": "encodeCwd collision-free",
+    "description": "Reimplementar encodeCwd() em sessions.ts com encoding que diferencia separadores de path de hifens literais: hifens -> _h_, separadores -> _s_, demais especiais -> _. Elimina colisoes entre /foo/bar e /foo-bar.",
+    "status": "pending",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "encodeCwd('/foo/bar') != encodeCwd('/foo-bar')",
+      "encodeCwd('/a/b') != encodeCwd('/a-b') e != encodeCwd('/ab')",
+      "encodeCwd('C:\\\\Users\\\\dev') != encodeCwd('C:\\\\Users-dev')",
+      "Funcao usa resolve() para normalizar o path antes de encodar",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-011-session-encode-cwd.md"
+  },
+  {
+    "id": "F-030",
+    "name": "Permission input validation",
+    "description": "Adicionar validacao em respondToPermission() (query.ts): verificar que toolUseId nao e vazio e behavior e 'allow' ou 'deny'. Lancar Error com mensagem clara se invalido.",
+    "status": "pending",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "respondToPermission() lanca Error se toolUseId for vazio/falsy",
+      "respondToPermission() lanca Error se behavior nao for 'allow' nem 'deny'",
+      "Validacao ocorre antes da serializacao JSON",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-012-permission-guard.md"
+  },
+  {
+    "id": "F-031",
+    "name": "writeStdin process guard",
+    "description": "Adicionar guard em writeStdin() dentro de spawnAndStream() (process.ts): verificar proc.exitCode !== null || proc.killed antes de escrever, lancando Error se processo ja saiu.",
+    "status": "pending",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "writeStdin() verifica proc.exitCode !== null || proc.killed",
+      "writeStdin() lanca Error com mensagem clara se processo saiu",
+      "Verificacao ocorre antes de proc.stdin?.write()",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-012-permission-guard.md"
+  },
+  {
+    "id": "F-032",
+    "name": "Static appendFile import",
+    "description": "Mover appendFile para import estatico no topo de sessions.ts (junto com readdir, stat, readFile). Remover as duas linhas de dynamic import 'await import(\"node:fs/promises\")' dentro de renameSession() e tagSession().",
+    "status": "pending",
+    "priority": 11,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "appendFile esta no import estatico de 'node:fs/promises' no topo de sessions.ts",
+      "Nenhuma ocorrencia de 'await import(\"node:fs/promises\")' existe em sessions.ts",
+      "renameSession() e tagSession() usam appendFile diretamente",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
+  },
+  {
+    "id": "F-033",
+    "name": "Remove public internals",
+    "description": "Remover de index.ts: exportacao de buildCliArgs, spawnAndStream, resolveExecutable (process internals) e resolveCommand (registry internal). Manter todas as outras exportacoes intactas.",
+    "status": "pending",
+    "priority": 12,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-027"],
+    "tests": [
+      "index.ts NAO exporta buildCliArgs, spawnAndStream, resolveExecutable",
+      "index.ts NAO exporta resolveCommand",
+      "index.ts CONTINUA exportando query, collectMessages, createOpenRouterRegistry, resolveModelEnv",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
+  },
+  {
+    "id": "F-034",
+    "name": "Specific SyntaxError catch",
+    "description": "Tornar o catch em spawnAndStream() (process.ts) especifico para SyntaxError: capturar o erro, verificar instanceof SyntaxError para ignorar (continue), e re-throw para qualquer outro tipo de erro.",
+    "status": "pending",
+    "priority": 13,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Catch em spawnAndStream() captura erro nomeado (nao catch vazio)",
+      "SyntaxError e tratado com continue (ignora linha nao-JSON)",
+      "Outros tipos de erro sao re-thrown com 'throw err'",
+      "Build (npm run build) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
+  }
+]
