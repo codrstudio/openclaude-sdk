@@ -63,6 +63,20 @@ export function buildCliArgs(options: Options = {}): string[] {
 
   // CWD — passed via spawn options, not as CLI flag
 
+  // Additional directories
+  if (options.additionalDirectories) {
+    for (const dir of options.additionalDirectories) {
+      args.push("--add-dir", dir)
+    }
+  }
+
+  // Betas
+  if (options.betas) {
+    for (const beta of options.betas) {
+      args.push("--beta", beta)
+    }
+  }
+
   // Debug
   if (options.debug) {
     args.push("--debug")
