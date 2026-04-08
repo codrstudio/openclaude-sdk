@@ -3,11 +3,12 @@
     "id": "F-022",
     "name": "filterEnv helper",
     "description": "Criar funcao filterEnv() em process.ts que filtra valores undefined de Record<string, string | undefined> e aplicar no spread de childEnv em spawnAndStream(), removendo o cast inseguro 'as Record<string, string>'.",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [],
+    "completed_at": "2026-04-08T22:45:00Z",
     "tests": [
       "filterEnv() existe como funcao local (nao exportada) em process.ts",
       "childEnv em spawnAndStream() usa filterEnv(options.env) em vez de cast",
@@ -24,7 +25,9 @@
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-022"],
+    "dependencies": [
+      "F-022"
+    ],
     "tests": [
       "Nenhum cast 'as Record<string, string>' existe em query.ts para options.env",
       "options.env e passado diretamente sem transformacao em query.ts",
@@ -190,11 +193,13 @@
     "id": "F-033",
     "name": "Remove public internals",
     "description": "Remover de index.ts: exportacao de buildCliArgs, spawnAndStream, resolveExecutable (process internals) e resolveCommand (registry internal). Manter todas as outras exportacoes intactas.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 12,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-027"],
+    "dependencies": [
+      "F-027"
+    ],
     "tests": [
       "index.ts NAO exporta buildCliArgs, spawnAndStream, resolveExecutable",
       "index.ts NAO exporta resolveCommand",

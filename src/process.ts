@@ -28,6 +28,20 @@ export function resolveExecutable(options?: Options): {
 }
 
 // ---------------------------------------------------------------------------
+// Filtrar valores undefined de um env parcial
+// ---------------------------------------------------------------------------
+
+function filterEnv(env: Record<string, string | undefined>): Record<string, string> {
+  const result: Record<string, string> = {}
+  for (const [key, value] of Object.entries(env)) {
+    if (value !== undefined) {
+      result[key] = value
+    }
+  }
+  return result
+}
+
+// ---------------------------------------------------------------------------
 // Construir args do CLI a partir de Options
 // ---------------------------------------------------------------------------
 
@@ -161,8 +175,8 @@ export function spawnAndStream(
   close: () => void
 } {
   const childEnv = {
-    ...process.env,
-    ...(options.env as Record<string, string>),
+    ...filterEnv(process.env as Record<string, string | undefined>),
+    ...(options.env ? filterEnv(options.env) : {}),
   }
 
   const proc: ChildProcess = spawn(command, args, {
