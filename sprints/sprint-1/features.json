@@ -1,0 +1,389 @@
+[
+  {
+    "id": "F-001",
+    "name": "Copiar fontes do prototipo",
+    "description": "Copiar proto/sdk/src/ (do diretorio de artefatos do projeto) para src/ na raiz do repositorio. Manter a estrutura intacta: index.ts, query.ts, process.ts, registry.ts, sessions.ts, types/.",
+    "status": "pending",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "src/index.ts existe e contem re-exports",
+      "src/query.ts existe e contem query() e collectMessages()",
+      "src/process.ts existe e contem spawnAndStream() e buildCliArgs()",
+      "src/registry.ts existe e contem createOpenRouterRegistry()",
+      "src/sessions.ts existe e contem listSessions()",
+      "src/types/ existe com tipos TypeScript"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
+  },
+  {
+    "id": "F-002",
+    "name": "Package config",
+    "description": "Criar package.json (name: openclaude-sdk, version: 0.1.0, type: module, exports ESM+CJS+DTS, engines.node >=20, devDeps tsup+typescript, SEM private:true), tsconfig.json (ES2022, ESNext, bundler, strict, noUncheckedIndexedAccess), tsup.config.ts (esm+cjs, dts, sourcemap), .gitignore (node_modules, dist, *.tgz), LICENSE (MIT).",
+    "status": "pending",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "package.json existe com name openclaude-sdk e NAO contem private:true",
+      "package.json tem exports com .import, .require, .types",
+      "tsconfig.json existe com target ES2022 e strict true",
+      "tsup.config.ts existe com format esm+cjs e dts true",
+      ".gitignore existe com node_modules e dist",
+      "LICENSE existe com texto MIT"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
+  },
+  {
+    "id": "F-003",
+    "name": "Build e validacao",
+    "description": "Executar npm install, npm run build e npm run typecheck. Corrigir erros de compilacao/tipo ate que tudo passe. O build deve produzir dist/index.js (ESM), dist/index.cjs (CJS) e dist/index.d.ts (DTS).",
+    "status": "pending",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-001", "F-002"],
+    "tests": [
+      "npm install completa sem erros",
+      "npm run build completa sem erros",
+      "npm run typecheck completa sem erros",
+      "dist/index.js existe (ESM)",
+      "dist/index.cjs existe (CJS)",
+      "dist/index.d.ts existe (DTS)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
+  },
+  {
+    "id": "F-008",
+    "name": "Fix permissionMode duplicado",
+    "description": "Em src/process.ts, buildCliArgs() tem permissionMode mapeado em dois lugares. Remover a segunda ocorrencia para que --permission-mode apareca exatamente UMA vez no array de args.",
+    "status": "pending",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-003"],
+    "tests": [
+      "buildCliArgs com permissionMode: 'plan' produz exatamente um --permission-mode plan",
+      "Nao ha segunda ocorrencia de --permission-mode no array retornado",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+  },
+  {
+    "id": "F-004",
+    "name": "Array flags em buildCliArgs",
+    "description": "Em src/process.ts, adicionar mapeamento em buildCliArgs() para: additionalDirectories (um --add-dir <path> por item do array) e betas (um --beta <name> por item do array).",
+    "status": "pending",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-008"],
+    "tests": [
+      "buildCliArgs com additionalDirectories: ['/a', '/b'] produz '--add-dir /a --add-dir /b' no output",
+      "buildCliArgs com betas: ['x', 'y'] produz '--beta x --beta y' no output",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+  },
+  {
+    "id": "F-005",
+    "name": "Scalar flags em buildCliArgs",
+    "description": "Em src/process.ts, adicionar mapeamento em buildCliArgs() para: effort (--effort <level>), thinking (--thinking enabled|disabled), maxBudgetUsd (--max-budget-usd <value> como string).",
+    "status": "pending",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-004"],
+    "tests": [
+      "buildCliArgs com effort: 'high' produz '--effort high' no output",
+      "buildCliArgs com thinking: 'enabled' produz '--thinking enabled' no output",
+      "buildCliArgs com maxBudgetUsd: 5 produz '--max-budget-usd 5' no output",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+  },
+  {
+    "id": "F-006",
+    "name": "Structured output via --json-schema",
+    "description": "Em src/process.ts, modificar buildCliArgs(): quando options.outputFormat tem type 'json_schema', usar --output-format json-schema e --json-schema <JSON.stringify(schema)> em vez de --output-format stream-json. Manter stream-json como default quando outputFormat nao esta definido.",
+    "status": "pending",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-005"],
+    "tests": [
+      "buildCliArgs sem outputFormat produz --output-format stream-json",
+      "buildCliArgs com outputFormat type json_schema produz --output-format json-schema e --json-schema com schema serializado",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+  },
+  {
+    "id": "F-007",
+    "name": "Extra args passthrough",
+    "description": "Em src/process.ts, adicionar mapeamento em buildCliArgs() para extraArgs: objeto Record<string, string | null> onde cada key vira --key value (ou so --key se value e null). Adicionar POR ULTIMO no array de args para permitir override de qualquer flag anterior.",
+    "status": "pending",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-006"],
+    "tests": [
+      "buildCliArgs com extraArgs: { foo: 'bar' } produz '--foo bar' no final do array",
+      "buildCliArgs com extraArgs: { verbose: null } produz '--verbose' sem valor no final do array",
+      "extraArgs vem APOS todas as outras flags no array retornado",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+  },
+  {
+    "id": "F-009",
+    "name": "Error classes",
+    "description": "Criar src/errors.ts com: OpenClaudeError (base class extending Error, com propriedades readonly code, sessionId, costUsd, durationMs) e 9 subclasses: AuthenticationError (code: authentication_failed), BillingError (code: billing_error), RateLimitError (code: rate_limit, com resetsAt? e utilization? extras), InvalidRequestError (code: invalid_request), ServerError (code: server_error), MaxTurnsError (code: max_turns), MaxBudgetError (code: max_budget_usd), ExecutionError (code: execution_error), StructuredOutputError (code: structured_output_retries). Exportar tudo via src/index.ts.",
+    "status": "pending",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-003"],
+    "tests": [
+      "src/errors.ts existe com OpenClaudeError e 9 subclasses",
+      "OpenClaudeError tem propriedades readonly code, sessionId, costUsd, durationMs",
+      "RateLimitError tem propriedades opcionais resetsAt e utilization",
+      "Todas as classes e isRecoverable sao exportadas via src/index.ts",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
+  },
+  {
+    "id": "F-010",
+    "name": "isRecoverable helper",
+    "description": "Em src/errors.ts, implementar e exportar isRecoverable(error: OpenClaudeError): boolean. Retorna true para RateLimitError, ServerError, MaxTurnsError, MaxBudgetError, StructuredOutputError, ExecutionError. Retorna false para AuthenticationError, BillingError, InvalidRequestError. Exportar via src/index.ts.",
+    "status": "pending",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-009"],
+    "tests": [
+      "isRecoverable(new RateLimitError(...)) retorna true",
+      "isRecoverable(new ServerError(...)) retorna true",
+      "isRecoverable(new AuthenticationError(...)) retorna false",
+      "isRecoverable(new BillingError(...)) retorna false",
+      "isRecoverable esta exportado via src/index.ts",
+      "npm run typecheck passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
+  },
+  {
+    "id": "F-011",
+    "name": "collectMessages error integration",
+    "description": "Em src/query.ts, modificar collectMessages() para lancar erros tipados quando o resultado indica falha. SDKResultMessage com subtype error_max_turns lanca MaxTurnsError, error_max_budget_usd lanca MaxBudgetError, error_during_execution lanca ExecutionError, error_max_structured_output_retries lanca StructuredOutputError. SDKAssistantMessage com error authentication_failed lanca AuthenticationError, billing_error lanca BillingError, rate_limit lanca RateLimitError, invalid_request lanca InvalidRequestError, server_error lanca ServerError. query() NAO lanca — apenas yield mensagens.",
+    "status": "pending",
+    "priority": 11,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-009"],
+    "tests": [
+      "collectMessages() lanca MaxTurnsError quando SDKResultMessage tem subtype error_max_turns",
+      "collectMessages() lanca AuthenticationError quando SDKAssistantMessage tem error authentication_failed",
+      "query() continua yieldando mensagens normalmente sem lancar",
+      "Imports de errors.ts estao corretos em query.ts",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
+  },
+  {
+    "id": "F-013",
+    "name": "resolveExecutable",
+    "description": "Criar e exportar funcao resolveExecutable(options?: Options) em src/process.ts que retorna { command: string, prependArgs: string[] }. Usa options.pathToClaudeCodeExecutable ou 'openclaude' como base. Em Windows (process.platform === 'win32'): retorna { command: process.env.ComSpec || 'C:\\\\Windows\\\\System32\\\\cmd.exe', prependArgs: ['/c', base] }. Em outros OS: retorna { command: base, prependArgs: [] }. Deprecar resolveCommand() em src/registry.ts com @deprecated JSDoc.",
+    "status": "pending",
+    "priority": 12,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-003"],
+    "tests": [
+      "resolveExecutable() sem options retorna command 'openclaude' em non-Windows",
+      "resolveExecutable com pathToClaudeCodeExecutable usa o path fornecido como base",
+      "resolveCommand() em registry.ts tem @deprecated no JSDoc",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
+  },
+  {
+    "id": "F-012",
+    "name": "SIGINT interrupt",
+    "description": "Em src/process.ts, alterar o abort handler de spawnAndStream(): Linux/macOS usa proc.kill('SIGINT') em vez de SIGTERM, Windows usa proc.stdin?.write('\\x03') (Ctrl+C via stdin). Adicionar timeout fallback: se o processo nao encerrar em 5 segundos apos SIGINT, enviar SIGTERM com proc.kill('SIGTERM').",
+    "status": "pending",
+    "priority": 13,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-003"],
+    "tests": [
+      "Abort handler usa SIGINT em vez de SIGTERM em Linux/macOS",
+      "Abort handler usa stdin write \\x03 em Windows",
+      "Timeout fallback de 5s envia SIGTERM se processo nao encerrou",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
+  },
+  {
+    "id": "F-014",
+    "name": "Cleanup spawnAndStream",
+    "description": "Remover logica Windows duplicada de spawnAndStream() em src/process.ts (a logica de wrapping com cmd.exe que agora esta em resolveExecutable). Atualizar query() em src/query.ts para usar resolveExecutable(): const { command, prependArgs } = resolveExecutable(options) e passar [...prependArgs, ...buildCliArgs(options)] como args para spawnAndStream().",
+    "status": "pending",
+    "priority": 14,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-013", "F-012"],
+    "tests": [
+      "spawnAndStream() NAO contem logica Windows de wrapping (cmd.exe /c)",
+      "query() usa resolveExecutable() para obter command e prependArgs",
+      "args passados a spawnAndStream incluem prependArgs antes de buildCliArgs",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
+  },
+  {
+    "id": "F-015",
+    "name": "Deep search listSessions",
+    "description": "Em src/sessions.ts, modificar listSessions() para suportar deep search. Nova interface ListSessionsOptions { dir?, limit?, deep? }. Quando dir nao e especificado e deep !== false: iterar todos os subdiretorios de ~/.claude/projects/ e agregar sessoes. Extrair logica de leitura para listSessionsInDir() interna. Iterar sequencialmente (nao Promise.all, para evitar EMFILE). Ordenar resultado final por lastModified desc. Aplicar limit apos agregar todos os resultados.",
+    "status": "pending",
+    "priority": 15,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-003"],
+    "tests": [
+      "listSessions({ dir: '/path' }) busca apenas no diretorio especificado",
+      "listSessions() sem dir itera subdiretorios de ~/.claude/projects/",
+      "listSessions({ deep: false }) busca apenas no root sem iterar subdiretorios",
+      "Resultado ordenado por lastModified desc",
+      "limit e aplicado apos agregar",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-005-session-improvements.md"
+  },
+  {
+    "id": "F-016",
+    "name": "continueSession",
+    "description": "Criar e exportar funcao continueSession({ sessionId, prompt, model?, registry?, options? }) em src/query.ts que retorna Query. Cria Options com resume: sessionId, faz merge com options do usuario (options do usuario tem precedencia exceto resume que e sempre sobrescrito pelo sessionId), delega para query(). Exportar via src/index.ts.",
+    "status": "pending",
+    "priority": 16,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-003"],
+    "tests": [
+      "continueSession retorna um Query (AsyncGenerator com interrupt/close)",
+      "O Options resultante tem resume igual ao sessionId fornecido",
+      "Options do usuario sao preservadas no merge exceto resume",
+      "continueSession esta exportado via src/index.ts",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-005-session-improvements.md"
+  },
+  {
+    "id": "F-017",
+    "name": "PermissionResponse type",
+    "description": "Criar tipo/interface PermissionResponse com campos: toolUseId (string), behavior ('allow' | 'deny'), message (string opcional). Pode ficar em src/types/ ou inline em src/query.ts. Exportar via src/index.ts.",
+    "status": "pending",
+    "priority": 17,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-003"],
+    "tests": [
+      "Tipo PermissionResponse existe com campos toolUseId, behavior, message",
+      "behavior aceita apenas 'allow' ou 'deny'",
+      "PermissionResponse esta exportado via src/index.ts",
+      "npm run typecheck passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+  },
+  {
+    "id": "F-020",
+    "name": "spawnAndStream refactor",
+    "description": "Alterar spawnAndStream() em src/process.ts para retornar { stream: AsyncGenerator<SDKMessage>, writeStdin: (data: string) => void, close: () => void } em vez de apenas o AsyncGenerator. writeStdin escreve no stdin do child process. close encerra o processo. Adaptar query() em src/query.ts para usar a nova assinatura: obter stream do retorno e iterar sobre ele.",
+    "status": "pending",
+    "priority": 18,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-014"],
+    "tests": [
+      "spawnAndStream retorna objeto com propriedades stream, writeStdin e close",
+      "stream e um AsyncGenerator<SDKMessage>",
+      "writeStdin escreve no stdin do child process",
+      "query() usa .stream do retorno de spawnAndStream para yield mensagens",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+  },
+  {
+    "id": "F-019",
+    "name": "stdin aberto em plan mode",
+    "description": "Em spawnAndStream() de src/process.ts, alterar o comportamento de stdin conforme o permission mode. Quando permissionMode NAO e bypassPermissions nem dontAsk: escrever prompt + newline via proc.stdin.write() e NAO fechar stdin (nao chamar proc.stdin.end()). Quando permissionMode e bypassPermissions ou dontAsk: manter comportamento atual (escrever prompt e fechar stdin com proc.stdin.end()). O permission mode deve ser passado como parametro ou derivado das options.",
+    "status": "pending",
+    "priority": 19,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-020"],
+    "tests": [
+      "Em plan mode, stdin NAO e fechado apos escrever o prompt",
+      "Em bypassPermissions mode, stdin E fechado normalmente apos escrever o prompt",
+      "Em dontAsk mode, stdin E fechado normalmente apos escrever o prompt",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+  },
+  {
+    "id": "F-018",
+    "name": "respondToPermission method",
+    "description": "Adicionar metodo respondToPermission(response: PermissionResponse) ao objeto Query retornado por query() em src/query.ts. O metodo serializa { tool_use_id: response.toolUseId, behavior: response.behavior, message: response.message } como JSON + newline e escreve no stdin do subprocess via a funcao writeStdin exposta por spawnAndStream().",
+    "status": "pending",
+    "priority": 20,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-017", "F-019"],
+    "tests": [
+      "Query retornado por query() tem metodo respondToPermission",
+      "respondToPermission serializa response como JSON com tool_use_id (snake_case) + newline",
+      "respondToPermission usa writeStdin para escrever no stdin do processo",
+      "npm run typecheck passa",
+      "npm run build passa"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+  },
+  {
+    "id": "F-021",
+    "name": "README documentacao",
+    "description": "Criar README.md na raiz do repositorio com documentacao completa da API publica em ingles. Secoes: Installation (npm install openclaude-sdk, requisitos Node>=20 + OpenClaude CLI), Quick Start (query + for await), API Reference (query, collectMessages, continueSession, createOpenRouterRegistry, resolveModelEnv, listSessions, getSessionMessages, getSessionInfo, renameSession, tagSession — cada uma com assinatura e exemplo), Options (tabela por categoria: Execucao, Permissoes, Sessao, Prompt, Output, Avancado), Error Handling (classes + isRecoverable + tabela recuperavel/fatal), Provider Registry (exemplo OpenRouter), Session Management (deep search + continueSession), Plan Mode (respondToPermission).",
+    "status": "pending",
+    "priority": 21,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-007", "F-010", "F-011", "F-015", "F-016", "F-018"],
+    "tests": [
+      "README.md existe na raiz do repositorio",
+      "README contem secao Installation com npm install openclaude-sdk",
+      "README contem secao Quick Start com exemplo query() e for await",
+      "README contem secao API Reference com todas as funcoes exportadas",
+      "README contem secao Options com tabela de campos por categoria",
+      "README contem secao Error Handling com classes e isRecoverable",
+      "README contem secao Plan Mode com respondToPermission",
+      "README esta inteiramente em ingles"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-007-readme.md"
+  }
+]
