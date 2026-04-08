@@ -40,10 +40,11 @@
     "id": "F-024",
     "name": "Kebab-case CLI flags",
     "description": "Corrigir buildCliArgs() em process.ts: trocar --allowedTools por --allowed-tools e --disallowedTools por --disallowed-tools. Os nomes das propriedades TypeScript permanecem em camelCase.",
-    "status": "pending",
+    "status": "passing",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-08T23:55:00Z",
     "dependencies": [],
     "tests": [
       "buildCliArgs() usa '--allowed-tools' (kebab-case) no args.push",

@@ -85,12 +85,12 @@ export function buildCliArgs(options: Options = {}): string[] {
 
   // Allowed tools
   if (options.allowedTools && options.allowedTools.length > 0) {
-    args.push("--allowedTools", options.allowedTools.join(","))
+    args.push("--allowed-tools", options.allowedTools.join(","))
   }
 
   // Disallowed tools
   if (options.disallowedTools && options.disallowedTools.length > 0) {
-    args.push("--disallowedTools", options.disallowedTools.join(","))
+    args.push("--disallowed-tools", options.disallowedTools.join(","))
   }
 
   // Model
