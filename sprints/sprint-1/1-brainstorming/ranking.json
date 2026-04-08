@@ -1,0 +1,92 @@
+[
+  {
+    "id": "D-001",
+    "type": "feature",
+    "description": "Configurar o package para distribuição: package.json com nome correto (openclaude-sdk), campo exports, build tsup (ESM + CJS + DTS), main/module/types.",
+    "score": 9,
+    "justification": "Pré-requisito absoluto. Sem package configurado corretamente a SDK não é instalável via npm nem utilizável fora do monorepo.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-002",
+    "type": "feature",
+    "description": "Produzir README.md da SDK com documentação da API pública: instalação, query() com exemplos, collectMessages(), registry, session management, tipos principais.",
+    "score": 9,
+    "justification": "TASK.md define README.md como artefato obrigatório desta wave. Sem ele a entrega está incompleta.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-003",
+    "type": "feature",
+    "description": "Completar buildCliArgs() mapeando Options ausentes: additionalDirectories (--add-dir), betas (--beta), effort (--effort), thinking (--thinking), extraArgs (flags adicionais diretos).",
+    "score": 7,
+    "justification": "Flags usadas em produção. additionalDirectories é crítico para dar ao agente acesso a diretórios fora do cwd. extraArgs permite extensibilidade sem precisar atualizar a SDK.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-004",
+    "type": "feature",
+    "description": "Implementar suporte a structured output: mapear outputFormat para --json-schema em buildCliArgs() e garantir que spawnAndStream() propague o campo structured_output do SDKResultMessage.",
+    "score": 7,
+    "justification": "Funcionalidade crítica para uso programático. O agentic-workflow já usa --json-schema para merge de worktrees. O tipo SDKResultMessage já tem structured_output mas o mapeamento CLI não existe.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-005",
+    "type": "feature",
+    "description": "Criar hierarquia de erros tipados: OpenClaudeError base class, AuthError, RateLimitError, BillingError, MaxTurnsError, ExecutionError — lançados quando SDKResultMessage.subtype é error_*.",
+    "score": 6,
+    "justification": "DX: consumidores precisam distinguir erros recuperáveis (rate limit, retry) de fatais (auth, billing) sem parsear strings. Padrão esperado em SDKs de produção.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-006",
+    "type": "feature",
+    "description": "Implementar suporte a permission mid-stream em plan mode: expor stdin do subprocess via método respondToPermission(requestId, behavior) no objeto Query.",
+    "score": 5,
+    "justification": "Necessário para usar plan mode interativo. O demo tem endpoint stub anotado como não suportado. Requer passar input pelo stdin após o processo já estar rodando.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-007",
+    "type": "feature",
+    "description": "Melhorar listSessions() para suportar deep search: quando dir não é especificado, iterar pelos subdiretórios de ~/.claude/projects/ e agregar sessões de todos os projetos.",
+    "score": 5,
+    "justification": "Comportamento atual lista só o root ou um único projeto. Deep search é necessário para implementar um session picker global (ex: interface de chat com histórico completo).",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-008",
+    "type": "bug",
+    "description": "Corrigir interrupt(): usar SIGINT em vez de SIGTERM para interromper o CLI graciosamente, preservando histórico de sessão no arquivo JSONL.",
+    "score": 5,
+    "justification": "SIGTERM mata o processo abruptamente. O CLI provavelmente espera SIGINT (Ctrl+C) para flush do histórico antes de sair. Interrupções com SIGTERM podem corromper sessões.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-009",
+    "type": "improvement",
+    "description": "Deduplicar a resolução do comando do subprocess: unificar resolveCommand(), pathToClaudeCodeExecutable e a lógica Windows de spawnAndStream() em um único ponto de decisão.",
+    "score": 4,
+    "justification": "Três mecanismos sobrepostos para resolver o mesmo problema causam confusão. Refactor de limpeza sem impacto funcional, mas reduz risco de bugs por comportamento inesperado no Windows.",
+    "sprint": 1,
+    "implemented": false
+  },
+  {
+    "id": "D-010",
+    "type": "feature",
+    "description": "Adicionar continueSession(sessionId, prompt, options) como função de conveniência que faz query() com resume: sessionId automaticamente.",
+    "score": 4,
+    "justification": "DX: evita que chamadores gerenciem state de sessionId manualmente. Padrão common em chat apps onde cada mensagem deve continuar a sessão anterior.",
+    "sprint": 1,
+    "implemented": false
+  }
+]
