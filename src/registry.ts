@@ -65,6 +65,12 @@ export function createOpenRouterRegistry(config: {
     supportsVision?: boolean
   }[]
 }): ProviderRegistry {
+  if (!config.apiKey) {
+    throw new Error("createOpenRouterRegistry: apiKey must not be empty")
+  }
+  if (!config.models.length) {
+    throw new Error("createOpenRouterRegistry: models array must not be empty")
+  }
   return {
     providers: [
       {
