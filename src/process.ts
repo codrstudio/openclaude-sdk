@@ -160,15 +160,7 @@ export async function* spawnAndStream(
     ...(options.env as Record<string, string>),
   }
 
-  // No Windows, spawn via cmd /c para evitar ENOENT
-  const spawnCmd =
-    process.platform === "win32"
-      ? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
-      : command
-  const spawnArgs =
-    process.platform === "win32" ? ["/c", command, ...args] : args
-
-  const proc: ChildProcess = spawn(spawnCmd, spawnArgs, {
+  const proc: ChildProcess = spawn(command, args, {
     cwd: options.cwd || process.cwd(),
     stdio: ["pipe", "pipe", "pipe"],
     env: {

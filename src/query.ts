@@ -5,7 +5,7 @@
 import type { SDKMessage, SDKSystemMessage } from "./types/messages.js"
 import type { Options } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
-import { buildCliArgs, spawnAndStream } from "./process.js"
+import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
 import { resolveModelEnv } from "./registry.js"
 import {
   AuthenticationError,
@@ -48,9 +48,8 @@ export function query(params: {
     options.env = { ...options.env, ...envFromRegistry }
   }
 
-  const command =
-    options.pathToClaudeCodeExecutable || "openclaude"
-  const args = buildCliArgs(options)
+  const { command, prependArgs } = resolveExecutable(options)
+  const args = [...prependArgs, ...buildCliArgs(options)]
   const abortController = options.abortController ?? new AbortController()
 
   const generator = spawnAndStream(command, args, prompt, {
