@@ -21,10 +21,11 @@
     "id": "F-023",
     "name": "Remove env cast in query.ts",
     "description": "Remover o cast 'as Record<string, string>' de options.env em query.ts, passando options.env diretamente para spawnAndStream() que agora aplica filterEnv() internamente.",
-    "status": "pending",
+    "status": "passing",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-08T23:50:00Z",
     "dependencies": [
       "F-022"
     ],

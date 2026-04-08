@@ -56,7 +56,7 @@ export function query(params: {
 
   const { stream, writeStdin } = spawnAndStream(command, args, prompt, {
     cwd: options.cwd,
-    env: options.env as Record<string, string>,
+    env: options.env,
     signal: abortController.signal,
     permissionMode: options.permissionMode,
   })
