@@ -61,11 +61,6 @@ export function buildCliArgs(options: Options = {}): string[] {
     args.push("--max-turns", String(options.maxTurns))
   }
 
-  // Permission mode
-  if (options.permissionMode && options.permissionMode !== "bypassPermissions") {
-    args.push("--permission-mode", options.permissionMode)
-  }
-
   // CWD — passed via spawn options, not as CLI flag
 
   // Debug
