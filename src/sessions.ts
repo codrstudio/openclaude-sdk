@@ -2,7 +2,7 @@
 // Session management — espelha @anthropic-ai/claude-agent-sdk
 // ---------------------------------------------------------------------------
 
-import { readdir, stat, readFile } from "node:fs/promises"
+import { readdir, stat, readFile, appendFile } from "node:fs/promises"
 import { join, resolve } from "node:path"
 import { homedir } from "node:os"
 import type {
@@ -258,7 +258,6 @@ export async function renameSession(
 
   const filePath = join(baseDir, `${sessionId}.jsonl`)
   const entry = JSON.stringify({ type: "custom_title", title: title.trim() })
-  const { appendFile } = await import("node:fs/promises")
   await appendFile(filePath, "\n" + entry)
 }
 
@@ -277,6 +276,5 @@ export async function tagSession(
 
   const filePath = join(baseDir, `${sessionId}.jsonl`)
   const entry = JSON.stringify({ type: "tag", tag })
-  const { appendFile } = await import("node:fs/promises")
   await appendFile(filePath, "\n" + entry)
 }
