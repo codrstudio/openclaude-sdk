@@ -19,6 +19,7 @@ export interface ListSessionsOptions {
   dir?: string
   limit?: number
   includeWorktrees?: boolean
+  deep?: boolean
 }
 
 export interface GetSessionMessagesOptions {

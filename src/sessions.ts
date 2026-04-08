@@ -87,13 +87,10 @@ async function readSessionFile(
 // listSessions()
 // ---------------------------------------------------------------------------
 
-export async function listSessions(
-  options: ListSessionsOptions = {},
+async function listSessionsInDir(
+  baseDir: string,
+  cwd?: string,
 ): Promise<SDKSessionInfo[]> {
-  const baseDir = options.dir
-    ? join(getProjectsDir(), encodeCwd(options.dir))
-    : getProjectsDir()
-
   let files: string[]
   try {
     const entries = await readdir(baseDir)
@@ -118,13 +115,58 @@ export async function listSessions(
         fileSize: fileStat.size,
         customTitle,
         firstPrompt,
-        cwd: options.dir,
+        cwd,
         tag,
         createdAt: fileStat.birthtimeMs,
       })
     } catch {
       // Arquivo ilegivel, pular
     }
+  }
+
+  return sessions
+}
+
+export async function listSessions(
+  options: ListSessionsOptions = {},
+): Promise<SDKSessionInfo[]> {
+  const projectsDir = getProjectsDir()
+  const deep = options.deep !== false && !options.dir
+
+  let sessions: SDKSessionInfo[]
+
+  if (options.dir) {
+    // Busca apenas no diretorio especificado
+    const baseDir = join(projectsDir, encodeCwd(options.dir))
+    sessions = await listSessionsInDir(baseDir, options.dir)
+  } else if (deep) {
+    // Itera todos os subdiretorios sequencialmente
+    sessions = []
+    let subdirs: string[]
+    try {
+      const entries = await readdir(projectsDir)
+      subdirs = []
+      for (const entry of entries) {
+        const entryPath = join(projectsDir, entry)
+        try {
+          const s = await stat(entryPath)
+          if (s.isDirectory()) {
+            subdirs.push(entry)
+          }
+        } catch {
+          // ignorar
+        }
+      }
+    } catch {
+      subdirs = []
+    }
+    for (const subdir of subdirs) {
+      const dirSessions = await listSessionsInDir(join(projectsDir, subdir))
+      sessions.push(...dirSessions)
+    }
+  } else {
+    // deep: false — busca apenas no root
+    sessions = await listSessionsInDir(projectsDir)
   }
 
   // Ordenar por lastModified desc
