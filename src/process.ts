@@ -178,7 +178,20 @@ export async function* spawnAndStream(
   })
 
   // Abort handling
-  const onAbort = () => proc.kill("SIGTERM")
+  let sigintFallbackTimer: ReturnType<typeof setTimeout> | undefined
+  const onAbort = () => {
+    if (process.platform === "win32") {
+      proc.stdin?.write("\x03")
+    } else {
+      proc.kill("SIGINT")
+    }
+    // Fallback: if process hasn't exited in 5s, escalate to SIGTERM
+    sigintFallbackTimer = setTimeout(() => {
+      if (!proc.killed && proc.exitCode === null) {
+        proc.kill("SIGTERM")
+      }
+    }, 5000)
+  }
   options.signal?.addEventListener("abort", onAbort, { once: true })
 
   // Timeout
@@ -229,6 +242,7 @@ export async function* spawnAndStream(
   })
 
   if (timer) clearTimeout(timer)
+  if (sigintFallbackTimer) clearTimeout(sigintFallbackTimer)
   options.signal?.removeEventListener("abort", onAbort)
 
   if (stderr && !options.signal?.aborted) {
