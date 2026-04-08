@@ -20,7 +20,11 @@ import type {
 
 /** Encode cwd para nome de diretorio de sessao (replica logica do CLI) */
 function encodeCwd(dir: string): string {
-  return resolve(dir).replace(/[^a-zA-Z0-9]/g, "-")
+  const normalized = resolve(dir)
+  return normalized
+    .replace(/-/g, "_h_")            // hifens literais → _h_
+    .replace(/[/\\:]/g, "_s_")       // separadores de path → _s_
+    .replace(/[^a-zA-Z0-9_]/g, "_")  // demais caracteres especiais → _
 }
 
 function getProjectsDir(): string {
