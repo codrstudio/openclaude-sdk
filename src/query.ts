@@ -7,6 +7,17 @@ import type { Options } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 import { buildCliArgs, spawnAndStream } from "./process.js"
 import { resolveModelEnv } from "./registry.js"
+import {
+  AuthenticationError,
+  BillingError,
+  RateLimitError,
+  InvalidRequestError,
+  ServerError,
+  MaxTurnsError,
+  MaxBudgetError,
+  ExecutionError,
+  StructuredOutputError,
+} from "./errors.js"
 
 // ---------------------------------------------------------------------------
 // Query object — AsyncGenerator com metodos extras
@@ -92,16 +103,42 @@ export async function collectMessages(
     }
 
     if (msg.type === "result") {
-      const r = msg as {
-        session_id?: string
-        result?: string
-        total_cost_usd?: number
-        duration_ms?: number
+      sessionId = msg.session_id ?? sessionId
+      costUsd = msg.total_cost_usd ?? costUsd
+      durationMs = msg.duration_ms ?? durationMs
+
+      if (msg.subtype === "success") {
+        result = msg.result ?? null
+      } else {
+        const errMsg = msg.errors?.join(", ") ?? msg.subtype
+        const errParams = { message: errMsg, sessionId, costUsd, durationMs }
+        switch (msg.subtype) {
+          case "error_max_turns":
+            throw new MaxTurnsError(errParams)
+          case "error_max_budget_usd":
+            throw new MaxBudgetError(errParams)
+          case "error_during_execution":
+            throw new ExecutionError(errParams)
+          case "error_max_structured_output_retries":
+            throw new StructuredOutputError(errParams)
+        }
       }
-      sessionId = r.session_id ?? sessionId
-      result = r.result ?? null
-      costUsd = r.total_cost_usd ?? costUsd
-      durationMs = r.duration_ms ?? durationMs
+    }
+
+    if (msg.type === "assistant" && msg.error) {
+      const errParams = { message: msg.error, sessionId, costUsd, durationMs }
+      switch (msg.error) {
+        case "authentication_failed":
+          throw new AuthenticationError(errParams)
+        case "billing_error":
+          throw new BillingError(errParams)
+        case "rate_limit":
+          throw new RateLimitError(errParams)
+        case "invalid_request":
+          throw new InvalidRequestError(errParams)
+        case "server_error":
+          throw new ServerError(errParams)
+      }
     }
   }
 

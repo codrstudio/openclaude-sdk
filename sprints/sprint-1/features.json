@@ -212,8 +212,9 @@
     "id": "F-011",
     "name": "collectMessages error integration",
     "description": "Em src/query.ts, modificar collectMessages() para lancar erros tipados quando o resultado indica falha. SDKResultMessage com subtype error_max_turns lanca MaxTurnsError, error_max_budget_usd lanca MaxBudgetError, error_during_execution lanca ExecutionError, error_max_structured_output_retries lanca StructuredOutputError. SDKAssistantMessage com error authentication_failed lanca AuthenticationError, billing_error lanca BillingError, rate_limit lanca RateLimitError, invalid_request lanca InvalidRequestError, server_error lanca ServerError. query() NAO lanca — apenas yield mensagens.",
-    "status": "pending",
+    "status": "passing",
     "priority": 11,
+    "completed_at": "2026-04-08T23:30:00Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
