@@ -147,8 +147,9 @@
     "id": "F-007",
     "name": "Extra args passthrough",
     "description": "Em src/process.ts, adicionar mapeamento em buildCliArgs() para extraArgs: objeto Record<string, string | null> onde cada key vira --key value (ou so --key se value e null). Adicionar POR ULTIMO no array de args para permitir override de qualquer flag anterior.",
-    "status": "pending",
+    "status": "passing",
     "priority": 8,
+    "completed_at": "2026-04-08T22:00:00Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [

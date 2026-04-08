@@ -107,6 +107,16 @@ export function buildCliArgs(options: Options = {}): string[] {
     args.push("--debug")
   }
 
+  // Extra args — added last to allow override of any earlier flag
+  if (options.extraArgs) {
+    for (const [key, value] of Object.entries(options.extraArgs)) {
+      args.push(`--${key}`)
+      if (value !== null) {
+        args.push(value)
+      }
+    }
+  }
+
   return args
 }
 
