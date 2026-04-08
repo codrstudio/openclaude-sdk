@@ -343,8 +343,9 @@
     "id": "F-017",
     "name": "PermissionResponse type",
     "description": "Criar tipo/interface PermissionResponse com campos: toolUseId (string), behavior ('allow' | 'deny'), message (string opcional). Pode ficar em src/types/ ou inline em src/query.ts. Exportar via src/index.ts.",
-    "status": "pending",
+    "status": "passing",
     "priority": 17,
+    "completed_at": "2026-04-08T03:00:00Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [

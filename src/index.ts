@@ -106,6 +106,7 @@ export type {
   PermissionUpdate,
   PermissionBehavior,
   PermissionUpdateDestination,
+  PermissionResponse,
   PermissionRuleValue,
   CanUseTool,
   HookEvent,

@@ -105,6 +105,12 @@ export type PermissionUpdate =
 
 export type PermissionBehavior = "allow" | "deny" | "ask"
 
+export interface PermissionResponse {
+  toolUseId: string
+  behavior: "allow" | "deny"
+  message?: string
+}
+
 export type PermissionUpdateDestination =
   | "userSettings"
   | "projectSettings"
