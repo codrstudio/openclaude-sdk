@@ -777,3 +777,104 @@ Key points:
 - `permissionMode: "plan"` keeps `stdin` open so responses can be sent during iteration
 - `behavior: "deny"` rejects the action — the agent will attempt an alternative approach
 - `message` is optional and provides a reason (shown to the agent on denial)
+
+## MCP Tool Factories
+
+MCP tool factories permitem definir tools inline em TypeScript e registrá-las num servidor in-process, sem precisar de um servidor MCP externo separado.
+
+> **Peer dependencies:** `zod` e `@modelcontextprotocol/sdk` devem estar instalados no seu projeto.
+
+### `tool(name, description, inputSchema, handler, extras?)`
+
+```typescript
+function tool<Schema extends z.ZodRawShape>(
+  name: string,
+  description: string,
+  inputSchema: Schema,
+  handler: (args: z.infer<z.ZodObject<Schema>>, extra: unknown) => Promise<CallToolResult>,
+  extras?: { annotations?: ToolAnnotations },
+): SdkMcpToolDefinition<Schema>
+```
+
+| Parâmetro | Tipo | Descrição |
+|-----------|------|-----------|
+| `name` | `string` | Nome da tool (visível ao agente) |
+| `description` | `string` | Descrição da tool (usada pelo agente para decidir quando invocar) |
+| `inputSchema` | `z.ZodRawShape` | Schema Zod dos parâmetros de entrada |
+| `handler` | `(args, extra) => Promise<CallToolResult>` | Função async que executa a tool |
+| `extras.annotations` | `ToolAnnotations` | Anotações opcionais de comportamento |
+
+### `createSdkMcpServer(options)`
+
+```typescript
+function createSdkMcpServer(options: {
+  name: string
+  version?: string
+  tools?: Array<SdkMcpToolDefinition<any>>
+}): McpSdkServerConfig
+```
+
+Retorna um `McpSdkServerConfig` com `type: "sdk"` que pode ser passado diretamente em `options.mcpServers`. O servidor roda in-process — sem porta de rede, sem processo filho.
+
+### Exemplo end-to-end
+
+```typescript
+import { z } from "zod"
+import { tool, createSdkMcpServer, query, collectMessages } from "openclaude-sdk"
+
+// 1. Definir tools
+const weatherTool = tool(
+  "get_weather",
+  "Get current weather for a city",
+  { city: z.string().describe("City name") },
+  async ({ city }) => ({
+    content: [{ type: "text", text: `Weather in ${city}: 22°C, sunny` }],
+  }),
+)
+
+const timeTool = tool(
+  "get_time",
+  "Get current time in a timezone",
+  { timezone: z.string().describe("IANA timezone") },
+  async ({ timezone }) => ({
+    content: [{ type: "text", text: `Current time in ${timezone}: ${new Date().toISOString()}` }],
+  }),
+  { annotations: { readOnly: true } },
+)
+
+// 2. Criar servidor in-process
+const mcpServer = createSdkMcpServer({
+  name: "my-tools",
+  tools: [weatherTool, timeTool],
+})
+
+// 3. Usar com query
+const q = query({
+  prompt: "What's the weather in Tokyo?",
+  options: {
+    mcpServers: { "my-tools": mcpServer },
+  },
+})
+
+const { result } = await collectMessages(q)
+console.log(result)
+```
+
+### `ToolAnnotations`
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `readOnly` | `boolean` | Tool apenas lê dados, não modifica estado |
+| `destructive` | `boolean` | Tool pode causar efeitos destrutivos |
+| `idempotent` | `boolean` | Múltiplas execuções produzem o mesmo resultado |
+| `openWorld` | `boolean` | Tool acessa recursos externos (rede, filesystem) |
+
+### Tipos exportados
+
+```typescript
+import type {
+  SdkMcpToolDefinition,
+  ToolAnnotations,
+  CallToolResult,
+} from "openclaude-sdk"
+```

@@ -62,7 +62,7 @@
     "id": "F-065",
     "name": "README MCP Tool Factories section",
     "description": "Adicionar secao 'MCP Tool Factories' ao README.md documentando tool() e createSdkMcpServer() com assinaturas, tabela de parametros de tool(), tabela de ToolAnnotations, exemplo end-to-end com Zod (weatherTool + timeTool + query), e tipos exportados. Mencionar peer dependencies (zod, @modelcontextprotocol/sdk).",
-    "status": "pending",
+    "status": "passing",
     "priority": 4,
     "agent": "coder",
     "task": "vibe-code",
@@ -76,7 +76,8 @@
       "Peer dependencies mencionadas (zod, @modelcontextprotocol/sdk)",
       "Tipos exportados (SdkMcpToolDefinition, ToolAnnotations, CallToolResult) listados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-028-readme-mcp-tool-factories.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-028-readme-mcp-tool-factories.md",
+    "completed_at": "2026-04-09T08:00:00.000Z"
   },
   {
     "id": "F-064",
