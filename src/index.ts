@@ -7,7 +7,7 @@ export { query, collectMessages, continueSession } from "./query.js"
 export type { Query } from "./query.js"
 
 // MCP tool factories
-export { tool, createSdkMcpServer } from "./mcp.js"
+export { tool, createSdkMcpServer, startSdkServerTransport } from "./mcp.js"
 export type { ToolAnnotations, CallToolResult, SdkMcpToolDefinition } from "./mcp.js"
 
 // Errors

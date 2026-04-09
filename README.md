@@ -887,14 +887,14 @@ function tool<Schema extends z.ZodRawShape>(
 ### `createSdkMcpServer(options)`
 
 ```typescript
-function createSdkMcpServer(options: {
+async function createSdkMcpServer(options: {
   name: string
   version?: string
   tools?: Array<SdkMcpToolDefinition<any>>
-}): McpSdkServerConfig
+}): Promise<McpSdkServerConfig>
 ```
 
-Retorna um `McpSdkServerConfig` com `type: "sdk"` que pode ser passado diretamente em `options.mcpServers`. O servidor roda in-process — sem porta de rede, sem processo filho.
+Retorna um `Promise<McpSdkServerConfig>` com `type: "sdk"` que pode ser passado diretamente em `options.mcpServers`. O servidor roda in-process — sem porta de rede, sem processo filho.
 
 ### Exemplo end-to-end
 
@@ -923,7 +923,7 @@ const timeTool = tool(
 )
 
 // 2. Criar servidor in-process
-const mcpServer = createSdkMcpServer({
+const mcpServer = await createSdkMcpServer({
   name: "my-tools",
   tools: [weatherTool, timeTool],
 })

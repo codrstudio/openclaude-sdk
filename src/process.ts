@@ -145,10 +145,13 @@ export function buildCliArgs(options: Options = {}): string[] {
   if (options.mcpServers) {
     for (const [name, config] of Object.entries(options.mcpServers)) {
       if (config.type === "sdk") {
-        throw new Error(
-          `MCP server "${name}" has type "sdk" which requires in-process transport (not yet supported). ` +
-            `Use stdio, sse, or http transport instead.`,
-        )
+        if (config._localPort == null) {
+          throw new Error(
+            `SDK MCP server "${config.name}" has no local transport. Call startSdkServerTransport() before spawning the CLI.`,
+          )
+        }
+        args.push("--mcp-server-sse", `${config.name}:http://localhost:${config._localPort}/mcp`)
+        continue
       } else if (!config.type || config.type === "stdio") {
         const stdio = config as McpStdioServerConfig
         const parts = [stdio.command, ...(stdio.args ?? [])]

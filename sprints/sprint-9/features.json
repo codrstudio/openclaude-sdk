@@ -1,0 +1,210 @@
+[
+  {
+    "id": "F-067",
+    "name": "mcpSdkServerName",
+    "description": "Adicionar campo `name: string` à interface McpSdkServerConfig em src/types/options.ts e incluir `name: options.name` no retorno de createSdkMcpServer() em src/mcp.ts. Campo necessário para identificação no lifecycle manager e em mensagens de erro.",
+    "status": "passing",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "completed_at": "2026-04-09T00:00:00Z",
+    "tests": [
+      "Interface McpSdkServerConfig em src/types/options.ts contém campo `name: string`",
+      "createSdkMcpServer() retorna objeto com propriedade `name` igual a `options.name`",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
+  },
+  {
+    "id": "F-068",
+    "name": "fixRequireEsm",
+    "description": "Tornar createSdkMcpServer() async (retorna Promise<McpSdkServerConfig>), substituir require('@modelcontextprotocol/sdk/server/mcp.js') e require('zod') por await import(). Remover comentários eslint-disable de require. O pacote é ESM ('type': 'module') e require() lança ReferenceError em runtime.",
+    "status": "passing",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "completed_at": "2026-04-09T00:01:00Z",
+    "tests": [
+      "createSdkMcpServer() é async (retorna Promise)",
+      "Nenhuma chamada require() existe em src/mcp.ts",
+      "Nenhum comentário eslint-disable para require em src/mcp.ts",
+      "Imports dinâmicos usam await import()",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
+  },
+  {
+    "id": "F-069",
+    "name": "fixServerToolSignature",
+    "description": "Corrigir chamada server.tool() em src/mcp.ts: passar toolDef.inputSchema (ZodRawShape) diretamente como terceiro argumento em vez de { inputSchema: zodShape }. Remover z.object() wrapping desnecessário. Remover import de zod se não houver outro uso.",
+    "status": "passing",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "completed_at": "2026-04-09T00:02:00Z",
+    "tests": [
+      "server.tool() recebe toolDef.inputSchema diretamente como terceiro argumento",
+      "Não existe z.object() wrapping no registro de tools em src/mcp.ts",
+      "Import de zod removido de createSdkMcpServer() se não há outro uso",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
+  },
+  {
+    "id": "F-070",
+    "name": "sdkServerTransport",
+    "description": "Criar função startSdkServerTransport() em src/mcp.ts que inicia um HTTP server Node.js em porta aleatória (porta 0) com StreamableHTTPServerTransport, conecta o McpServer ao transport, e retorna { port, close }. Adicionar campo opcional _localPort a McpSdkServerConfig. Atualizar buildCliArgs() em src/process.ts para gerar --mcp-server-sse name:http://localhost:PORT/mcp quando _localPort presente, ou throw com mensagem explicita quando ausente. Exportar startSdkServerTransport em src/index.ts.",
+    "status": "passing",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:03:00Z",
+    "dependencies": [
+      "F-067",
+      "F-068",
+      "F-069"
+    ],
+    "tests": [
+      "Função startSdkServerTransport() existe e é exportada em src/index.ts",
+      "McpSdkServerConfig tem campo opcional _localPort?: number",
+      "buildCliArgs() gera --mcp-server-sse name:http://localhost:PORT/mcp para servers com _localPort",
+      "buildCliArgs() lança erro explicito para servers sdk sem _localPort",
+      "buildCliArgs() não lança mais o throw genérico para type 'sdk'",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-031-sdk-server-transport-lifecycle.md"
+  },
+  {
+    "id": "F-071",
+    "name": "sdkServerLifecycle",
+    "description": "Implementar funções auxiliares startSdkServers() e stopSdkServers() em src/query.ts. Integrar lifecycle lazy no query(): iniciar SDK servers no primeiro next() do async generator (antes do spawn), encerrar no finally. stopSdkServers() usa Promise.allSettled para garantir cleanup mesmo com falhas. close() do Query também encerra SDK servers. Assinatura pública de query() permanece síncrona.",
+    "status": "passing",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:04:00Z",
+    "dependencies": [
+      "F-070"
+    ],
+    "tests": [
+      "Funções startSdkServers() e stopSdkServers() existem em src/query.ts (internals, não exportadas)",
+      "SDK servers são iniciados automaticamente antes do spawn do CLI em query()",
+      "SDK servers são encerrados no finally block quando query completa ou falha",
+      "close() do Query encerra SDK servers",
+      "query() continua retornando Query sincronamente (não Promise<Query>)",
+      "stopSdkServers() usa Promise.allSettled",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-031-sdk-server-transport-lifecycle.md"
+  },
+  {
+    "id": "F-076",
+    "name": "fixEmptyMainLeaves",
+    "description": "Corrigir edge case em buildConversationChain() em src/sessions.ts: quando mainLeaves está vazio (todos os leaves são sidechain/team/meta), retornar [] em vez de fallback para pickBest(leaves) que incluiria mensagens de sidechain na chain principal. Divergência intencional do Python SDK.",
+    "status": "passing",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:05:00Z",
+    "dependencies": [],
+    "tests": [
+      "buildConversationChain() retorna [] quando mainLeaves.length === 0",
+      "Não existe fallback pickBest(leaves) quando mainLeaves está vazio",
+      "Comportamento inalterado quando mainLeaves tem entries (pickBest(mainLeaves))",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-033-buildconversationchain-empty-mainleaves.md"
+  },
+  {
+    "id": "F-072",
+    "name": "readmeV2SessionApi",
+    "description": "Inserir seção 'V2 Session API' no README.md após 'Session Management' e antes de 'Plan Mode'. Incluir: createSession() com assinatura e CreateSessionOptions, tabela SDKSession (send, collect, close, Symbol.asyncDispose), exemplo multi-turn com streaming, resumeSession() com exemplo, prompt() one-shot, nota sobre await using (TS >= 5.2), comparação V1 vs V2, tipos exportados.",
+    "status": "passing",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:06:00Z",
+    "dependencies": [],
+    "tests": [
+      "README.md contém seção '## V2 Session API' ou equivalente",
+      "Seção inclui assinatura de createSession() com CreateSessionOptions",
+      "Tabela SDKSession com send(), collect(), close(), [Symbol.asyncDispose]() presente",
+      "Exemplo multi-turn com streaming presente",
+      "resumeSession() documentado com exemplo",
+      "prompt() one-shot documentado",
+      "Tabela comparação V1 vs V2 presente",
+      "Seções existentes do README não foram removidas ou reorganizadas"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
+  },
+  {
+    "id": "F-073",
+    "name": "readmeQueryControlMethods",
+    "description": "Atualizar tabela do objeto Query no README.md com 3 métodos de controle: setModel(model?), setPermissionMode(mode), setMaxThinkingTokens(tokens). Adicionar exemplo de uso mid-session mostrando troca de modelo após primeiros resultados. Nota: fire-and-forget, efeito no próximo turno.",
+    "status": "passing",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:07:00Z",
+    "dependencies": [],
+    "tests": [
+      "Tabela do Query no README inclui setModel(), setPermissionMode(), setMaxThinkingTokens()",
+      "Exemplo mid-session com setModel() presente no README",
+      "Nota sobre fire-and-forget presente",
+      "Seções existentes do README não foram removidas ou reorganizadas"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
+  },
+  {
+    "id": "F-075",
+    "name": "readmeQueryOperations",
+    "description": "Expandir tabela do Query no README.md com duas sub-seções: Introspection Methods (6: initializationResult, supportedCommands, supportedModels, supportedAgents, mcpServerStatus, accountInfo) e Operation Methods (6: reconnectMcpServer, toggleMcpServer, stopTask, rewindFiles, setMcpServers, streamInput). Adicionar exemplo de mcpServerStatus(). Mencionar tipos exportados.",
+    "status": "passing",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:08:00Z",
+    "dependencies": [],
+    "tests": [
+      "README contém sub-seção de Introspection Methods com 6 métodos listados",
+      "README contém sub-seção de Operation Methods com 6 métodos listados",
+      "Exemplo de uso de mcpServerStatus() presente",
+      "Tipos exportados mencionados (SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult)",
+      "Seções existentes do README não foram removidas ou reorganizadas"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
+  },
+  {
+    "id": "F-074",
+    "name": "readmeMcpToolFactories",
+    "description": "Inserir seção 'MCP Tool Factories' no README.md após 'MCP Servers'. Incluir: assinatura de tool() com genérico Zod, assinatura de createSdkMcpServer() ASYNC (pós PRP-030), tabela de tipos exportados (ToolAnnotations, CallToolResult, SdkMcpToolDefinition), exemplo end-to-end com weatherTool + createSdkMcpServer + query, nota sobre peerDependencies opcionais (zod, @modelcontextprotocol/sdk).",
+    "status": "passing",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-070",
+      "F-071"
+    ],
+    "tests": [
+      "README.md contém seção 'MCP Tool Factories' ou equivalente",
+      "Assinatura de tool() com genérico Schema presente",
+      "createSdkMcpServer() documentado como async (retorna Promise)",
+      "Tabela de tipos (ToolAnnotations, CallToolResult, SdkMcpToolDefinition) presente",
+      "Exemplo end-to-end com tool() + createSdkMcpServer() + query() presente",
+      "Nota sobre peerDependencies opcionais presente",
+      "Seções existentes do README não foram removidas ou reorganizadas"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md",
+    "completed_at": "2026-04-09T00:09:00Z"
+  }
+]

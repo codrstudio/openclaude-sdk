@@ -16,6 +16,8 @@ import type {
   McpSetServersResult,
 } from "./types/query.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
+import { startSdkServerTransport } from "./mcp.js"
+import type { McpSdkServerConfig } from "./types/options.js"
 import { resolveModelEnv } from "./registry.js"
 import {
   AuthenticationError,
@@ -73,6 +75,41 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
 }
 
 // ---------------------------------------------------------------------------
+// SDK server lifecycle helpers (internal — not exported)
+// ---------------------------------------------------------------------------
+
+interface RunningServer {
+  name: string
+  close: () => Promise<void>
+}
+
+async function startSdkServers(
+  mcpServers: Record<string, import("./types/options.js").McpServerConfig>,
+): Promise<RunningServer[]> {
+  const running: RunningServer[] = []
+
+  for (const [name, config] of Object.entries(mcpServers)) {
+    if (config.type !== "sdk") continue
+
+    const sdkConfig = config as McpSdkServerConfig
+    const { port, close } = await startSdkServerTransport(sdkConfig)
+    sdkConfig._localPort = port
+    running.push({ name, close })
+  }
+
+  return running
+}
+
+async function stopSdkServers(servers: RunningServer[]): Promise<void> {
+  const results = await Promise.allSettled(servers.map((s) => s.close()))
+  for (const result of results) {
+    if (result.status === "rejected") {
+      console.error("[openclaude-sdk] Failed to stop SDK server:", result.reason)
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // query() function
 // ---------------------------------------------------------------------------
 
@@ -108,16 +145,22 @@ export function query(params: {
   }
 
   const { command, prependArgs } = resolveExecutable(resolvedOptions)
-  const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
   const abortController = resolvedOptions.abortController ?? new AbortController()
 
-  const { stream, writeStdin, close: closeProc } = spawnAndStream(command, args, prompt, {
-    cwd: resolvedOptions.cwd,
-    env: resolvedOptions.env,
-    signal: abortController.signal,
-    permissionMode: resolvedOptions.permissionMode,
-    timeoutMs: resolvedOptions.timeoutMs,
-  })
+  // ---------------------------------------------------------------------------
+  // Mutable refs — populated when the lifecycle generator starts
+  // ---------------------------------------------------------------------------
+
+  let runningServers: RunningServer[] = []
+  let serversStopped = false
+  let writeStdinRef: ((data: string) => void) | null = null
+  let closeProcRef: (() => Promise<void>) | null = null
+
+  async function stopOnce(): Promise<void> {
+    if (serversStopped) return
+    serversStopped = true
+    await stopSdkServers(runningServers)
+  }
 
   // ---------------------------------------------------------------------------
   // Infraestrutura de request/response (F-054)
@@ -152,38 +195,65 @@ export function query(params: {
         },
       })
 
-      writeStdin(JSON.stringify({ type: commandType, requestId }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: commandType, requestId }) + "\n")
     })
   }
 
-  async function* wrapStream(
-    source: AsyncGenerator<SDKMessage>,
-    pending: Map<string, { resolve: (data: unknown) => void; reject: (error: Error) => void }>,
-  ): AsyncGenerator<SDKMessage, void> {
-    for await (const msg of source) {
-      const obj = msg as Record<string, unknown>
-      if (obj["type"] === "control_response" && typeof obj["responseId"] === "string") {
-        const entry = pending.get(obj["responseId"])
-        if (entry) {
-          pending.delete(obj["responseId"])
-          entry.resolve(obj["data"])
-        }
-        continue
+  // ---------------------------------------------------------------------------
+  // Lifecycle generator — starts SDK servers before spawn, stops in finally
+  // ---------------------------------------------------------------------------
+
+  async function* lifecycleGenerator(): AsyncGenerator<SDKMessage, void> {
+    try {
+      // Start SDK servers and assign _localPort before building CLI args
+      if (resolvedOptions.mcpServers) {
+        runningServers = await startSdkServers(resolvedOptions.mcpServers)
       }
-      yield msg
+
+      // Build CLI args after _localPort is set on SDK server configs
+      const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
+
+      // Spawn CLI process
+      const { stream, writeStdin, close: closeProc } = spawnAndStream(command, args, prompt, {
+        cwd: resolvedOptions.cwd,
+        env: resolvedOptions.env,
+        signal: abortController.signal,
+        permissionMode: resolvedOptions.permissionMode,
+        timeoutMs: resolvedOptions.timeoutMs,
+      })
+
+      writeStdinRef = writeStdin
+      closeProcRef = closeProc
+
+      // Yield messages, routing control_response internally
+      for await (const msg of stream) {
+        const obj = msg as Record<string, unknown>
+        if (obj["type"] === "control_response" && typeof obj["responseId"] === "string") {
+          const entry = pendingRequests.get(obj["responseId"])
+          if (entry) {
+            pendingRequests.delete(obj["responseId"])
+            entry.resolve(obj["data"])
+          }
+          continue
+        }
+        yield msg
+      }
+    } finally {
+      await stopOnce()
     }
   }
 
-  const wrappedStream = wrapStream(stream, pendingRequests)
+  const gen = lifecycleGenerator()
 
-  // Decorar o stream com metodos extras da interface Query
-  const query: Query = Object.assign(wrappedStream, {
-    _writeStdin: writeStdin,
+  // Decorar o generator com metodos extras da interface Query
+  const query: Query = Object.assign(gen, {
+    _writeStdin: (data: string) => writeStdinRef?.(data),
     async interrupt(): Promise<void> {
       abortController.abort()
     },
     async close(): Promise<void> {
-      await closeProc()
+      if (closeProcRef) await closeProcRef()
+      await stopOnce()
     },
     respondToPermission(response: PermissionResponse): void {
       if (!response.toolUseId) {
@@ -199,16 +269,16 @@ export function query(params: {
         behavior: response.behavior,
         message: response.message,
       })
-      writeStdin(payload + "\n")
+      writeStdinRef?.(payload + "\n")
     },
     setModel(model?: string): void {
-      writeStdin(JSON.stringify({ type: "set_model", model: model ?? null }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: "set_model", model: model ?? null }) + "\n")
     },
     setPermissionMode(mode: PermissionMode): void {
-      writeStdin(JSON.stringify({ type: "set_permission_mode", permissionMode: mode }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: "set_permission_mode", permissionMode: mode }) + "\n")
     },
     setMaxThinkingTokens(tokens: number | null): void {
-      writeStdin(JSON.stringify({ type: "set_max_thinking_tokens", maxThinkingTokens: tokens }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: "set_max_thinking_tokens", maxThinkingTokens: tokens }) + "\n")
     },
     initializationResult(): Promise<InitializationResult> {
       return sendControlRequest("get_initialization_result")
@@ -229,13 +299,13 @@ export function query(params: {
       return sendControlRequest("get_account_info")
     },
     reconnectMcpServer(serverName: string): void {
-      writeStdin(JSON.stringify({ type: "reconnect_mcp_server", serverName }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: "reconnect_mcp_server", serverName }) + "\n")
     },
     toggleMcpServer(serverName: string, enabled: boolean): void {
-      writeStdin(JSON.stringify({ type: "toggle_mcp_server", serverName, enabled }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: "toggle_mcp_server", serverName, enabled }) + "\n")
     },
     stopTask(taskId: string): void {
-      writeStdin(JSON.stringify({ type: "stop_task", taskId }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: "stop_task", taskId }) + "\n")
     },
     rewindFiles(userMessageId: string, opts?: { dryRun?: boolean }): Promise<RewindFilesResult> {
       const requestId = nextRequestId()
@@ -250,7 +320,7 @@ export function query(params: {
           reject: (err) => { clearTimeout(timeout); reject(err) },
         })
 
-        writeStdin(JSON.stringify({
+        writeStdinRef?.(JSON.stringify({
           type: "rewind_files",
           requestId,
           userMessageId,
@@ -271,7 +341,7 @@ export function query(params: {
           reject: (err) => { clearTimeout(timeout); reject(err) },
         })
 
-        writeStdin(JSON.stringify({
+        writeStdinRef?.(JSON.stringify({
           type: "set_mcp_servers",
           requestId,
           servers,
@@ -280,9 +350,9 @@ export function query(params: {
     },
     async streamInput(stream: AsyncIterable<string>): Promise<void> {
       for await (const chunk of stream) {
-        writeStdin(JSON.stringify({ type: "stream_input", content: chunk }) + "\n")
+        writeStdinRef?.(JSON.stringify({ type: "stream_input", content: chunk }) + "\n")
       }
-      writeStdin(JSON.stringify({ type: "stream_input_end" }) + "\n")
+      writeStdinRef?.(JSON.stringify({ type: "stream_input_end" }) + "\n")
     },
   })
 
