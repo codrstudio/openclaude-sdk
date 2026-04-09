@@ -51,6 +51,22 @@ export function query(params: {
     resolvedOptions = { ...options, env: { ...options.env, ...envFromRegistry } }
   }
 
+  // Propagar env de MCP stdio servers
+  if (resolvedOptions.mcpServers) {
+    const mcpEnv: Record<string, string> = {}
+    for (const config of Object.values(resolvedOptions.mcpServers)) {
+      if ((!config.type || config.type === "stdio") && "env" in config && config.env) {
+        Object.assign(mcpEnv, config.env)
+      }
+    }
+    if (Object.keys(mcpEnv).length > 0) {
+      resolvedOptions = {
+        ...resolvedOptions,
+        env: { ...resolvedOptions.env, ...mcpEnv },
+      }
+    }
+  }
+
   const { command, prependArgs } = resolveExecutable(resolvedOptions)
   const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
   const abortController = resolvedOptions.abortController ?? new AbortController()
