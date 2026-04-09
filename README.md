@@ -133,6 +133,90 @@ import type {
 } from "openclaude-sdk"
 ```
 
+#### Operation Methods
+
+##### Request/Response Operations (timeout 30s)
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `rewindFiles(userMessageId, opts?)` | `Promise<RewindFilesResult>` | Reverts files changed by the agent back to a previous point. Pass `opts.dryRun: true` for a preview without reverting |
+| `setMcpServers(servers)` | `Promise<McpSetServersResult>` | Reconfigures MCP servers mid-session |
+
+> **Timeout note:** Request/response operations use a 30s timeout (longer than introspection) because they may involve filesystem or network operations.
+
+##### Fire-and-Forget Operations
+
+| Method | Description |
+|--------|-------------|
+| `reconnectMcpServer(serverName: string): void` | Reconnects a disconnected MCP server |
+| `toggleMcpServer(serverName: string, enabled: boolean): void` | Enables or disables a MCP server |
+| `stopTask(taskId: string): void` | Stops a specific agent task |
+
+##### Stream Operations
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `streamInput(stream: AsyncIterable<string>)` | `Promise<void>` | Sends text chunk by chunk via stdin. Blocks until the entire iterable is consumed |
+
+**Example — `rewindFiles()` with dryRun:**
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Refactor the auth module",
+  options: { permissionMode: "plan" },
+})
+
+let lastUserMessageId: string | null = null
+
+for await (const msg of q) {
+  if (msg.type === "user") {
+    lastUserMessageId = msg.uuid
+  }
+
+  if (shouldRevert && lastUserMessageId) {
+    // Preview which files would be reverted
+    const preview = await q.rewindFiles(lastUserMessageId, { dryRun: true })
+    console.log("Files to revert:", preview)
+
+    // Actually revert
+    await q.rewindFiles(lastUserMessageId)
+    break
+  }
+}
+```
+
+**Example — `streamInput()` with AsyncIterable:**
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({ prompt: "Process the following data:" })
+
+async function* generateChunks() {
+  yield "First chunk of data\n"
+  yield "Second chunk of data\n"
+  yield "Final chunk\n"
+}
+
+// Stream all chunks into the agent before iterating responses
+await q.streamInput(generateChunks())
+
+for await (const msg of q) {
+  // process messages
+}
+```
+
+**Exported operation types:**
+
+```typescript
+import type {
+  RewindFilesResult,
+  McpSetServersResult,
+} from "openclaude-sdk"
+```
+
 ---
 
 ### `collectMessages(q)`
