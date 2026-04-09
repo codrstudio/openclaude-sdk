@@ -59,6 +59,7 @@ export function createSdkMcpServer(options: {
 
   return {
     type: "sdk" as const,
+    name: options.name,
     instance: server,
   }
 }

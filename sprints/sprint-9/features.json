@@ -3,11 +3,12 @@
     "id": "F-067",
     "name": "mcpSdkServerName",
     "description": "Adicionar campo `name: string` à interface McpSdkServerConfig em src/types/options.ts e incluir `name: options.name` no retorno de createSdkMcpServer() em src/mcp.ts. Campo necessário para identificação no lifecycle manager e em mensagens de erro.",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [],
+    "completed_at": "2026-04-09T00:00:00Z",
     "tests": [
       "Interface McpSdkServerConfig em src/types/options.ts contém campo `name: string`",
       "createSdkMcpServer() retorna objeto com propriedade `name` igual a `options.name`",
@@ -57,11 +58,15 @@
     "id": "F-070",
     "name": "sdkServerTransport",
     "description": "Criar função startSdkServerTransport() em src/mcp.ts que inicia um HTTP server Node.js em porta aleatória (porta 0) com StreamableHTTPServerTransport, conecta o McpServer ao transport, e retorna { port, close }. Adicionar campo opcional _localPort a McpSdkServerConfig. Atualizar buildCliArgs() em src/process.ts para gerar --mcp-server-sse name:http://localhost:PORT/mcp quando _localPort presente, ou throw com mensagem explicita quando ausente. Exportar startSdkServerTransport em src/index.ts.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 4,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-067", "F-068", "F-069"],
+    "dependencies": [
+      "F-067",
+      "F-068",
+      "F-069"
+    ],
     "tests": [
       "Função startSdkServerTransport() existe e é exportada em src/index.ts",
       "McpSdkServerConfig tem campo opcional _localPort?: number",
@@ -77,11 +82,13 @@
     "id": "F-071",
     "name": "sdkServerLifecycle",
     "description": "Implementar funções auxiliares startSdkServers() e stopSdkServers() em src/query.ts. Integrar lifecycle lazy no query(): iniciar SDK servers no primeiro next() do async generator (antes do spawn), encerrar no finally. stopSdkServers() usa Promise.allSettled para garantir cleanup mesmo com falhas. close() do Query também encerra SDK servers. Assinatura pública de query() permanece síncrona.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-070"],
+    "dependencies": [
+      "F-070"
+    ],
     "tests": [
       "Funções startSdkServers() e stopSdkServers() existem em src/query.ts (internals, não exportadas)",
       "SDK servers são iniciados automaticamente antes do spawn do CLI em query()",
@@ -172,11 +179,14 @@
     "id": "F-074",
     "name": "readmeMcpToolFactories",
     "description": "Inserir seção 'MCP Tool Factories' no README.md após 'MCP Servers'. Incluir: assinatura de tool() com genérico Zod, assinatura de createSdkMcpServer() ASYNC (pós PRP-030), tabela de tipos exportados (ToolAnnotations, CallToolResult, SdkMcpToolDefinition), exemplo end-to-end com weatherTool + createSdkMcpServer + query, nota sobre peerDependencies opcionais (zod, @modelcontextprotocol/sdk).",
-    "status": "pending",
+    "status": "blocked",
     "priority": 10,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-070", "F-071"],
+    "dependencies": [
+      "F-070",
+      "F-071"
+    ],
     "tests": [
       "README.md contém seção 'MCP Tool Factories' ou equivalente",
       "Assinatura de tool() com genérico Schema presente",
