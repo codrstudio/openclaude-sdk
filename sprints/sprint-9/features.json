@@ -21,11 +21,12 @@
     "id": "F-068",
     "name": "fixRequireEsm",
     "description": "Tornar createSdkMcpServer() async (retorna Promise<McpSdkServerConfig>), substituir require('@modelcontextprotocol/sdk/server/mcp.js') e require('zod') por await import(). Remover comentários eslint-disable de require. O pacote é ESM ('type': 'module') e require() lança ReferenceError em runtime.",
-    "status": "pending",
+    "status": "passing",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [],
+    "completed_at": "2026-04-09T00:01:00Z",
     "tests": [
       "createSdkMcpServer() é async (retorna Promise)",
       "Nenhuma chamada require() existe em src/mcp.ts",

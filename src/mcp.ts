@@ -25,17 +25,15 @@ export interface SdkMcpToolDefinition<Schema extends z.ZodRawShape = z.ZodRawSha
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createSdkMcpServer(options: {
+export async function createSdkMcpServer(options: {
   name: string
   version?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tools?: Array<SdkMcpToolDefinition<any>>
-}): McpSdkServerConfig {
+}): Promise<McpSdkServerConfig> {
   // Import dinamico para nao forcar dep em quem nao usa MCP
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js")
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { z } = require("zod")
+  const { McpServer } = await import("@modelcontextprotocol/sdk/server/mcp.js")
+  const { z } = await import("zod")
 
   const server = new McpServer({
     name: options.name,
@@ -51,7 +49,7 @@ export function createSdkMcpServer(options: {
         { inputSchema: zodShape },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async (args: unknown, extra: unknown) => {
-          return toolDef.handler(args as any, extra)
+          return toolDef.handler(args as any, extra) as any
         },
       )
     }
