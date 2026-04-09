@@ -150,10 +150,11 @@
     "id": "F-073",
     "name": "readmeQueryControlMethods",
     "description": "Atualizar tabela do objeto Query no README.md com 3 métodos de controle: setModel(model?), setPermissionMode(mode), setMaxThinkingTokens(tokens). Adicionar exemplo de uso mid-session mostrando troca de modelo após primeiros resultados. Nota: fire-and-forget, efeito no próximo turno.",
-    "status": "pending",
+    "status": "passing",
     "priority": 8,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:07:00Z",
     "dependencies": [],
     "tests": [
       "Tabela do Query no README inclui setModel(), setPermissionMode(), setMaxThinkingTokens()",
