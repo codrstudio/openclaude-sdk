@@ -46,7 +46,7 @@
     "id": "F-049",
     "name": "integrateChainPipeline",
     "description": "Substituir o bloco de filtragem ingenua em getSessionMessages() (linhas ~268-291 de src/sessions.ts) pelo pipeline: parseTranscriptEntries(data.messages) -> buildConversationChain(entries) -> chain.filter(isVisibleMessage) -> map para SessionMessage[]. Manter offset/limit existentes operando sobre o resultado. Validar: getSessionMessages retorna mensagens corretas, sessoes simples continuam funcionando.",
-    "status": "pending",
+    "status": "passing",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
@@ -62,7 +62,8 @@
       "npm run typecheck passa sem erros",
       "npm run build compila sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
+    "completed_at": "2026-04-09T05:25:00.000Z"
   },
   {
     "id": "F-054",

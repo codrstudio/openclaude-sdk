@@ -394,21 +394,17 @@ export async function getSessionMessages(
     return []
   }
 
-  const sessionMessages: SessionMessage[] = data.messages
-    .filter((m) => {
-      const obj = m as { type?: string }
-      return obj.type === "user" || obj.type === "assistant"
-    })
-    .map((m) => {
-      const obj = m as Record<string, unknown>
-      return {
-        type: obj.type as "user" | "assistant",
-        uuid: (obj.uuid as string) || "",
-        session_id: (obj.session_id as string) || sessionId,
-        message: obj.message,
-        parent_tool_use_id: null,
-      }
-    })
+  const entries = parseTranscriptEntries(data.messages)
+  const chain = buildConversationChain(entries)
+  const sessionMessages: SessionMessage[] = chain
+    .filter(isVisibleMessage)
+    .map((entry) => ({
+      type: entry.type as "user" | "assistant",
+      uuid: entry.uuid,
+      session_id: entry.sessionId ?? sessionId,
+      message: entry.message,
+      parent_tool_use_id: null,
+    }))
 
   const offset = options.offset ?? 0
   const sliced = sessionMessages.slice(offset)
