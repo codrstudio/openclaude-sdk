@@ -42,7 +42,7 @@
     "id": "F-063",
     "name": "README Query control and introspection methods",
     "description": "Expandir a tabela de metodos do Query no README para incluir 3 control methods (setModel, setPermissionMode, setMaxThinkingTokens) e 6 introspection methods (initializationResult, supportedCommands, supportedModels, supportedAgents, mcpServerStatus, accountInfo). Organizar tabela em categorias. Adicionar exemplo mid-session e nota sobre protocolo de controle. Listar tipos de introspection exportados.",
-    "status": "pending",
+    "status": "passing",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
@@ -55,7 +55,8 @@
       "Nota sobre protocolo fire-and-forget vs request/response presente",
       "Tipos de introspection exportados listados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-027-readme-query-methods.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-027-readme-query-methods.md",
+    "completed_at": "2026-04-09T07:10:00.000Z"
   },
   {
     "id": "F-065",
@@ -81,7 +82,7 @@
     "id": "F-064",
     "name": "README Query operation methods",
     "description": "Adicionar categoria 'Operation Methods' na tabela do Query no README, com 3 sub-categorias: Request/Response (rewindFiles, setMcpServers com timeout 30s), Fire-and-Forget (reconnectMcpServer, toggleMcpServer, stopTask), e Stream (streamInput). Incluir exemplos de rewindFiles() com dryRun e streamInput() com AsyncIterable. Listar tipos exportados.",
-    "status": "blocked",
+    "status": "pending",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",

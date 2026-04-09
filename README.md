@@ -59,11 +59,79 @@ for await (const msg of q) {
 
 The `Query` object also exposes:
 
+#### Core Methods
+
 | Method | Description |
 |--------|-------------|
-| `interrupt(): Promise<void>` | Gracefully interrupt the running agent |
-| `close(): void` | Immediately terminate the subprocess |
+| `interrupt(): Promise<void>` | Gracefully interrupt the running agent (SIGINT) |
+| `close(): Promise<void>` | Terminate the subprocess (3-stage shutdown) |
 | `respondToPermission(response: PermissionResponse): void` | Respond to a tool permission request (plan mode) |
+
+#### Control Methods (fire-and-forget)
+
+Sent via stdin — no response is awaited.
+
+| Method | Description |
+|--------|-------------|
+| `setModel(model?: string): void` | Change the model mid-session. `undefined` resets to default |
+| `setPermissionMode(mode: PermissionMode): void` | Change permission mode mid-session (`"default"`, `"plan"`, `"bypassPermissions"`, `"dontAsk"`) |
+| `setMaxThinkingTokens(tokens: number \| null): void` | Set max thinking tokens mid-session. `null` to disable |
+
+#### Introspection Methods (request/response, timeout 10s)
+
+Only available while the agent is active (during stream iteration).
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `initializationResult()` | `Promise<InitializationResult>` | Initialization result (tools, agents, MCP) |
+| `supportedCommands()` | `Promise<SlashCommand[]>` | Available slash commands |
+| `supportedModels()` | `Promise<ModelInfo[]>` | Available models |
+| `supportedAgents()` | `Promise<AgentInfo[]>` | Configured agents |
+| `mcpServerStatus()` | `Promise<McpServerStatusInfo[]>` | Status of connected MCP servers |
+| `accountInfo()` | `Promise<AccountInfo>` | Account information |
+
+**Example — mid-session control and introspection:**
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Analyze this codebase",
+  options: { permissionMode: "plan" },
+})
+
+// Change model mid-session (fire-and-forget)
+q.setModel("claude-sonnet-4-6")
+
+// Check available models
+const models = await q.supportedModels()
+console.log("Available models:", models.map(m => m.id))
+
+// Check MCP server status
+const mcpStatus = await q.mcpServerStatus()
+for (const server of mcpStatus) {
+  console.log(`${server.name}: ${server.status}`)
+}
+
+for await (const msg of q) {
+  // process messages
+}
+```
+
+> **Protocol note:** Control methods (`set*`) are fire-and-forget — they write a command to stdin and return immediately. Introspection methods are request/response — they write a command and await a reply on stdout (timeout 10s).
+
+**Exported introspection types:**
+
+```typescript
+import type {
+  InitializationResult,
+  SlashCommand,
+  ModelInfo,
+  AgentInfo,
+  McpServerStatusInfo,
+  AccountInfo,
+} from "openclaude-sdk"
+```
 
 ---
 
