@@ -1,3 +1,4 @@
+import * as http from "node:http"
 import type { z } from "zod"
 import type { McpSdkServerConfig } from "./types/options.js"
 
@@ -57,6 +58,53 @@ export async function createSdkMcpServer(options: {
     type: "sdk" as const,
     name: options.name,
     instance: server,
+  }
+}
+
+export async function startSdkServerTransport(
+  config: McpSdkServerConfig,
+): Promise<{ port: number; close: () => Promise<void> }> {
+  const { StreamableHTTPServerTransport } = await import(
+    "@modelcontextprotocol/sdk/server/streamableHttp.js"
+  )
+
+  // Stateless mode — no session management needed for local in-process use
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+  })
+
+  const server = http.createServer(async (req, res) => {
+    if (req.url === "/mcp") {
+      // Collect body for POST requests
+      const chunks: Buffer[] = []
+      for await (const chunk of req) {
+        chunks.push(chunk as Buffer)
+      }
+      const body = chunks.length > 0 ? JSON.parse(Buffer.concat(chunks).toString()) : undefined
+      await transport.handleRequest(req, res, body)
+    } else {
+      res.writeHead(404)
+      res.end()
+    }
+  })
+
+  // Bind to port 0 — OS assigns a random available port
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve))
+
+  const address = server.address() as { port: number }
+
+  // Connect the McpServer instance to the transport
+  const mcpServer = config.instance as { connect: (transport: unknown) => Promise<void> }
+  await mcpServer.connect(transport)
+
+  return {
+    port: address.port,
+    close: async () => {
+      await transport.close()
+      await new Promise<void>((resolve, reject) =>
+        server.close((err) => (err ? reject(err) : resolve())),
+      )
+    },
   }
 }
 

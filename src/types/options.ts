@@ -30,6 +30,8 @@ export interface McpSdkServerConfig {
   type: "sdk"
   name: string
   instance: unknown // McpServer de @modelcontextprotocol/sdk — tipo opaco para evitar dep direta
+  /** @internal — Porta local atribuida pelo lifecycle manager */
+  _localPort?: number
 }
 
 export type McpServerConfig =
