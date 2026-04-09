@@ -90,7 +90,7 @@
     "id": "F-053",
     "name": "queryConfigMethods",
     "description": "Adicionar 3 metodos fire-and-forget a interface Query em src/query.ts: setModel(model?: string) envia {type: 'set_model', model}, setPermissionMode(mode: PermissionMode) envia {type: 'set_permission_mode', permissionMode}, setMaxThinkingTokens(tokens: number|null) envia {type: 'set_max_thinking_tokens', maxThinkingTokens}. Todos enviam JSON + newline via writeStdin existente. Importar PermissionMode se necessario. Validar: metodos existem na interface e implementacao, JSON enviado esta correto.",
-    "status": "pending",
+    "status": "passing",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
@@ -103,7 +103,8 @@
       "Todos usam writeStdin(payload + newline)",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md",
+    "completed_at": "2026-04-09T07:00:00.000Z"
   },
   {
     "id": "F-050",
@@ -149,7 +150,7 @@
     "id": "F-055",
     "name": "queryIntrospectionMethods",
     "description": "Criar src/types/query.ts com tipos: SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult. Adicionar 6 metodos a interface Query: initializationResult(), supportedCommands(), supportedModels(), supportedAgents(), mcpServerStatus(), accountInfo() — todos retornam Promise<T> via sendControlRequest(). Exportar tipos em src/index.ts. Validar: tipos existem, metodos usam sendControlRequest, exports estao corretos.",
-    "status": "blocked",
+    "status": "pending",
     "priority": 8,
     "agent": "coder",
     "task": "vibe-code",
@@ -187,7 +188,7 @@
     "id": "F-057",
     "name": "operationWithResponse",
     "description": "Adicionar 2 metodos request/response a interface Query: rewindFiles(userMessageId, opts?) retorna Promise<RewindFilesResult> com timeout 30s, setMcpServers(servers) retorna Promise<McpSetServersResult> com timeout 30s. Ambos usam pendingRequests e nextRequestId de F-054. Criar tipos RewindFilesResult e McpSetServersResult em src/types/query.ts. Exportar tipos em src/index.ts. Validar: metodos usam pendingRequests, timeout e 30s, tipos existem.",
-    "status": "blocked",
+    "status": "pending",
     "priority": 10,
     "agent": "coder",
     "task": "vibe-code",

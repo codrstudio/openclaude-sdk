@@ -2,7 +2,7 @@
 // query() — interface principal, espelha @anthropic-ai/claude-agent-sdk
 // ---------------------------------------------------------------------------
 
-import type { SDKMessage, SDKSystemMessage } from "./types/messages.js"
+import type { SDKMessage, SDKSystemMessage, PermissionMode } from "./types/messages.js"
 import type { Options, PermissionResponse } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
@@ -30,6 +30,12 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   close(): Promise<void>
   /** Responde a uma solicitacao de permissao de ferramenta */
   respondToPermission(response: PermissionResponse): void
+  /** Define o modelo a usar (fire-and-forget) */
+  setModel(model?: string): void
+  /** Define o modo de permissao (fire-and-forget) */
+  setPermissionMode(mode: PermissionMode): void
+  /** Define o numero maximo de tokens de thinking (fire-and-forget) */
+  setMaxThinkingTokens(tokens: number | null): void
 }
 
 // ---------------------------------------------------------------------------
@@ -160,6 +166,15 @@ export function query(params: {
         message: response.message,
       })
       writeStdin(payload + "\n")
+    },
+    setModel(model?: string): void {
+      writeStdin(JSON.stringify({ type: "set_model", model: model ?? null }) + "\n")
+    },
+    setPermissionMode(mode: PermissionMode): void {
+      writeStdin(JSON.stringify({ type: "set_permission_mode", permissionMode: mode }) + "\n")
+    },
+    setMaxThinkingTokens(tokens: number | null): void {
+      writeStdin(JSON.stringify({ type: "set_max_thinking_tokens", maxThinkingTokens: tokens }) + "\n")
     },
   })
 
