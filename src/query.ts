@@ -56,6 +56,12 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   mcpServerStatus(): Promise<McpServerStatusInfo[]>
   /** Info da conta */
   accountInfo(): Promise<AccountInfo>
+  /** Reconecta um MCP server */
+  reconnectMcpServer(serverName: string): void
+  /** Habilita/desabilita um MCP server */
+  toggleMcpServer(serverName: string, enabled: boolean): void
+  /** Para uma task especifica */
+  stopTask(taskId: string): void
 }
 
 // ---------------------------------------------------------------------------
@@ -213,6 +219,15 @@ export function query(params: {
     },
     accountInfo(): Promise<AccountInfo> {
       return sendControlRequest("get_account_info")
+    },
+    reconnectMcpServer(serverName: string): void {
+      writeStdin(JSON.stringify({ type: "reconnect_mcp_server", serverName }) + "\n")
+    },
+    toggleMcpServer(serverName: string, enabled: boolean): void {
+      writeStdin(JSON.stringify({ type: "toggle_mcp_server", serverName, enabled }) + "\n")
+    },
+    stopTask(taskId: string): void {
+      writeStdin(JSON.stringify({ type: "stop_task", taskId }) + "\n")
     },
   })
 

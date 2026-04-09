@@ -151,7 +151,7 @@
   {
     "id": "F-055",
     "name": "queryIntrospectionMethods",
-    "description": "Criar src/types/query.ts com tipos: SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult. Adicionar 6 metodos a interface Query: initializationResult(), supportedCommands(), supportedModels(), supportedAgents(), mcpServerStatus(), accountInfo() — todos retornam Promise<T> via sendControlRequest(). Exportar tipos em src/index.ts. Validar: tipos existem, metodos usam sendControlRequest, exports estao corretos.",
+    "description": "Criar src/types/query.ts com tipos: SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult. Adicionar 6 metodos a interface Query: initializationResult(), supportedCommands(), supportedModels(), supportedAgents(), mcpServerStatus(), accountInfo() \u00e2\u20ac\u201d todos retornam Promise<T> via sendControlRequest(). Exportar tipos em src/index.ts. Validar: tipos existem, metodos usam sendControlRequest, exports estao corretos.",
     "status": "passing",
     "completed_at": "2026-04-09T08:00:00.000Z",
     "priority": 8,
@@ -173,7 +173,7 @@
     "id": "F-056",
     "name": "operationFireAndForget",
     "description": "Adicionar 3 metodos fire-and-forget a interface Query em src/query.ts: reconnectMcpServer(serverName) envia {type: 'reconnect_mcp_server', serverName}, toggleMcpServer(serverName, enabled) envia {type: 'toggle_mcp_server', serverName, enabled}, stopTask(taskId) envia {type: 'stop_task', taskId}. Todos enviam JSON + newline via writeStdin. Validar: metodos existem e enviam payloads corretos.",
-    "status": "pending",
+    "status": "passing",
     "priority": 9,
     "agent": "coder",
     "task": "vibe-code",
@@ -185,7 +185,8 @@
       "stopTask envia JSON com type e taskId",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
+    "completed_at": "2026-04-09T08:20:00Z"
   },
   {
     "id": "F-057",
@@ -211,7 +212,7 @@
   {
     "id": "F-058",
     "name": "streamInput",
-    "description": "Adicionar metodo streamInput(stream: AsyncIterable<string>): Promise<void> a interface Query em src/query.ts. Implementacao: itera o AsyncIterable, envia cada chunk como {type: 'stream_input', content: chunk} via writeStdin, ao final envia {type: 'stream_input_end'}. Metodo bloqueante — consome iterable inteiro antes de resolver. Validar: metodo existe, envia chunks e end signal.",
+    "description": "Adicionar metodo streamInput(stream: AsyncIterable<string>): Promise<void> a interface Query em src/query.ts. Implementacao: itera o AsyncIterable, envia cada chunk como {type: 'stream_input', content: chunk} via writeStdin, ao final envia {type: 'stream_input_end'}. Metodo bloqueante \u00e2\u20ac\u201d consome iterable inteiro antes de resolver. Validar: metodo existe, envia chunks e end signal.",
     "status": "pending",
     "priority": 11,
     "agent": "coder",
