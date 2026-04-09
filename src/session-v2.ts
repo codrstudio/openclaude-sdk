@@ -16,6 +16,8 @@ import type { ProviderRegistry } from "./types/provider.js"
 export interface SDKSession {
   /** ID da sessao (gerado ou fornecido) */
   readonly sessionId: string
+  /** Query ativa no momento, ou null se nenhuma send() foi chamada ainda */
+  readonly currentQuery: Query | null
   /** Envia mensagem e inicia query — retorna stream de mensagens */
   send(prompt: string | SDKUserMessage, options?: Partial<Options>): Query
   /** Conveniencia: envia mensagem e coleta resultado completo */
@@ -47,6 +49,10 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
 
   return {
     sessionId,
+
+    get currentQuery(): Query | null {
+      return activeQuery
+    },
 
     send(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>): Query {
       const promptText = typeof prompt === "string" ? prompt : JSON.stringify(prompt.message.content)
@@ -125,6 +131,10 @@ export function resumeSession(
 
   return {
     sessionId,
+
+    get currentQuery(): Query | null {
+      return activeQuery
+    },
 
     send(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>): Query {
       const promptText = typeof prompt === "string" ? prompt : JSON.stringify(prompt.message.content)

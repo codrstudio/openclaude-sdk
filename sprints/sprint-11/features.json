@@ -76,10 +76,11 @@
     "id": "F-091",
     "name": "sessionCurrentQueryGetter",
     "description": "Adicionar getter readonly `currentQuery: Query | null` na interface SDKSession e implementá-lo em createSession() e resumeSession() como `get currentQuery() { return activeQuery }`. Permite acesso externo à Query ativa para operações avançadas sem precisar chamar close().",
-    "status": "pending",
+    "status": "passing",
     "priority": 4,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
     "dependencies": [],
     "tests": [
       "Interface SDKSession tem campo `readonly currentQuery: Query | null`",
