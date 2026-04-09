@@ -187,7 +187,7 @@
     "id": "F-074",
     "name": "readmeMcpToolFactories",
     "description": "Inserir seção 'MCP Tool Factories' no README.md após 'MCP Servers'. Incluir: assinatura de tool() com genérico Zod, assinatura de createSdkMcpServer() ASYNC (pós PRP-030), tabela de tipos exportados (ToolAnnotations, CallToolResult, SdkMcpToolDefinition), exemplo end-to-end com weatherTool + createSdkMcpServer + query, nota sobre peerDependencies opcionais (zod, @modelcontextprotocol/sdk).",
-    "status": "pending",
+    "status": "passing",
     "priority": 10,
     "agent": "coder",
     "task": "vibe-code",
@@ -204,6 +204,7 @@
       "Nota sobre peerDependencies opcionais presente",
       "Seções existentes do README não foram removidas ou reorganizadas"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md",
+    "completed_at": "2026-04-09T00:09:00Z"
   }
 ]
