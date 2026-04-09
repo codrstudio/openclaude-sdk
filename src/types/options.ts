@@ -290,6 +290,7 @@ export interface Options {
   hooks?: Partial<Record<HookEvent, HookCallbackMatcher[]>>
   includePartialMessages?: boolean
   maxBudgetUsd?: number
+  maxBufferSize?: number
   maxThinkingTokens?: number
   maxTurns?: number
   mcpServers?: Record<string, McpServerConfig>

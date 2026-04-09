@@ -336,6 +336,7 @@ export function spawnAndStream(
     signal?: AbortSignal
     timeoutMs?: number
     permissionMode?: string
+    maxBufferSize?: number
   } = {},
 ): {
   stream: AsyncGenerator<SDKMessage>
@@ -466,7 +467,7 @@ export function spawnAndStream(
       const rl = createInterface({ input: proc.stdout })
 
       let jsonBuffer = ""
-      const MAX_BUFFER_SIZE = 1_048_576 // 1MB
+      const MAX_BUFFER_SIZE = options.maxBufferSize ?? 1_048_576
 
       try {
         for await (const line of rl) {

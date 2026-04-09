@@ -236,6 +236,7 @@ export function query(params: {
         signal: abortController.signal,
         permissionMode: resolvedOptions.permissionMode,
         timeoutMs: resolvedOptions.timeoutMs,
+        maxBufferSize: resolvedOptions.maxBufferSize,
       })
 
       writeStdinRef = writeStdin
