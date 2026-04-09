@@ -208,4 +208,5 @@ export type {
   CreateSessionOptions,
   ResumeSessionOptions,
   PromptOptions,
+  PromptResult,
 } from "./session-v2.js"

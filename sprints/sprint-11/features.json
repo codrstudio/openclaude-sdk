@@ -52,10 +52,11 @@
     "id": "F-089",
     "name": "promptReturnFullResult",
     "description": "Criar interface PromptResult com campos result, sessionId, costUsd, durationMs e resultMessage: SDKResultMessage | null. Alterar prompt() para retornar PromptResult, extraindo o SDKResultMessage do array de mensagens coletadas. Exportar PromptResult em index.ts.",
-    "status": "pending",
+    "status": "passing",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
     "dependencies": [
       "F-090"
     ],

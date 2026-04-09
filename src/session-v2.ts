@@ -5,7 +5,7 @@
 import { randomUUID } from "node:crypto"
 import { query, collectMessages } from "./query.js"
 import type { Query } from "./query.js"
-import type { SDKMessage, SDKUserMessage } from "./types/messages.js"
+import type { SDKMessage, SDKResultMessage, SDKUserMessage } from "./types/messages.js"
 import type { Options } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 
@@ -185,15 +185,18 @@ export interface PromptOptions extends Partial<Options> {
   registry?: ProviderRegistry
 }
 
-export async function prompt(
-  text: string,
-  opts: PromptOptions = {},
-): Promise<{
+export interface PromptResult {
   result: string | null
   sessionId: string | null
   costUsd: number
   durationMs: number
-}> {
+  resultMessage: SDKResultMessage | null
+}
+
+export async function prompt(
+  text: string,
+  opts: PromptOptions = {},
+): Promise<PromptResult> {
   const { model, registry, ...options } = opts
   const q = query({
     prompt: text,
@@ -201,5 +204,13 @@ export async function prompt(
     registry,
     options,
   })
-  return collectMessages(q)
+  const collected = await collectMessages(q)
+  const resultMessage = collected.messages.find((m) => m.type === "result") as SDKResultMessage | null ?? null
+  return {
+    result: collected.result,
+    sessionId: collected.sessionId,
+    costUsd: collected.costUsd,
+    durationMs: collected.durationMs,
+    resultMessage,
+  }
 }
