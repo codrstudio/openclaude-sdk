@@ -186,7 +186,7 @@ export function spawnAndStream(
 ): {
   stream: AsyncGenerator<SDKMessage>
   writeStdin: (data: string) => void
-  close: () => void
+  close: () => Promise<void>
 } {
   const childEnv = {
     ...filterEnv(process.env as Record<string, string | undefined>),
@@ -203,17 +203,31 @@ export function spawnAndStream(
   })
 
   // Abort handling
-  let sigintFallbackTimer: ReturnType<typeof setTimeout> | undefined
+  let shutdownFallbackTimer: ReturnType<typeof setTimeout> | undefined
   const onAbort = () => {
-    if (process.platform === "win32") {
-      proc.stdin?.write("\x03")
-    } else {
-      proc.kill("SIGINT")
-    }
-    // Fallback: if process hasn't exited in 5s, escalate to SIGTERM
-    sigintFallbackTimer = setTimeout(() => {
-      if (!proc.killed && proc.exitCode === null) {
+    // Stage 1: close stdin (signals EOF to CLI for graceful save)
+    stdinClosed = true
+    proc.stdin?.end()
+
+    let sigkillTimer: ReturnType<typeof setTimeout> | undefined
+
+    // Limpar timers quando o processo sair
+    proc.once("exit", () => {
+      if (shutdownFallbackTimer) clearTimeout(shutdownFallbackTimer)
+      if (sigkillTimer) clearTimeout(sigkillTimer)
+    })
+
+    // Stage 2: after 5s without exit, escalate to SIGTERM
+    shutdownFallbackTimer = setTimeout(() => {
+      if (proc.exitCode === null) {
         proc.kill("SIGTERM")
+
+        // Stage 3: after 5s without exit, escalate to SIGKILL
+        sigkillTimer = setTimeout(() => {
+          if (proc.exitCode === null) {
+            proc.kill("SIGKILL")
+          }
+        }, 5000)
       }
     }, 5000)
   }
@@ -231,20 +245,59 @@ export function spawnAndStream(
   const closeAfterPrompt =
     options.permissionMode === "bypassPermissions" ||
     options.permissionMode === "dontAsk"
+  let stdinClosed = false
   proc.stdin?.write(prompt + "\n")
   if (closeAfterPrompt) {
+    stdinClosed = true
     proc.stdin?.end()
   }
 
   function writeStdin(data: string): void {
+    if (stdinClosed) {
+      throw new Error("writeStdin: stdin already closed")
+    }
     if (proc.exitCode !== null || proc.killed) {
       throw new Error("writeStdin: process has already exited")
     }
     proc.stdin?.write(data)
   }
 
-  function close(): void {
-    proc.kill("SIGTERM")
+  function close(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      // Processo ja encerrado: resolver imediatamente
+      if (proc.exitCode !== null) {
+        resolve()
+        return
+      }
+
+      // Estagio 1: fechar stdin (sinaliza EOF ao CLI)
+      stdinClosed = true
+      proc.stdin?.end()
+
+      let sigtermTimer: ReturnType<typeof setTimeout> | undefined
+      let sigkillTimer: ReturnType<typeof setTimeout> | undefined
+
+      // Limpar timers e resolver quando o processo sair
+      proc.once("exit", () => {
+        if (sigtermTimer) clearTimeout(sigtermTimer)
+        if (sigkillTimer) clearTimeout(sigkillTimer)
+        resolve()
+      })
+
+      // Estagio 2: apos 5s sem exit, enviar SIGTERM
+      sigtermTimer = setTimeout(() => {
+        if (proc.exitCode === null) {
+          proc.kill("SIGTERM")
+
+          // Estagio 3: apos mais 5s, enviar SIGKILL
+          sigkillTimer = setTimeout(() => {
+            if (proc.exitCode === null) {
+              proc.kill("SIGKILL")
+            }
+          }, 5000)
+        }
+      }, 5000)
+    })
   }
 
   async function* streamGen(): AsyncGenerator<SDKMessage> {
@@ -301,7 +354,7 @@ export function spawnAndStream(
     })
 
     if (timer) clearTimeout(timer)
-    if (sigintFallbackTimer) clearTimeout(sigintFallbackTimer)
+    if (shutdownFallbackTimer) clearTimeout(shutdownFallbackTimer)
     options.signal?.removeEventListener("abort", onAbort)
 
     if (stderr && !options.signal?.aborted) {

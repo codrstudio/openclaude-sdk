@@ -1,0 +1,70 @@
+[
+  {
+    "id": "F-044",
+    "name": "stdinClosed guard em writeStdin()",
+    "description": "Declarar flag stdinClosed dentro de spawnAndStream(), adicionar guard como primeira verificacao em writeStdin() que lanca Error('writeStdin: stdin already closed'), e setar flag=true no bloco closeAfterPrompt antes de proc.stdin?.end(). A flag e variavel local de spawnAndStream(), nao exportada. Validar: writeStdin() apos stdinClosed=true deve lancar erro com mensagem especifica.",
+    "status": "passing",
+    "completed_at": "2026-04-09T00:00:00.000Z",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Flag stdinClosed declarada como let stdinClosed = false dentro de spawnAndStream()",
+      "writeStdin() verifica stdinClosed antes de exitCode/killed e lanca Error('writeStdin: stdin already closed')",
+      "Bloco closeAfterPrompt seta stdinClosed = true antes de proc.stdin?.end()",
+      "Compilacao sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
+  },
+  {
+    "id": "F-045",
+    "name": "close() com shutdown de 3 estagios",
+    "description": "Tornar close() assincrona (retorna Promise<void>). Implementar 3 estagios: (1) setar stdinClosed=true e proc.stdin?.end(), (2) apos 5s sem exit → proc.kill('SIGTERM'), (3) apos mais 5s → proc.kill('SIGKILL'). Se proc.exitCode !== null no inicio, resolver imediatamente. Listener proc.once('exit') limpa timers e resolve. Atualizar tipo de retorno em spawnAndStream(). Propagar await em src/query.ts e atualizar tipo Query em src/types/index.ts se close estiver exposto.",
+    "status": "passing",
+    "completed_at": "2026-04-09T03:40:00.000Z",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-044"
+    ],
+    "tests": [
+      "close() retorna Promise<void> (assincrona)",
+      "Estagio 1: close() seta stdinClosed=true e chama proc.stdin?.end()",
+      "Estagio 2: setTimeout de 5000ms dispara proc.kill('SIGTERM') se proc.exitCode === null",
+      "Estagio 3: setTimeout de 5000ms apos SIGTERM dispara proc.kill('SIGKILL') se proc.exitCode === null",
+      "Processo ja morto (exitCode !== null): resolve() imediato sem timers",
+      "proc.once('exit') limpa ambos timers (sigtermTimer e sigkillTimer) e chama resolve()",
+      "query.ts usa await nas chamadas de close()",
+      "Tipo Query em types/index.ts reflete close: () => Promise<void> se exposto",
+      "Compilacao sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
+  },
+  {
+    "id": "F-046",
+    "name": "onAbort com shutdown de 3 estagios",
+    "description": "Renomear sigintFallbackTimer para shutdownFallbackTimer e atualizar referencia no cleanup do streamGen(). Substituir bloco onAbort por 3 estagios: (1) setar stdinClosed=true e proc.stdin?.end(), (2) shutdownFallbackTimer = setTimeout 5s → proc.kill('SIGTERM'), (3) setTimeout 5s → proc.kill('SIGKILL'). Adicionar proc.once('exit') que limpa shutdownFallbackTimer e sigkillTimer local. interrupt() permanece inalterado usando SIGINT.",
+    "status": "passing",
+    "completed_at": "2026-04-09T04:00:00.000Z",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-044"
+    ],
+    "tests": [
+      "sigintFallbackTimer renomeado para shutdownFallbackTimer em todo spawnAndStream()",
+      "Cleanup do streamGen() usa clearTimeout(shutdownFallbackTimer)",
+      "onAbort seta stdinClosed=true como primeira acao",
+      "onAbort chama proc.stdin?.end() (estagio 1)",
+      "onAbort seta shutdownFallbackTimer com setTimeout 5s para SIGTERM (estagio 2)",
+      "Dentro do SIGTERM timer, setTimeout 5s para SIGKILL (estagio 3)",
+      "proc.once('exit') no onAbort limpa shutdownFallbackTimer e sigkillTimer",
+      "interrupt() NAO foi alterado — continua usando SIGINT",
+      "Compilacao sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
+  }
+]

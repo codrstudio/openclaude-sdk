@@ -27,7 +27,7 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   /** Interrompe a query */
   interrupt(): Promise<void>
   /** Fecha a query e mata o processo */
-  close(): void
+  close(): Promise<void>
   /** Responde a uma solicitacao de permissao de ferramenta */
   respondToPermission(response: PermissionResponse): void
 }
@@ -71,7 +71,7 @@ export function query(params: {
   const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
   const abortController = resolvedOptions.abortController ?? new AbortController()
 
-  const { stream, writeStdin } = spawnAndStream(command, args, prompt, {
+  const { stream, writeStdin, close: closeProc } = spawnAndStream(command, args, prompt, {
     cwd: resolvedOptions.cwd,
     env: resolvedOptions.env,
     signal: abortController.signal,
@@ -85,8 +85,8 @@ export function query(params: {
     async interrupt(): Promise<void> {
       abortController.abort()
     },
-    close(): void {
-      abortController.abort()
+    async close(): Promise<void> {
+      await closeProc()
     },
     respondToPermission(response: PermissionResponse): void {
       if (!response.toolUseId) {
