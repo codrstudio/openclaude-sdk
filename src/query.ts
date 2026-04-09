@@ -79,8 +79,65 @@ export function query(params: {
     timeoutMs: resolvedOptions.timeoutMs,
   })
 
+  // ---------------------------------------------------------------------------
+  // Infraestrutura de request/response (F-054)
+  // ---------------------------------------------------------------------------
+
+  const pendingRequests = new Map<string, {
+    resolve: (data: unknown) => void
+    reject: (error: Error) => void
+  }>()
+
+  let requestCounter = 0
+  function nextRequestId(): string {
+    return `req_${++requestCounter}_${Date.now()}`
+  }
+
+  function sendControlRequest<T>(commandType: string): Promise<T> {
+    const requestId = nextRequestId()
+    return new Promise<T>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        pendingRequests.delete(requestId)
+        reject(new Error(`Control request '${commandType}' timed out after 10s`))
+      }, 10_000)
+
+      pendingRequests.set(requestId, {
+        resolve: (data) => {
+          clearTimeout(timeout)
+          resolve(data as T)
+        },
+        reject: (err) => {
+          clearTimeout(timeout)
+          reject(err)
+        },
+      })
+
+      writeStdin(JSON.stringify({ type: commandType, requestId }) + "\n")
+    })
+  }
+
+  async function* wrapStream(
+    source: AsyncGenerator<SDKMessage>,
+    pending: Map<string, { resolve: (data: unknown) => void; reject: (error: Error) => void }>,
+  ): AsyncGenerator<SDKMessage, void> {
+    for await (const msg of source) {
+      const obj = msg as Record<string, unknown>
+      if (obj["type"] === "control_response" && typeof obj["responseId"] === "string") {
+        const entry = pending.get(obj["responseId"])
+        if (entry) {
+          pending.delete(obj["responseId"])
+          entry.resolve(obj["data"])
+        }
+        continue
+      }
+      yield msg
+    }
+  }
+
+  const wrappedStream = wrapStream(stream, pendingRequests)
+
   // Decorar o stream com metodos extras da interface Query
-  const query: Query = Object.assign(stream, {
+  const query: Query = Object.assign(wrappedStream, {
     _writeStdin: writeStdin,
     async interrupt(): Promise<void> {
       abortController.abort()

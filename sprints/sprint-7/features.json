@@ -69,7 +69,7 @@
     "id": "F-054",
     "name": "controlRequestInfra",
     "description": "Implementar em src/query.ts dentro do closure de query(): Map pendingRequests para correlacao request/response, funcao nextRequestId() com contador + timestamp, funcao sendControlRequest<T>(commandType) que cria requestId, registra no map, envia via writeStdin e aguarda resposta com timeout 10s. Implementar async generator wrapStream(source, pending) que intercepta mensagens type=control_response com responseId, resolve a Promise correspondente e nao propaga ao consumidor. Aplicar wrapper ao stream antes do Object.assign. Validar: infra compila, stream wrapper filtra control_response.",
-    "status": "pending",
+    "status": "passing",
     "priority": 4,
     "agent": "coder",
     "task": "vibe-code",
@@ -83,7 +83,8 @@
       "Mensagens normais passam pelo wrapStream sem alteracao",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md",
+    "completed_at": "2026-04-09T06:45:00.000Z"
   },
   {
     "id": "F-053",
