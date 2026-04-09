@@ -186,7 +186,7 @@ export function spawnAndStream(
 ): {
   stream: AsyncGenerator<SDKMessage>
   writeStdin: (data: string) => void
-  close: () => void
+  close: () => Promise<void>
 } {
   const childEnv = {
     ...filterEnv(process.env as Record<string, string | undefined>),
@@ -248,8 +248,42 @@ export function spawnAndStream(
     proc.stdin?.write(data)
   }
 
-  function close(): void {
-    proc.kill("SIGTERM")
+  function close(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      // Processo ja encerrado: resolver imediatamente
+      if (proc.exitCode !== null) {
+        resolve()
+        return
+      }
+
+      // Estagio 1: fechar stdin (sinaliza EOF ao CLI)
+      stdinClosed = true
+      proc.stdin?.end()
+
+      let sigtermTimer: ReturnType<typeof setTimeout> | undefined
+      let sigkillTimer: ReturnType<typeof setTimeout> | undefined
+
+      // Limpar timers e resolver quando o processo sair
+      proc.once("exit", () => {
+        if (sigtermTimer) clearTimeout(sigtermTimer)
+        if (sigkillTimer) clearTimeout(sigkillTimer)
+        resolve()
+      })
+
+      // Estagio 2: apos 5s sem exit, enviar SIGTERM
+      sigtermTimer = setTimeout(() => {
+        if (proc.exitCode === null) {
+          proc.kill("SIGTERM")
+
+          // Estagio 3: apos mais 5s, enviar SIGKILL
+          sigkillTimer = setTimeout(() => {
+            if (proc.exitCode === null) {
+              proc.kill("SIGKILL")
+            }
+          }, 5000)
+        }
+      }, 5000)
+    })
   }
 
   async function* streamGen(): AsyncGenerator<SDKMessage> {
