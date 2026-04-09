@@ -109,10 +109,11 @@
     "id": "F-076",
     "name": "fixEmptyMainLeaves",
     "description": "Corrigir edge case em buildConversationChain() em src/sessions.ts: quando mainLeaves está vazio (todos os leaves são sidechain/team/meta), retornar [] em vez de fallback para pickBest(leaves) que incluiria mensagens de sidechain na chain principal. Divergência intencional do Python SDK.",
-    "status": "pending",
+    "status": "passing",
     "priority": 6,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:05:00Z",
     "dependencies": [],
     "tests": [
       "buildConversationChain() retorna [] quando mainLeaves.length === 0",
