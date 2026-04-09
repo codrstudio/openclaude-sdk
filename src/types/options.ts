@@ -301,6 +301,7 @@ export interface Options {
     | string
     | { type: "preset"; preset: "claude_code"; append?: string }
   thinking?: ThinkingConfig
+  timeoutMs?: number
   toolConfig?: ToolConfig
   tools?: string[] | { type: "preset"; preset: "claude_code" }
 }

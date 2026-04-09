@@ -60,6 +60,7 @@ export function query(params: {
     env: resolvedOptions.env,
     signal: abortController.signal,
     permissionMode: resolvedOptions.permissionMode,
+    timeoutMs: resolvedOptions.timeoutMs,
   })
 
   // Decorar o stream com metodos extras da interface Query
