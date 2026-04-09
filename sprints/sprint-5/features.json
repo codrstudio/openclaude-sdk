@@ -1,0 +1,121 @@
+[
+  {
+    "id": "F-038",
+    "name": "Session Deep Search",
+    "description": "Criar helper privado findSessionFile() em src/sessions.ts que busca um sessionId.jsonl primeiro na raiz de ~/.claude/projects/ e depois iterando subdiretorios. Substituir a resolucao de filePath em getSessionMessages() para usar findSessionFile() quando options.dir nao for fornecido, permitindo deep search automatico. Quando dir e fornecido, manter comportamento atual (resolve direto).",
+    "status": "passing",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
+    "dependencies": [],
+    "tests": [
+      "getSessionMessages(sessionId) sem dir retorna mensagens de sessao que vive em subdiretorio de ~/.claude/projects/",
+      "getSessionMessages(sessionId, { dir }) continua funcionando com path direto",
+      "getSessionMessages(sessionIdInexistente) sem dir retorna array vazio",
+      "findSessionFile nao e exportada em index.ts (helper privado)",
+      "Typecheck passa sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-016-session-deep-search-delete.md"
+  },
+  {
+    "id": "F-040",
+    "name": "Query Options Immutability",
+    "description": "Eliminar a mutacao de options.env em query() (src/query.ts). Criar variavel local resolvedOptions que recebe copia de options com env mergeado do registry, em vez de mutar options.env diretamente. Substituir todas as referencias a options apos o bloco de registry por resolvedOptions (resolveExecutable, buildCliArgs, abortController, cwd, env, permissionMode).",
+    "status": "passing",
+    "completed_at": "2026-04-09T05:30:00.000Z",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Reutilizar mesmo objeto options para 2 queries consecutivas com registry nao acumula env vars da primeira na segunda",
+      "options.env original nao e modificado apos query() com registry",
+      "query() com registry continua resolvendo env vars corretamente no child process",
+      "Typecheck passa sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-017-query-options-safety-timeout.md"
+  },
+  {
+    "id": "F-041",
+    "name": "TimeoutMs Option",
+    "description": "Adicionar campo timeoutMs?: number ao tipo Options em src/types/options.ts. Em query() (src/query.ts), passar resolvedOptions.timeoutMs para o objeto de opcoes de spawnAndStream(). O mecanismo de timeout ja existe em spawnAndStream() — apenas conectar o valor da API publica ao mecanismo interno.",
+    "status": "passing",
+    "completed_at": "2026-04-09T06:00:00.000Z",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Campo timeoutMs existe no tipo Options em src/types/options.ts",
+      "query() passa timeoutMs para spawnAndStream() no objeto de opcoes",
+      "Typecheck passa sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-017-query-options-safety-timeout.md"
+  },
+  {
+    "id": "F-039",
+    "name": "Delete Session",
+    "description": "Adicionar funcao exportada deleteSession(sessionId, options?) em src/sessions.ts. Usa findSessionFile() (criado por F-038) para deep search quando dir nao fornecido, ou resolve path direto quando dir fornecido. Remove o arquivo .jsonl via unlink. Retorna true se deletou, false se nao encontrou. Adicionar import de unlink de node:fs/promises. Exportar deleteSession em src/index.ts.",
+    "status": "passing",
+    "completed_at": "2026-04-09T07:00:00.000Z",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-038"
+    ],
+    "tests": [
+      "deleteSession e exportada em src/index.ts",
+      "deleteSession(sessionId) sem dir usa findSessionFile para localizar o arquivo",
+      "deleteSession retorna false para sessao inexistente (nao lanca erro)",
+      "Import de unlink existe em src/sessions.ts",
+      "Typecheck passa sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-016-session-deep-search-delete.md"
+  },
+  {
+    "id": "F-042",
+    "name": "MCP Servers Mapping",
+    "description": "Implementar mapeamento de options.mcpServers em buildCliArgs() (src/process.ts): servidores stdio geram --mcp-server name:command args, servidores sse/http geram --mcp-server-sse name:url. Importar tipos McpStdioServerConfig, McpSSEServerConfig, McpHttpServerConfig. Em query() (src/query.ts), apos resolucao de registry, coletar env vars de servidores stdio e mergear em resolvedOptions.env sem mutar o original. Bloco MCP deve ficar antes de extraArgs em buildCliArgs().",
+    "status": "passing",
+    "completed_at": "2026-04-09T08:00:00.000Z",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-040"
+    ],
+    "tests": [
+      "buildCliArgs com mcpServers stdio gera flags --mcp-server name:command args",
+      "buildCliArgs com mcpServers sse gera flags --mcp-server-sse name:url",
+      "buildCliArgs com mcpServers http gera flags --mcp-server-sse name:url (mesmo flag que SSE)",
+      "Env vars de servidores stdio sao propagadas ao child process em query()",
+      "Bloco MCP vem antes de extraArgs em buildCliArgs()",
+      "Typecheck passa sem erros (npm run typecheck)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-018-mcp-servers-mapping.md"
+  },
+  {
+    "id": "F-043",
+    "name": "README Completion",
+    "description": "Adicionar tres secoes ao README.md: (1) Error Handling — hierarquia de erros tipados com diagrama, tabela fatal/recuperavel, exemplo com instanceof e isRecoverable(). (2) Options Reference — tabela markdown com todos os campos principais de Options incluindo timeoutMs e mcpServers. (3) Permission Mid-Stream — exemplo completo de respondToPermission em plan mode. Inserir apos secao de Sessions. Manter tom e formatacao existentes, texto em ingles.",
+    "status": "passing",
+    "completed_at": "2026-04-09T09:00:00.000Z",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-041",
+      "F-042"
+    ],
+    "tests": [
+      "README.md contem secao Error Handling com hierarquia de erros e exemplo de isRecoverable()",
+      "README.md contem secao Options Reference com tabela incluindo timeoutMs e mcpServers",
+      "README.md contem secao Permission Mid-Stream com exemplo de respondToPermission()",
+      "Secoes existentes do README nao foram alteradas",
+      "Texto das novas secoes esta em ingles"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-019-readme-completion.md"
+  }
+]

@@ -45,20 +45,38 @@ export function query(params: {
   const { prompt, model, registry, options = {} } = params
 
   // Quando registry + model sao fornecidos, gerar env vars automaticamente
+  let resolvedOptions = options
   if (registry && model) {
     const envFromRegistry = resolveModelEnv(registry, model)
-    options.env = { ...options.env, ...envFromRegistry }
+    resolvedOptions = { ...options, env: { ...options.env, ...envFromRegistry } }
   }
 
-  const { command, prependArgs } = resolveExecutable(options)
-  const args = [...prependArgs, ...buildCliArgs(options)]
-  const abortController = options.abortController ?? new AbortController()
+  // Propagar env de MCP stdio servers
+  if (resolvedOptions.mcpServers) {
+    const mcpEnv: Record<string, string> = {}
+    for (const config of Object.values(resolvedOptions.mcpServers)) {
+      if ((!config.type || config.type === "stdio") && "env" in config && config.env) {
+        Object.assign(mcpEnv, config.env)
+      }
+    }
+    if (Object.keys(mcpEnv).length > 0) {
+      resolvedOptions = {
+        ...resolvedOptions,
+        env: { ...resolvedOptions.env, ...mcpEnv },
+      }
+    }
+  }
+
+  const { command, prependArgs } = resolveExecutable(resolvedOptions)
+  const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
+  const abortController = resolvedOptions.abortController ?? new AbortController()
 
   const { stream, writeStdin } = spawnAndStream(command, args, prompt, {
-    cwd: options.cwd,
-    env: options.env,
+    cwd: resolvedOptions.cwd,
+    env: resolvedOptions.env,
     signal: abortController.signal,
-    permissionMode: options.permissionMode,
+    permissionMode: resolvedOptions.permissionMode,
+    timeoutMs: resolvedOptions.timeoutMs,
   })
 
   // Decorar o stream com metodos extras da interface Query

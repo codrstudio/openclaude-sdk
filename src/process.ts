@@ -5,7 +5,7 @@
 import { spawn, type ChildProcess } from "node:child_process"
 import { createInterface } from "node:readline"
 import type { SDKMessage } from "./types/index.js"
-import type { Options } from "./types/options.js"
+import type { Options, McpStdioServerConfig, McpSSEServerConfig, McpHttpServerConfig } from "./types/options.js"
 
 // ---------------------------------------------------------------------------
 // Resolver executavel do CLI considerando a plataforma
@@ -139,6 +139,20 @@ export function buildCliArgs(options: Options = {}): string[] {
   // Debug
   if (options.debug) {
     args.push("--debug")
+  }
+
+  // MCP Servers
+  if (options.mcpServers) {
+    for (const [name, config] of Object.entries(options.mcpServers)) {
+      if (!config.type || config.type === "stdio") {
+        const stdio = config as McpStdioServerConfig
+        const parts = [stdio.command, ...(stdio.args ?? [])]
+        args.push("--mcp-server", `${name}:${parts.join(" ")}`)
+      } else if (config.type === "sse" || config.type === "http") {
+        const remote = config as McpSSEServerConfig | McpHttpServerConfig
+        args.push("--mcp-server-sse", `${name}:${remote.url}`)
+      }
+    }
   }
 
   // Extra args — added last to allow override of any earlier flag

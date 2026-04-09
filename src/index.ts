@@ -34,6 +34,7 @@ export {
   getSessionInfo,
   renameSession,
   tagSession,
+  deleteSession,
 } from "./sessions.js"
 
 // ---------------------------------------------------------------------------
