@@ -319,6 +319,7 @@ All `Options` fields are optional. They are passed via `query({ options })` or `
 | `model` | `string` | Model identifier (e.g. `"claude-sonnet-4-6"`) |
 | `maxTurns` | `number` | Maximum number of agent turns |
 | `maxBudgetUsd` | `number` | Spend cap in USD; throws `MaxBudgetError` when exceeded |
+| `timeoutMs` | `number` | Timeout in milliseconds for the agent subprocess |
 | `effort` | `"low" \| "medium" \| "high" \| "max"` | Controls agent effort level |
 | `thinking` | `ThinkingConfig` | Controls extended thinking (`adaptive`, `enabled`, `disabled`) |
 
@@ -358,6 +359,7 @@ All `Options` fields are optional. They are passed via `query({ options })` or `
 | `additionalDirectories` | `string[]` | Extra directories to make available to the agent (`--add-dir`) |
 | `betas` | `SdkBeta[]` | Enable beta features (e.g. `"context-1m-2025-08-07"`) |
 | `extraArgs` | `Record<string, string \| null>` | Pass arbitrary CLI flags; `null` value emits a bare flag (e.g. `{ verbose: null }` → `--verbose`) |
+| `mcpServers` | `Record<string, McpServerConfig>` | MCP server definitions (stdio, SSE, or HTTP) to pass to the agent |
 | `env` | `Record<string, string>` | Additional environment variables for the subprocess |
 | `pathToClaudeCodeExecutable` | `string` | Override the path to the OpenClaude executable (default: `"openclaude"`) |
 
@@ -366,6 +368,21 @@ All `Options` fields are optional. They are passed via `query({ options })` or `
 ## Error Handling
 
 `collectMessages()` throws typed errors when the agent terminates abnormally. Use `isRecoverable()` to decide whether to retry.
+
+### Error Hierarchy
+
+```
+OpenClaudeError
+├── AuthenticationError      (fatal)
+├── BillingError             (fatal)
+├── InvalidRequestError      (fatal)
+├── MaxTurnsError            (fatal)
+├── MaxBudgetError           (fatal)
+├── ExecutionError           (fatal)
+├── StructuredOutputError    (fatal)
+├── RateLimitError           (recoverable — has resetsAt, utilization)
+└── ServerError              (recoverable)
+```
 
 ```typescript
 import { query, collectMessages, isRecoverable, RateLimitError } from "openclaude-sdk"
@@ -541,3 +558,41 @@ for await (const msg of q) {
 ```
 
 > **Note:** `stdin` is kept open automatically in `plan` mode. It is closed after the initial prompt only in `bypassPermissions` and `dontAsk` modes.
+
+---
+
+## Permission Mid-Stream
+
+When `permissionMode` is `"plan"`, the agent pauses before executing tools and waits for your decision. Call `respondToPermission()` on the `Query` object to approve or deny each request mid-stream.
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Create a new file called hello.txt",
+  options: { permissionMode: "plan" },
+})
+
+for await (const msg of q) {
+  if (msg.type === "assistant" && msg.message?.content) {
+    const content = msg.message.content
+    if (Array.isArray(content)) {
+      for (const block of content) {
+        if (block.type === "tool_use") {
+          q.respondToPermission({
+            toolUseId: block.id,
+            behavior: "allow",
+            message: "Approved by automation",
+          })
+        }
+      }
+    }
+  }
+}
+```
+
+Key points:
+
+- `permissionMode: "plan"` keeps `stdin` open so responses can be sent during iteration
+- `behavior: "deny"` rejects the action — the agent will attempt an alternative approach
+- `message` is optional and provides a reason (shown to the agent on denial)
