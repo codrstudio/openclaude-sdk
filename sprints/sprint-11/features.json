@@ -1,0 +1,96 @@
+[
+  {
+    "id": "F-090",
+    "name": "flattenSessionOptions",
+    "description": "Flatten CreateSessionOptions, ResumeSessionOptions e PromptOptions: remover nesting `options?: Options` e usar `extends Partial<Options>` para que campos como maxTurns, systemPrompt etc. fiquem no nível raiz. Alterar corpo de createSession(), resumeSession() e prompt() para destructuring dos novos campos. Backwards-incompatible: callers que usavam `options: {...}` precisam mover campos para raiz.",
+    "status": "passing",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
+    "dependencies": [],
+    "tests": [
+      "CreateSessionOptions extends Partial<Options> e NÃO tem campo `options`",
+      "ResumeSessionOptions extends Partial<Options> e NÃO tem campo `options`",
+      "PromptOptions extends Partial<Options> e NÃO tem campo `options`",
+      "createSession() destructura { model, registry, sessionId, ...options } de opts",
+      "resumeSession() destructura { model, registry, ...options } de opts",
+      "prompt() destructura { model, registry, ...options } de opts",
+      "send() em createSession() usa variáveis extraídas (model, registry, options) em vez de opts.model, opts.options",
+      "send() em resumeSession() usa variáveis extraídas (model, registry, options) em vez de opts.model, opts.options",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-11/worktree/sprints/sprint-11/3-prps/PRP-038-v2-session-ergonomics.md"
+  },
+  {
+    "id": "F-088",
+    "name": "sendAcceptSdkUserMessage",
+    "description": "Alterar send() e collect() em createSession() e resumeSession() para aceitar `string | SDKUserMessage` em vez de apenas `string`. Quando receber SDKUserMessage, serializar message.content via JSON.stringify antes de passar ao query(). Importar SDKUserMessage em session-v2.ts.",
+    "status": "passing",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
+    "dependencies": [
+      "F-090"
+    ],
+    "tests": [
+      "Interface SDKSession.send() aceita parâmetro do tipo `string | SDKUserMessage`",
+      "Interface SDKSession.collect() aceita parâmetro do tipo `string | SDKUserMessage`",
+      "Implementação de send() em createSession() extrai texto via typeof check e JSON.stringify",
+      "Implementação de send() em resumeSession() aplica mesma conversão",
+      "collect() em createSession() aceita `string | SDKUserMessage` (delega para send())",
+      "collect() em resumeSession() aceita `string | SDKUserMessage`",
+      "Import de SDKUserMessage existe em session-v2.ts",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-11/worktree/sprints/sprint-11/3-prps/PRP-038-v2-session-ergonomics.md"
+  },
+  {
+    "id": "F-089",
+    "name": "promptReturnFullResult",
+    "description": "Criar interface PromptResult com campos result, sessionId, costUsd, durationMs e resultMessage: SDKResultMessage | null. Alterar prompt() para retornar PromptResult, extraindo o SDKResultMessage do array de mensagens coletadas. Exportar PromptResult em index.ts.",
+    "status": "passing",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
+    "dependencies": [
+      "F-090"
+    ],
+    "tests": [
+      "Interface PromptResult existe em session-v2.ts com campos: result, sessionId, costUsd, durationMs, resultMessage",
+      "Campo resultMessage é do tipo `SDKResultMessage | null`",
+      "prompt() retorna Promise<PromptResult>",
+      "prompt() extrai SDKResultMessage via .find() no array de mensagens com type === 'result'",
+      "PromptResult é exportado em index.ts",
+      "Import de SDKResultMessage existe em session-v2.ts",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-11/worktree/sprints/sprint-11/3-prps/PRP-038-v2-session-ergonomics.md"
+  },
+  {
+    "id": "F-091",
+    "name": "sessionCurrentQueryGetter",
+    "description": "Adicionar getter readonly `currentQuery: Query | null` na interface SDKSession e implementá-lo em createSession() e resumeSession() como `get currentQuery() { return activeQuery }`. Permite acesso externo à Query ativa para operações avançadas sem precisar chamar close().",
+    "status": "passing",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
+    "dependencies": [],
+    "tests": [
+      "Interface SDKSession tem campo `readonly currentQuery: Query | null`",
+      "createSession() retorna objeto com `get currentQuery()` que retorna activeQuery",
+      "resumeSession() retorna objeto com `get currentQuery()` que retorna activeQuery",
+      "Antes de send(), currentQuery é null",
+      "Após send(), currentQuery retorna a Query ativa",
+      "npm run typecheck passa sem erros",
+      "npm run build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-11/worktree/sprints/sprint-11/3-prps/PRP-038-v2-session-ergonomics.md"
+  }
+]

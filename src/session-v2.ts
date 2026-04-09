@@ -5,7 +5,7 @@
 import { randomUUID } from "node:crypto"
 import { query, collectMessages } from "./query.js"
 import type { Query } from "./query.js"
-import type { SDKMessage } from "./types/messages.js"
+import type { SDKMessage, SDKResultMessage, SDKUserMessage } from "./types/messages.js"
 import type { Options } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 
@@ -16,10 +16,12 @@ import type { ProviderRegistry } from "./types/provider.js"
 export interface SDKSession {
   /** ID da sessao (gerado ou fornecido) */
   readonly sessionId: string
+  /** Query ativa no momento, ou null se nenhuma send() foi chamada ainda */
+  readonly currentQuery: Query | null
   /** Envia mensagem e inicia query — retorna stream de mensagens */
-  send(prompt: string, options?: Partial<Options>): Query
+  send(prompt: string | SDKUserMessage, options?: Partial<Options>): Query
   /** Conveniencia: envia mensagem e coleta resultado completo */
-  collect(prompt: string, options?: Partial<Options>): Promise<{
+  collect(prompt: string | SDKUserMessage, options?: Partial<Options>): Promise<{
     messages: SDKMessage[]
     result: string | null
     costUsd: number
@@ -35,28 +37,32 @@ export interface SDKSession {
 // createSession
 // ---------------------------------------------------------------------------
 
-export interface CreateSessionOptions {
-  model?: string
+export interface CreateSessionOptions extends Partial<Options> {
   registry?: ProviderRegistry
-  options?: Options
-  sessionId?: string
 }
 
 export function createSession(opts: CreateSessionOptions = {}): SDKSession {
-  const sessionId = opts.sessionId ?? randomUUID()
+  const { model, registry, sessionId: providedSessionId, ...options } = opts
+  const sessionId = providedSessionId ?? randomUUID()
   let activeQuery: Query | null = null
   let isFirstTurn = true
 
   return {
     sessionId,
 
-    send(prompt: string, turnOptions?: Partial<Options>): Query {
+    get currentQuery(): Query | null {
+      return activeQuery
+    },
+
+    send(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>): Query {
+      const promptText = typeof prompt === "string" ? prompt : JSON.stringify(prompt.message.content)
+
       if (activeQuery) {
         activeQuery.close()
       }
 
       // Strip session-control fields to prevent conflicts with internal management
-      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = opts.options ?? {}
+      const { resume: _r, continue: _c, ...safeBaseOptions } = options
       const { resume: _r2, sessionId: _s2, continue: _c2, ...safeTurnOptions } = turnOptions ?? {}
 
       const mergedOptions: Options = {
@@ -66,17 +72,17 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
 
       if (isFirstTurn) {
         activeQuery = query({
-          prompt,
-          model: opts.model,
-          registry: opts.registry,
+          prompt: promptText,
+          model,
+          registry,
           options: { ...mergedOptions, sessionId },
         })
         isFirstTurn = false
       } else {
         activeQuery = query({
-          prompt,
-          model: opts.model,
-          registry: opts.registry,
+          prompt: promptText,
+          model,
+          registry,
           options: { ...mergedOptions, resume: sessionId },
         })
       }
@@ -84,7 +90,7 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
       return activeQuery
     },
 
-    async collect(prompt: string, turnOptions?: Partial<Options>) {
+    async collect(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>) {
       const q = this.send(prompt, turnOptions)
       const result = await collectMessages(q)
       return {
@@ -112,28 +118,33 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
 // resumeSession
 // ---------------------------------------------------------------------------
 
-export interface ResumeSessionOptions {
-  model?: string
+export interface ResumeSessionOptions extends Partial<Options> {
   registry?: ProviderRegistry
-  options?: Options
 }
 
 export function resumeSession(
   sessionId: string,
   opts: ResumeSessionOptions = {},
 ): SDKSession {
+  const { model, registry, ...options } = opts
   let activeQuery: Query | null = null
 
   return {
     sessionId,
 
-    send(prompt: string, turnOptions?: Partial<Options>): Query {
+    get currentQuery(): Query | null {
+      return activeQuery
+    },
+
+    send(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>): Query {
+      const promptText = typeof prompt === "string" ? prompt : JSON.stringify(prompt.message.content)
+
       if (activeQuery) {
         activeQuery.close()
       }
 
       // Strip session-control fields to prevent conflicts with internal management
-      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = opts.options ?? {}
+      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = options
       const { resume: _r2, sessionId: _s2, continue: _c2, ...safeTurnOptions } = turnOptions ?? {}
 
       const mergedOptions: Options = {
@@ -143,16 +154,16 @@ export function resumeSession(
       }
 
       activeQuery = query({
-        prompt,
-        model: opts.model,
-        registry: opts.registry,
+        prompt: promptText,
+        model,
+        registry,
         options: mergedOptions,
       })
 
       return activeQuery
     },
 
-    async collect(prompt: string, turnOptions?: Partial<Options>) {
+    async collect(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>) {
       const q = this.send(prompt, turnOptions)
       const result = await collectMessages(q)
       return {
@@ -180,26 +191,36 @@ export function resumeSession(
 // prompt() — one-shot convenience
 // ---------------------------------------------------------------------------
 
-export interface PromptOptions {
-  model?: string
+export interface PromptOptions extends Partial<Options> {
   registry?: ProviderRegistry
-  options?: Options
+}
+
+export interface PromptResult {
+  result: string | null
+  sessionId: string | null
+  costUsd: number
+  durationMs: number
+  resultMessage: SDKResultMessage | null
 }
 
 export async function prompt(
   text: string,
   opts: PromptOptions = {},
-): Promise<{
-  result: string | null
-  sessionId: string | null
-  costUsd: number
-  durationMs: number
-}> {
+): Promise<PromptResult> {
+  const { model, registry, ...options } = opts
   const q = query({
     prompt: text,
-    model: opts.model,
-    registry: opts.registry,
-    options: opts.options,
+    model,
+    registry,
+    options,
   })
-  return collectMessages(q)
+  const collected = await collectMessages(q)
+  const resultMessage = collected.messages.find((m) => m.type === "result") as SDKResultMessage | null ?? null
+  return {
+    result: collected.result,
+    sessionId: collected.sessionId,
+    costUsd: collected.costUsd,
+    durationMs: collected.durationMs,
+    resultMessage,
+  }
 }
