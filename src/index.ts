@@ -27,6 +27,7 @@ export {
 
 // Registry
 export {
+  DEFAULT_MODEL,
   createOpenRouterRegistry,
   resolveModelEnv,
 } from "./registry.js"

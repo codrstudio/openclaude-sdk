@@ -439,27 +439,23 @@ All errors extend `OpenClaudeError` which provides:
 Use a `ProviderRegistry` to route requests through any OpenAI-compatible provider (e.g. OpenRouter) without managing environment variables manually.
 
 ```typescript
-import { createOpenRouterRegistry, query, collectMessages } from "openclaude-sdk"
+import { createOpenRouterRegistry, DEFAULT_MODEL, query, collectMessages } from "openclaude-sdk"
 
 const registry = createOpenRouterRegistry({
   apiKey: process.env.OPENROUTER_API_KEY!,
   models: [
+    DEFAULT_MODEL, // GLM 4.7 Flash — best cost/quality ratio
     {
-      id: "anthropic/claude-3.5-sonnet",
-      label: "Claude 3.5 Sonnet",
-      contextWindow: 200000,
-    },
-    {
-      id: "openai/gpt-4o",
-      label: "GPT-4o",
-      contextWindow: 128000,
+      id: "google/gemini-2.5-pro-preview-06-05",
+      label: "Gemini 2.5 Pro",
+      contextWindow: 1000000,
     },
   ],
 })
 
 const q = query({
   prompt: "Summarize this codebase",
-  model: "anthropic/claude-3.5-sonnet",
+  model: DEFAULT_MODEL.id,
   registry,
   options: { cwd: "/my/project" },
 })

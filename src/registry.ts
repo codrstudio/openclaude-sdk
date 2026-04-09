@@ -5,6 +5,16 @@
 import type { Provider, Model, ProviderRegistry } from "./types/provider.js"
 
 // ---------------------------------------------------------------------------
+// Modelo default recomendado (benchmark 2026-04-09: 92% media, menor custo)
+// ---------------------------------------------------------------------------
+
+export const DEFAULT_MODEL = {
+  id: "z-ai/glm-4.7-flash",
+  label: "GLM 4.7 Flash",
+  contextWindow: 128000,
+} as const
+
+// ---------------------------------------------------------------------------
 // resolveModelEnv() — mapeia provider type para env vars do openclaude
 // ---------------------------------------------------------------------------
 
