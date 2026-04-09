@@ -231,12 +231,17 @@ export function spawnAndStream(
   const closeAfterPrompt =
     options.permissionMode === "bypassPermissions" ||
     options.permissionMode === "dontAsk"
+  let stdinClosed = false
   proc.stdin?.write(prompt + "\n")
   if (closeAfterPrompt) {
+    stdinClosed = true
     proc.stdin?.end()
   }
 
   function writeStdin(data: string): void {
+    if (stdinClosed) {
+      throw new Error("writeStdin: stdin already closed")
+    }
     if (proc.exitCode !== null || proc.killed) {
       throw new Error("writeStdin: process has already exited")
     }
