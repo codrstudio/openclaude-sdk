@@ -165,6 +165,19 @@ export type {
 } from "./types/tools.js"
 
 // ---------------------------------------------------------------------------
+// Tipos — Query introspection
+// ---------------------------------------------------------------------------
+
+export type {
+  SlashCommand,
+  ModelInfo,
+  AgentInfo,
+  McpServerStatusInfo,
+  AccountInfo,
+  InitializationResult,
+} from "./types/query.js"
+
+// ---------------------------------------------------------------------------
 // Tipos — Sessions
 // ---------------------------------------------------------------------------
 

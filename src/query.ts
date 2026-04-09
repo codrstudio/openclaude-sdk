@@ -5,6 +5,14 @@
 import type { SDKMessage, SDKSystemMessage, PermissionMode } from "./types/messages.js"
 import type { Options, PermissionResponse } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
+import type {
+  SlashCommand,
+  ModelInfo,
+  AgentInfo,
+  McpServerStatusInfo,
+  AccountInfo,
+  InitializationResult,
+} from "./types/query.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
 import { resolveModelEnv } from "./registry.js"
 import {
@@ -36,6 +44,18 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   setPermissionMode(mode: PermissionMode): void
   /** Define o numero maximo de tokens de thinking (fire-and-forget) */
   setMaxThinkingTokens(tokens: number | null): void
+  /** Resultado da inicializacao (tools, agents, MCP) */
+  initializationResult(): Promise<InitializationResult>
+  /** Slash commands disponiveis */
+  supportedCommands(): Promise<SlashCommand[]>
+  /** Modelos disponiveis */
+  supportedModels(): Promise<ModelInfo[]>
+  /** Agentes configurados */
+  supportedAgents(): Promise<AgentInfo[]>
+  /** Status dos MCP servers */
+  mcpServerStatus(): Promise<McpServerStatusInfo[]>
+  /** Info da conta */
+  accountInfo(): Promise<AccountInfo>
 }
 
 // ---------------------------------------------------------------------------
@@ -175,6 +195,24 @@ export function query(params: {
     },
     setMaxThinkingTokens(tokens: number | null): void {
       writeStdin(JSON.stringify({ type: "set_max_thinking_tokens", maxThinkingTokens: tokens }) + "\n")
+    },
+    initializationResult(): Promise<InitializationResult> {
+      return sendControlRequest("get_initialization_result")
+    },
+    supportedCommands(): Promise<SlashCommand[]> {
+      return sendControlRequest("get_supported_commands")
+    },
+    supportedModels(): Promise<ModelInfo[]> {
+      return sendControlRequest("get_supported_models")
+    },
+    supportedAgents(): Promise<AgentInfo[]> {
+      return sendControlRequest("get_supported_agents")
+    },
+    mcpServerStatus(): Promise<McpServerStatusInfo[]> {
+      return sendControlRequest("get_mcp_server_status")
+    },
+    accountInfo(): Promise<AccountInfo> {
+      return sendControlRequest("get_account_info")
     },
   })
 
