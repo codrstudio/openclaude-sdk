@@ -22,7 +22,7 @@
     "id": "F-062",
     "name": "README V2 Session API section",
     "description": "Adicionar secao 'V2 Session API' ao README.md apos 'Session Management', documentando createSession(), resumeSession() e prompt() com assinaturas completas, tabela da interface SDKSession, exemplos de multi-turn com streaming, await using, e comparacao V1 vs V2. Texto em portugues, codigo em ingles.",
-    "status": "pending",
+    "status": "passing",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
@@ -35,7 +35,8 @@
       "Comparacao V1 vs V2 em formato tabular esta presente",
       "Tipos exportados (SDKSession, CreateSessionOptions, ResumeSessionOptions, PromptOptions) listados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-026-readme-v2-session-api.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-026-readme-v2-session-api.md",
+    "completed_at": "2026-04-09T06:30:00.000Z"
   },
   {
     "id": "F-063",
