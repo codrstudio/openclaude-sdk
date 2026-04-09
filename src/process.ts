@@ -130,10 +130,8 @@ export function buildCliArgs(options: Options = {}): string[] {
   }
 
   // Thinking
-  if (options.thinking?.type === "enabled") {
-    args.push("--thinking", "enabled")
-  } else if (options.thinking?.type === "disabled") {
-    args.push("--thinking", "disabled")
+  if (options.thinking?.type) {
+    args.push("--thinking", options.thinking.type)
   }
 
   // Max budget
