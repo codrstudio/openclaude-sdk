@@ -144,7 +144,12 @@ export function buildCliArgs(options: Options = {}): string[] {
   // MCP Servers
   if (options.mcpServers) {
     for (const [name, config] of Object.entries(options.mcpServers)) {
-      if (!config.type || config.type === "stdio") {
+      if (config.type === "sdk") {
+        throw new Error(
+          `MCP server "${name}" has type "sdk" which requires in-process transport (not yet supported). ` +
+            `Use stdio, sse, or http transport instead.`,
+        )
+      } else if (!config.type || config.type === "stdio") {
         const stdio = config as McpStdioServerConfig
         const parts = [stdio.command, ...(stdio.args ?? [])]
         args.push("--mcp-server", `${name}:${parts.join(" ")}`)

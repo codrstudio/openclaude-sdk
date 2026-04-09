@@ -130,7 +130,7 @@
     "id": "F-051",
     "name": "createSdkMcpServer",
     "description": "Implementar createSdkMcpServer(options) em src/mcp.ts que cria McpServer in-process via require() dinamico de @modelcontextprotocol/sdk e zod, registra tools no server, e retorna McpSdkServerConfig {type: 'sdk', instance}. Adicionar interface McpSdkServerConfig em src/types/options.ts na union McpServerConfig. Adicionar guard em buildCliArgs() (src/process.ts) que lanca Error se type=sdk for encontrado. Validar: funcao existe, tipo esta na union, guard impede uso em CLI.",
-    "status": "pending",
+    "status": "passing",
     "priority": 7,
     "agent": "coder",
     "task": "vibe-code",
@@ -145,7 +145,8 @@
       "Mensagem de erro menciona que in-process transport nao e suportado",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
+    "completed_at": "2026-04-09T07:30:00.000Z"
   },
   {
     "id": "F-055",
@@ -228,7 +229,7 @@
     "id": "F-052",
     "name": "mcpExportsAndDeps",
     "description": "Exportar em src/index.ts: funcoes tool e createSdkMcpServer de ./mcp.js, tipos ToolAnnotations, CallToolResult, SdkMcpToolDefinition de ./mcp.js, tipo McpSdkServerConfig de ./types/options.js. Adicionar peerDependencies opcionais ao package.json: zod >=3.0.0 e @modelcontextprotocol/sdk >=1.0.0 com peerDependenciesMeta optional: true. Validar: exports resolvem, package.json correto.",
-    "status": "blocked",
+    "status": "pending",
     "priority": 12,
     "agent": "coder",
     "task": "vibe-code",
