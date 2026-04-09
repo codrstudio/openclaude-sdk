@@ -3,7 +3,7 @@
     "id": "F-086",
     "name": "fixZodPeerDep",
     "description": "Alterar peerDependencies.zod de '>=3.0.0' para '>=4.0.0' em package.json para alinhar com devDependencies zod@^4.3.6. Contrato de pacote quebrado: usuarios com Zod v3 enfrentam incompatibilidades de tipo ao usar tool() sem warning do package manager.",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
     "agent": "coder",
     "task": "vibe-code",
@@ -13,7 +13,8 @@
       "devDependencies.zod permanece '^4.3.6' (nao alterado)",
       "Typecheck (npm run typecheck) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md",
+    "completed_at": "2026-04-09T15:30:00.000Z"
   },
   {
     "id": "F-081",
@@ -182,11 +183,13 @@
     "id": "F-087",
     "name": "readmeExternalMcpServers",
     "description": "Nova secao 'External MCP Servers' no README.md apos 'MCP Tool Factories'. Conteudo: introducao, exemplo stdio (brave-search), exemplo SSE com headers (Authorization), exemplo HTTP com headers (X-API-Key), exemplo combinado (inline + external), tabela de tipos de servidor (stdio/sse/http/sdk), nota sobre env em stdio.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 11,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-080"],
+    "dependencies": [
+      "F-080"
+    ],
     "tests": [
       "README.md contem secao 'External MCP Servers' posicionada apos 'MCP Tool Factories'",
       "Exemplo stdio com brave-search presente e compilavel (imports corretos)",
