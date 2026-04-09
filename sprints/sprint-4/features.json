@@ -1,0 +1,22 @@
+[
+  {
+    "id": "F-037",
+    "name": "JSONL Partial Buffering",
+    "description": "Substituir bloco de parse JSONL em spawnAndStream() (process.ts linhas 244-261) por versao com buffer acumulativo: jsonBuffer persistente entre iteracoes, skip de linhas nao-JSON quando buffer vazio (ex: [SandboxDebug]), limite 1 MB com erro explicito. JSON partido em 2+ linhas deve ser reconstruido. Nao alterar interface publica nem outros trechos do arquivo.",
+    "status": "passing",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "JSON valido em uma unica linha continua sendo parseado e yielded normalmente",
+      "JSON partido em 2 linhas pelo OS pipe buffer e reconstruido e yielded corretamente",
+      "JSON partido em 3+ linhas e acumulado e parseado corretamente",
+      "Linhas nao-JSON como [SandboxDebug] sao ignoradas sem tentativa de parse quando buffer esta vazio",
+      "Buffer acumulativo > 1 MB lanca Error com mensagem explicita sobre max buffer size",
+      "Signal aborted mid-buffer continua causando break do loop normalmente"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-4/worktree/sprints/sprint-4/3-prps/PRP-015-jsonl-partial-buffering.md",
+    "completed_at": "2026-04-08T00:00:00.000Z"
+  }
+]
