@@ -1,0 +1,497 @@
+[
+  {
+    "id": "D-001",
+    "type": "feature",
+    "description": "Configurar o package para distribuição: package.json com nome correto (openclaude-sdk), campo exports, build tsup (ESM + CJS + DTS), main/module/types.",
+    "score": 9,
+    "justification": "Pré-requisito absoluto. Sem package configurado corretamente a SDK não é instalável via npm nem utilizável fora do monorepo.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-002",
+    "type": "feature",
+    "description": "Produzir README.md da SDK com documentação da API pública: instalação, query() com exemplos, collectMessages(), registry, session management, tipos principais.",
+    "score": 9,
+    "justification": "TASK.md define README.md como artefato obrigatório desta wave. Sem ele a entrega está incompleta.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-003",
+    "type": "feature",
+    "description": "Completar buildCliArgs() mapeando Options ausentes: additionalDirectories (--add-dir), betas (--beta), effort (--effort), thinking (--thinking), extraArgs (flags adicionais diretos).",
+    "score": 7,
+    "justification": "Flags usadas em produção. additionalDirectories é crítico para dar ao agente acesso a diretórios fora do cwd. extraArgs permite extensibilidade sem precisar atualizar a SDK.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-004",
+    "type": "feature",
+    "description": "Implementar suporte a structured output: mapear outputFormat para --json-schema em buildCliArgs() e garantir que spawnAndStream() propague o campo structured_output do SDKResultMessage.",
+    "score": 7,
+    "justification": "Funcionalidade crítica para uso programático. O agentic-workflow já usa --json-schema para merge de worktrees. O tipo SDKResultMessage já tem structured_output mas o mapeamento CLI não existe.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-005",
+    "type": "feature",
+    "description": "Criar hierarquia de erros tipados: OpenClaudeError base class, AuthError, RateLimitError, BillingError, MaxTurnsError, ExecutionError — lançados quando SDKResultMessage.subtype é error_*.",
+    "score": 6,
+    "justification": "DX: consumidores precisam distinguir erros recuperáveis (rate limit, retry) de fatais (auth, billing) sem parsear strings. Padrão esperado em SDKs de produção.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-006",
+    "type": "feature",
+    "description": "Implementar suporte a permission mid-stream em plan mode: expor stdin do subprocess via método respondToPermission(requestId, behavior) no objeto Query.",
+    "score": 5,
+    "justification": "Necessário para usar plan mode interativo. O demo tem endpoint stub anotado como não suportado. Requer passar input pelo stdin após o processo já estar rodando.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-007",
+    "type": "feature",
+    "description": "Melhorar listSessions() para suportar deep search: quando dir não é especificado, iterar pelos subdiretórios de ~/.claude/projects/ e agregar sessões de todos os projetos.",
+    "score": 5,
+    "justification": "Comportamento atual lista só o root ou um único projeto. Deep search é necessário para implementar um session picker global (ex: interface de chat com histórico completo).",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-008",
+    "type": "bug",
+    "description": "Corrigir interrupt(): usar SIGINT em vez de SIGTERM para interromper o CLI graciosamente, preservando histórico de sessão no arquivo JSONL.",
+    "score": 5,
+    "justification": "SIGTERM mata o processo abruptamente. O CLI provavelmente espera SIGINT (Ctrl+C) para flush do histórico antes de sair. Interrupções com SIGTERM podem corromper sessões.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-009",
+    "type": "improvement",
+    "description": "Deduplicar a resolução do comando do subprocess: unificar resolveCommand(), pathToClaudeCodeExecutable e a lógica Windows de spawnAndStream() em um único ponto de decisão.",
+    "score": 4,
+    "justification": "Três mecanismos sobrepostos para resolver o mesmo problema causam confusão. Refactor de limpeza sem impacto funcional, mas reduz risco de bugs por comportamento inesperado no Windows.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-010",
+    "type": "feature",
+    "description": "Adicionar continueSession(sessionId, prompt, options) como função de conveniência que faz query() com resume: sessionId automaticamente.",
+    "score": 4,
+    "justification": "DX: evita que chamadores gerenciem state de sessionId manualmente. Padrão common em chat apps onde cada mensagem deve continuar a sessão anterior.",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-011",
+    "type": "bug",
+    "description": "Corrigir cast inseguro de options.env em process.ts:165 e query.ts:58 — filtrar entradas undefined antes de spread no env do processo filho.",
+    "score": 7,
+    "justification": "Cast 'as Record<string, string>' silencia o compilador mas passa undefined values ao child process, causando comportamento indefinido. Perde type safety sem aviso.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-012",
+    "type": "bug",
+    "description": "Corrigir spawnAndStream() para não emitir mais mensagens após exit do processo: adicionar flag `exited` e verificar antes de continuar iteração no for-await.",
+    "score": 6,
+    "justification": "Race condition: o processo pode emitir eventos residuais após exit. Sem guard, o stream pode propagar mensagens corrompidas ou duplicadas ao consumidor.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-013",
+    "type": "bug",
+    "description": "Corrigir listSessions() quando ~/.claude/projects/ não existe: retornar [] em vez de throw ENOENT.",
+    "score": 5,
+    "justification": "Em ambiente limpo (sem Claude Code instalado ou nenhuma sessão ainda), o diretório não existe. Throw inesperado ao invés de array vazio quebra o fluxo do consumidor.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-014",
+    "type": "improvement",
+    "description": "Adicionar campo costUsd ao SDKResultMessage e calculá-lo em spawnAndStream() a partir de usage.input_tokens × price_per_token conforme registry do modelo.",
+    "score": 5,
+    "justification": "Consumidores de automação precisam rastrear custo por query para billing e controle de budget. Sem isso, é necessário parsear usage manualmente.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-015",
+    "type": "feature",
+    "description": "Adicionar suporte a OpenRouter como provider externo: criar createOpenRouterRegistry(apiKey) que produz um ProviderRegistry configurado para roteamento via api.openrouter.ai.",
+    "score": 5,
+    "justification": "Permite usar modelos não-Anthropic sem configurar múltiplos providers manualmente. OpenRouter é o aggregator mais popular para LLMs, especialmente para cost-optimization.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-016",
+    "type": "feature",
+    "description": "Implementar getSessionMessages(sessionId, options?): lê o arquivo JSONL da sessão e retorna o array de mensagens (user/assistant) em ordem cronológica.",
+    "score": 6,
+    "justification": "Funcionalidade de histórico básica. Sem ela é impossível mostrar o histórico de uma conversa sem ler e parsear o JSONL manualmente.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-017",
+    "type": "feature",
+    "description": "Implementar getSessionInfo(sessionId, options?): retorna metadata da sessão (título, tags, timestamps, tamanho em bytes, contagem de mensagens).",
+    "score": 4,
+    "justification": "Necessário para UIs de session picker e para debugging. Complementa listSessions() com detalhes de uma sessão específica.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-018",
+    "type": "feature",
+    "description": "Implementar renameSession(sessionId, newTitle, options?) e tagSession(sessionId, tag, options?) para gestão de metadados de sessão.",
+    "score": 4,
+    "justification": "Permite organizar sessões por projeto/feature. Útil para apps de chat que precisam de nomes amigáveis ao invés de UUIDs.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-019",
+    "type": "docs",
+    "description": "Adicionar JSDoc em todas as funções públicas da SDK: query(), collectMessages(), continueSession(), listSessions(), getSessionMessages(), e funções de erro.",
+    "score": 3,
+    "justification": "DX: JSDoc aparece em IDEs como IntelliSense/hover. Reduz necessidade de consultar README para uso básico.",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-020",
+    "type": "bug",
+    "description": "Corrigir race condition em query() quando abort é chamado antes do processo spawnar: verificar se abortController.signal.aborted antes de chamar spawnAndStream().",
+    "score": 4,
+    "justification": "Sem o guard, abortar imediatamente após query() pode deixar o processo em estado inconsistente. A verificação early-exit é trivial e previne comportamento indefinido.",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-021",
+    "type": "feature",
+    "description": "Implementar resolveModelEnv() no registry: dado um ProviderRegistry e um model string, retorna o Record<string,string> de env vars (ANTHROPIC_BASE_URL, OPENAI_API_KEY, etc.) correto.",
+    "score": 6,
+    "justification": "Centraliza a lógica de seleção de provider. Sem isso, cada consumidor implementa seu próprio mapeamento model→env, gerando divergências.",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-022",
+    "type": "feature",
+    "description": "Adicionar suporte a hooks de permissão programáticos: Options.onPermission(request) callback que decide approve/deny sem intervenção humana.",
+    "score": 6,
+    "justification": "Automações precisam aprovar/negar ações do agente (leitura de arquivos, execução de comandos) sem interação humana. Sem isso, o agente trava aguardando input.",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-023",
+    "type": "feature",
+    "description": "Adicionar suporte a hooks de evento em Options: onMessage(msg), onPermission(req), onError(err) — callbacks chamados em pontos do ciclo de vida da query.",
+    "score": 5,
+    "justification": "Permite side-effects (logging, telemetria) sem precisar consumir o AsyncGenerator. Complementa a API de streaming para casos onde o chamador só quer observar.",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-024",
+    "type": "bug",
+    "description": "Corrigir buildCliArgs() para não adicionar --output-format=json quando outputFormat está definido mas é undefined — validar presença antes de mapear.",
+    "score": 5,
+    "justification": "Passagem de flags inválidas ao CLI causa falha silenciosa ou comportamento inesperado. Validação simples previne bugs difíceis de rastrear em produção.",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-025",
+    "type": "improvement",
+    "description": "Adicionar DEFAULT_MODEL exportado: constante com o modelo padrão (GLM 4.7 Flash) e versão fixada para uso em registries e testes.",
+    "score": 4,
+    "justification": "Evita magic strings espalhadas. GLM 4.7 Flash é o modelo padrão do projeto conforme benchmark de 2026-04-09.",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-026",
+    "type": "bug",
+    "description": "Corrigir getSessionInfo() para retornar null quando sessionId não existe em vez de throw ENOENT.",
+    "score": 4,
+    "justification": "Consistência: listSessions() e getSessionMessages() retornam valores neutros quando não há dados. getSessionInfo() deve seguir o mesmo padrão.",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-027",
+    "type": "feature",
+    "description": "Exportar todos os tipos de mensagem SDKMessage e suas variantes em index.ts para que consumidores possam tipar sem re-importar de arquivos internos.",
+    "score": 4,
+    "justification": "Sem export público dos tipos, consumidores TypeScript são forçados a usar 'as any' ou importar de src/* interno (quebra encapsulamento, não funciona após build).",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-028",
+    "type": "feature",
+    "description": "Implementar Options.abortController?: AbortController em query(): permite que o chamador cancele uma query em andamento programaticamente sem expor o signal interno.",
+    "score": 6,
+    "justification": "Padrão web-standard para cancelamento de operações assíncronas. Alternativa ergonômica ao interrupt() que não requer referência ao Query object.",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-029",
+    "type": "feature",
+    "description": "Adicionar timeoutMs?: number ao Options e conectá-lo ao spawnAndStream() via query() — atualmente spawnAndStream() aceita o parâmetro mas query() nunca o passa.",
+    "score": 6,
+    "justification": "Usuários de automação precisam de timeouts para evitar queries penduradas. O mecanismo interno existe mas é inacessível pela API pública. Requer AbortController manual como workaround.",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-030",
+    "type": "bug",
+    "description": "Corrigir mutação de options.env em query.ts linha 50: 'options.env = { ...options.env, ...envFromRegistry }' muta o objeto do caller. Usar variável local para o merge.",
+    "score": 7,
+    "justification": "Bug de reusabilidade: reutilizar o mesmo objeto options para múltiplas queries com registry acumula env vars de cada query anterior. Silencioso e difícil de debugar.",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-031",
+    "type": "bug",
+    "description": "Corrigir getSessionMessages() para fazer deep search quando sem dir: atualmente busca em ~/.claude/projects/ root mas sessões vivem em subdiretorios, retornando sempre [] sem dir.",
+    "score": 9,
+    "justification": "Bug funcional: o fluxo mais natural (listar sessões → ler mensagens) está quebrado. listSessions() funciona com deep search mas getSessionMessages() não. Usuário não sabe que precisa de dir.",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-032",
+    "type": "feature",
+    "description": "Implementar mapeamento de mcpServers em buildCliArgs(): Options.mcpServers é tipado mas silenciosamente ignorado — nenhum flag --mcp-server é passado ao CLI.",
+    "score": 5,
+    "justification": "Divergência entre tipo e comportamento: usuário configura mcpServers esperando que funcionem, mas o CLI não os recebe. Viola princípio de menor surpresa.",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-033",
+    "type": "docs",
+    "description": "Completar README.md: adicionar seção de Error Handling com exemplos de RateLimitError/isRecoverable, tabela de Options principais, exemplo de respondToPermission em plan mode.",
+    "score": 6,
+    "justification": "TASK.md define README.md como entregável obrigatório. Seções críticas para DX estão ausentes: tratamento de erros, referência de options, uso de plan mode.",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-034",
+    "type": "feature",
+    "description": "Implementar deleteSession(sessionId, options?): remove o arquivo JSONL da sessão do filesystem. Necessário para cleanup de sessões antigas ou sensíveis.",
+    "score": 4,
+    "justification": "CRUD incompleto no módulo de sessions. Usuários precisam acessar o filesystem diretamente para remover sessões. A função é trivial (unlink) mas importante para completude da API.",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-035",
+    "type": "bug",
+    "description": "Implementar shutdown de 3 estágios em close() (src/process.ts): (1) fechar stdin com proc.stdin?.end() para sinalizar EOF ao CLI; (2) aguardar 5s, se timeout: SIGTERM; (3) aguardar 5s, se timeout: SIGKILL. Previne corrupção de sessão e evita processos pendentes.",
+    "score": 9,
+    "justification": "Bug de integridade de sessão: sem EOF no stdin, o CLI pode ser morto antes de salvar o arquivo JSONL (issue #625 Python SDK). Sem SIGKILL, processos que ignoram SIGTERM ficam pendentes indefinidamente.",
+    "sprint": 6,
+    "implemented": true
+  },
+  {
+    "id": "D-036",
+    "type": "improvement",
+    "description": "Atualizar onAbort handler em spawnAndStream() para usar shutdown de 3 estágios: stdin.end como estágio 1, SIGTERM como estágio 2, SIGKILL como estágio 3. Manter interrupt() com SIGINT.",
+    "score": 7,
+    "justification": "Consistência: o onAbort (shutdown programático via AbortController) deve seguir o mesmo padrão de close(). Alinha comportamento TypeScript com a referência Python.",
+    "sprint": 6,
+    "implemented": true
+  },
+  {
+    "id": "D-037",
+    "type": "bug",
+    "description": "Adicionar flag stdinClosed em spawnAndStream() que é setada em close() antes de proc.stdin?.end(), e verificada em writeStdin() antes de escrever. Previne EPIPE quando writeStdin() é chamado após close() mas antes do exit do processo.",
+    "score": 8,
+    "justification": "Uma vez que close() feche stdin (D-035), o guard atual de writeStdin() (exitCode !== null || killed) não detecta stdin fechado. EPIPE não tratado pode crashar o consumidor.",
+    "sprint": 6,
+    "implemented": true
+  },
+  {
+    "id": "D-038",
+    "type": "bug",
+    "description": "Reimplementar getSessionMessages() com algoritmo de conversation chain reconstruction via parentUuid: parse entries com TRANSCRIPT_TYPES, indexar por UUID, encontrar terminais, caminhar backward, filtrar sidechains/teamName/isMeta, escolher melhor leaf, reverter para ordem cronológica.",
+    "score": 8,
+    "justification": "Filtragem ingênua por type produz resultados incorretos em sessões com sidechains, team messages ou compactação. Qualquer app que leia histórico de sessões está exposto. Algoritmo bem documentado na referência Python (backlog/05/ref/sessions.py).",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-039",
+    "type": "feature",
+    "description": "Implementar tool() factory: cria SdkMcpToolDefinition<Schema> com nome, descrição, inputSchema Zod, handler async e anotações opcionais. Exportar tipos ToolAnnotations, CallToolResult, SdkMcpToolDefinition.",
+    "score": 6,
+    "justification": "Habilita MCP tools inline sem servidor externo. Pré-requisito para D-040. Impacto alto para usuários que querem integração tight com TypeScript. Segue padrão do Claude Code SDK oficial.",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-040",
+    "type": "feature",
+    "description": "Implementar createSdkMcpServer() que cria McpServer in-process (@modelcontextprotocol/sdk) e retorna McpSdkServerConfigWithInstance compatível com mcpServers Options. Adicionar zod e @modelcontextprotocol/sdk como peerDependencies.",
+    "score": 6,
+    "justification": "Complemento obrigatório de D-039. Sem server in-process, tool() não tem onde ser registrada. A combinação tool() + createSdkMcpServer() fecha o gap com o SDK oficial para MCP programático.",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-041",
+    "type": "feature",
+    "description": "Implementar métodos de configuração mid-session no Query: setModel(model?), setPermissionMode(mode), setMaxThinkingTokens(tokens). Comunicação via protocolo de controle stdin JSON do CLI.",
+    "score": 7,
+    "justification": "Gap funcional mais impactante do Query. setModel() e setPermissionMode() são necessários para automações que ajustam comportamento dinamicamente. Alta demanda por paridade com SDK oficial.",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-042",
+    "type": "feature",
+    "description": "Implementar métodos de introspecção no Query: initializationResult(), supportedCommands(), supportedModels(), supportedAgents(), mcpServerStatus(), accountInfo(). Requer investigação do protocolo stdin e definição dos tipos de resposta.",
+    "score": 5,
+    "justification": "Valor para debugging e UIs dinâmicas. mcpServerStatus() é especialmente útil para diagnóstico de MCP servers. Menor impacto que configuração mas importante para completude da API.",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-043",
+    "type": "feature",
+    "description": "Implementar métodos de operação avançada no Query: rewindFiles(), reconnectMcpServer(), toggleMcpServer(), setMcpServers(), streamInput(), stopTask(). Controle avançado de sessões em andamento.",
+    "score": 5,
+    "justification": "rewindFiles() e setMcpServers() têm casos de uso claros em automações complexas. streamInput() (AsyncIterable) é o mais complexo de implementar. Necessários para paridade completa com SDK oficial.",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-044",
+    "type": "feature",
+    "description": "Implementar V2 Session API: createSession(options): SDKSession com interface stateful (send(), stream(), close(), [Symbol.asyncDispose]()). SDKSession mantém sessionId entre turnos e encadeia queries automaticamente.",
+    "score": 5,
+    "justification": "Ergonomia multi-turn sem gerenciar sessionId manualmente. await using para cleanup automático. Wrapper fino sobre query() existente — complexidade de implementação baixa, valor de DX alto.",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-045",
+    "type": "feature",
+    "description": "Implementar resumeSession(sessionId, options): SDKSession para retomar sessão existente, e prompt(text, options): Promise<SDKResultMessage> para one-shot sem streaming.",
+    "score": 4,
+    "justification": "Conveniência adicional da V2. prompt() simplifica o padrão query() + collectMessages() para o caso mais comum. Baixa complexidade se D-044 já estiver pronto.",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-046",
+    "type": "docs",
+    "description": "Documentar V2 Session API no README.md: seção com exemplos de createSession(), resumeSession() e prompt(). Incluir await using para async dispose, padrão multi-turn stateful e comparação com continueSession().",
+    "score": 9,
+    "justification": "As funções createSession/resumeSession/prompt foram implementadas mas não aparecem no README. São a API de maior impacto de DX do sprint-7 — usuários não sabem que existem.",
+    "sprint": 8,
+    "implemented": false
+  },
+  {
+    "id": "D-047",
+    "type": "docs",
+    "description": "Documentar Query control methods no README.md: tabela atualizada do objeto Query incluindo setModel(), setPermissionMode(), setMaxThinkingTokens(). Adicionar exemplo de uso mid-session.",
+    "score": 7,
+    "justification": "setModel() e setPermissionMode() têm casos de uso imediatos em automações que ajustam comportamento dinamicamente. Sem documentação são inacessíveis para a maioria dos usuários.",
+    "sprint": 8,
+    "implemented": false
+  },
+  {
+    "id": "D-048",
+    "type": "docs",
+    "description": "Documentar MCP tool factories no README.md: seção com exemplos de tool() e createSdkMcpServer(). Incluir exemplo end-to-end de MCP inline com schema Zod e handler TypeScript.",
+    "score": 6,
+    "justification": "tool() + createSdkMcpServer() são o caminho para MCP programático inline. Sem docs, usuários continuarão criando servidores MCP externos desnecessariamente.",
+    "sprint": 8,
+    "implemented": false
+  },
+  {
+    "id": "D-049",
+    "type": "docs",
+    "description": "Documentar Query introspection e operation methods avançados no README.md: initializationResult(), supportedModels(), mcpServerStatus(), rewindFiles(), streamInput(), stopTask(), reconnectMcpServer(), toggleMcpServer(), setMcpServers(). Referência tabular com assinatura e descrição.",
+    "score": 5,
+    "justification": "Métodos avançados implementados mas invisíveis. Referência tabular é suficiente — exemplos detalhados não são necessários para todos, mas o contrato de API precisa estar documentado.",
+    "sprint": 8,
+    "implemented": false
+  },
+  {
+    "id": "D-050",
+    "type": "bug",
+    "description": "Edge case em buildConversationChain(): quando mainLeaves está vazio (todos os leaves são sidechain/team/meta), o fallback pickBest(leaves) retorna um leaf de sidechain, potencialmente incluindo mensagens de sidechain na chain principal.",
+    "score": 3,
+    "justification": "Cenário muito raro — ocorre apenas quando TODOS os terminais de uma sessão são de sidechains. Em paridade com o Python SDK (mesmo comportamento). Impacto baixo mas inconsistente com o objetivo de excluir sidechains.",
+    "sprint": 8,
+    "implemented": false
+  },
+  {
+    "id": "D-051",
+    "type": "bug",
+    "description": "Fix buildCliArgs() em process.ts:147 — remover throw para type 'sdk' e implementar transporte local: iniciar McpServer com HTTP/SSE transport em porta aleatória, passar --mcp-server-sse <name>:http://localhost:<port> ao CLI.",
+    "score": 9,
+    "justification": "Bloqueador crítico: createSdkMcpServer() é inutilizável porque buildCliArgs() joga erro para type 'sdk'. Todo usuário que tenta usar MCP tool factories recebe RuntimeError antes mesmo do spawn.",
+    "sprint": 9,
+    "implemented": false
+  },
+  {
+    "id": "D-052",
+    "type": "bug",
+    "description": "Fix require() em mcp.ts:35-36 — substituir require('@modelcontextprotocol/sdk/server/mcp.js') e require('zod') por await import() pois o pacote é ESM (\"type\": \"module\") e require não está disponível.",
+    "score": 9,
+    "justification": "ReferenceError em runtime: 'require is not defined in ES module scope'. Qualquer chamada a createSdkMcpServer() falha imediatamente. Bug introduzido ao implementar import dinâmico sem verificar que o pacote é ESM.",
+    "sprint": 9,
+    "implemented": false
+  },
+  {
+    "id": "D-053",
+    "type": "bug",
+    "description": "Fix server.tool() em mcp.ts:47 — corrigir assinatura do McpServer.tool() do @modelcontextprotocol/sdk v1.x: terceiro argumento deve ser o ZodRawShape diretamente, não { inputSchema: zodShape }.",
+    "score": 8,
+    "justification": "Tools registradas com assinatura incorreta são expostas pelo servidor sem schema válido, causando erros no cliente MCP ao tentar invocar tools. O wrapping { inputSchema } não corresponde à API do SDK.",
+    "sprint": 9,
+    "implemented": false
+  },
+  {
+    "id": "D-054",
+    "type": "improvement",
+    "description": "Adicionar campo name: string à interface McpSdkServerConfig em types/options.ts e ao valor retornado por createSdkMcpServer(). Campo necessário para identificar o servidor no lifecycle manager e em mensagens de erro.",
+    "score": 7,
+    "justification": "TASK.md especifica McpSdkServerConfigWithInstance com name: string, mas a implementação atual omite esse campo. Sem name, o lifecycle manager (D-055) não consegue associar erros ao servidor correto.",
+    "sprint": 9,
+    "implemented": false
+  },
+  {
+    "id": "D-055",
+    "type": "feature",
+    "description": "Implementar lifecycle management de SDK MCP servers em query.ts: antes do spawn, iniciar todos os servers com type 'sdk' numa porta local aleatória; após query terminar (stream esgotado ou error), encerrar os servers.",
+    "score": 8,
+    "justification": "Dependência de D-051 e D-053. Sem lifecycle correto, os McpServer processes vazam após a query terminar, acumulando portas abertas. Necessário para correctness em produção.",
+    "sprint": 9,
+    "implemented": false
+  }
+]
