@@ -338,3 +338,30 @@ export async function tagSession(
   const entry = JSON.stringify({ type: "tag", tag })
   await appendFile(filePath, "\n" + entry)
 }
+
+// ---------------------------------------------------------------------------
+// deleteSession()
+// ---------------------------------------------------------------------------
+
+export async function deleteSession(
+  sessionId: string,
+  options: SessionMutationOptions = {},
+): Promise<boolean> {
+  const projectsDir = getProjectsDir()
+  let filePath: string
+
+  if (options.dir) {
+    filePath = join(projectsDir, sanitizePath(resolve(options.dir)), `${sessionId}.jsonl`)
+  } else {
+    const found = await findSessionFile(projectsDir, sessionId)
+    if (!found) return false
+    filePath = found
+  }
+
+  try {
+    await unlink(filePath)
+    return true
+  } catch {
+    return false
+  }
+}
