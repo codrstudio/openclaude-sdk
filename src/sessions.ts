@@ -350,7 +350,8 @@ function buildConversationChain(entries: TranscriptEntry[]): TranscriptEntry[] {
     return best
   }
 
-  const leaf = mainLeaves.length > 0 ? pickBest(mainLeaves) : pickBest(leaves)
+  if (mainLeaves.length === 0) return []
+  const leaf = pickBest(mainLeaves)
 
   // Caminhar de leaf ate root via parentUuid
   const chain: TranscriptEntry[] = []

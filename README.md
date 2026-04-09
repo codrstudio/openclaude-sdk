@@ -59,11 +59,163 @@ for await (const msg of q) {
 
 The `Query` object also exposes:
 
+#### Core Methods
+
 | Method | Description |
 |--------|-------------|
-| `interrupt(): Promise<void>` | Gracefully interrupt the running agent |
-| `close(): void` | Immediately terminate the subprocess |
+| `interrupt(): Promise<void>` | Gracefully interrupt the running agent (SIGINT) |
+| `close(): Promise<void>` | Terminate the subprocess (3-stage shutdown) |
 | `respondToPermission(response: PermissionResponse): void` | Respond to a tool permission request (plan mode) |
+
+#### Control Methods (fire-and-forget)
+
+Sent via stdin — no response is awaited.
+
+| Method | Description |
+|--------|-------------|
+| `setModel(model?: string): void` | Change the model mid-session. `undefined` resets to default |
+| `setPermissionMode(mode: PermissionMode): void` | Change permission mode mid-session (`"default"`, `"plan"`, `"bypassPermissions"`, `"dontAsk"`) |
+| `setMaxThinkingTokens(tokens: number \| null): void` | Set max thinking tokens mid-session. `null` to disable |
+
+#### Introspection Methods (request/response, timeout 10s)
+
+Only available while the agent is active (during stream iteration).
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `initializationResult()` | `Promise<InitializationResult>` | Initialization result (tools, agents, MCP) |
+| `supportedCommands()` | `Promise<SlashCommand[]>` | Available slash commands |
+| `supportedModels()` | `Promise<ModelInfo[]>` | Available models |
+| `supportedAgents()` | `Promise<AgentInfo[]>` | Configured agents |
+| `mcpServerStatus()` | `Promise<McpServerStatusInfo[]>` | Status of connected MCP servers |
+| `accountInfo()` | `Promise<AccountInfo>` | Account information |
+
+**Example — mid-session control and introspection:**
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Analyze this codebase",
+  options: { permissionMode: "plan" },
+})
+
+// Change model mid-session (fire-and-forget)
+q.setModel("claude-sonnet-4-6")
+
+// Check available models
+const models = await q.supportedModels()
+console.log("Available models:", models.map(m => m.id))
+
+// Check MCP server status
+const mcpStatus = await q.mcpServerStatus()
+for (const server of mcpStatus) {
+  console.log(`${server.name}: ${server.status}`)
+}
+
+for await (const msg of q) {
+  // process messages
+}
+```
+
+> **Protocol note:** Control methods (`set*`) are fire-and-forget — they write a command to stdin and return immediately. Introspection methods are request/response — they write a command and await a reply on stdout (timeout 10s).
+
+**Exported introspection types:**
+
+```typescript
+import type {
+  InitializationResult,
+  SlashCommand,
+  ModelInfo,
+  AgentInfo,
+  McpServerStatusInfo,
+  AccountInfo,
+} from "openclaude-sdk"
+```
+
+#### Operation Methods
+
+##### Request/Response Operations (timeout 30s)
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `rewindFiles(userMessageId, opts?)` | `Promise<RewindFilesResult>` | Reverts files changed by the agent back to a previous point. Pass `opts.dryRun: true` for a preview without reverting |
+| `setMcpServers(servers)` | `Promise<McpSetServersResult>` | Reconfigures MCP servers mid-session |
+
+> **Timeout note:** Request/response operations use a 30s timeout (longer than introspection) because they may involve filesystem or network operations.
+
+##### Fire-and-Forget Operations
+
+| Method | Description |
+|--------|-------------|
+| `reconnectMcpServer(serverName: string): void` | Reconnects a disconnected MCP server |
+| `toggleMcpServer(serverName: string, enabled: boolean): void` | Enables or disables a MCP server |
+| `stopTask(taskId: string): void` | Stops a specific agent task |
+
+##### Stream Operations
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `streamInput(stream: AsyncIterable<string>)` | `Promise<void>` | Sends text chunk by chunk via stdin. Blocks until the entire iterable is consumed |
+
+**Example — `rewindFiles()` with dryRun:**
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Refactor the auth module",
+  options: { permissionMode: "plan" },
+})
+
+let lastUserMessageId: string | null = null
+
+for await (const msg of q) {
+  if (msg.type === "user") {
+    lastUserMessageId = msg.uuid
+  }
+
+  if (shouldRevert && lastUserMessageId) {
+    // Preview which files would be reverted
+    const preview = await q.rewindFiles(lastUserMessageId, { dryRun: true })
+    console.log("Files to revert:", preview)
+
+    // Actually revert
+    await q.rewindFiles(lastUserMessageId)
+    break
+  }
+}
+```
+
+**Example — `streamInput()` with AsyncIterable:**
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({ prompt: "Process the following data:" })
+
+async function* generateChunks() {
+  yield "First chunk of data\n"
+  yield "Second chunk of data\n"
+  yield "Final chunk\n"
+}
+
+// Stream all chunks into the agent before iterating responses
+await q.streamInput(generateChunks())
+
+for await (const msg of q) {
+  // process messages
+}
+```
+
+**Exported operation types:**
+
+```typescript
+import type {
+  RewindFilesResult,
+  McpSetServersResult,
+} from "openclaude-sdk"
+```
 
 ---
 
@@ -508,6 +660,119 @@ for await (const msg of q) {
 
 ---
 
+## V2 Session API
+
+A V2 Session API é o padrão recomendado para conversas multi-turn, substituindo o gerenciamento manual de `sessionId`.
+
+### `createSession(opts?)`
+
+```typescript
+function createSession(opts?: CreateSessionOptions): SDKSession
+
+interface CreateSessionOptions {
+  model?: string
+  registry?: ProviderRegistry
+  options?: Options
+  sessionId?: string  // auto-gerado se omitido
+}
+```
+
+### Interface `SDKSession`
+
+| Método | Retorno | Descrição |
+|--------|---------|-----------|
+| `send(prompt, options?)` | `Query` | Envia mensagem e retorna stream (AsyncGenerator) |
+| `collect(prompt, options?)` | `Promise<{ messages, result, costUsd, durationMs }>` | Envia e coleta resultado completo |
+| `close()` | `Promise<void>` | Fecha a sessão e mata query ativa |
+| `[Symbol.asyncDispose]()` | `Promise<void>` | Suporte a `await using` |
+
+### Exemplo: Multi-turn com streaming
+
+```typescript
+import { createSession } from "openclaude-sdk"
+
+await using session = createSession({ model: "sonnet" })
+
+// Turno 1 — streaming
+for await (const msg of session.send("Create a hello.ts file")) {
+  if (msg.type === "assistant") {
+    console.log(msg.message.content)
+  }
+}
+
+// Turno 2 — coleta completa
+const result = await session.collect("Now add error handling")
+console.log(result.result)
+```
+
+### `resumeSession(sessionId, opts?)`
+
+```typescript
+function resumeSession(sessionId: string, opts?: ResumeSessionOptions): SDKSession
+
+interface ResumeSessionOptions {
+  model?: string
+  registry?: ProviderRegistry
+  options?: Options
+}
+```
+
+**Exemplo:**
+
+```typescript
+import { resumeSession } from "openclaude-sdk"
+
+const session = resumeSession("abc-123-def")
+const result = await session.collect("Continue where we left off")
+await session.close()
+```
+
+### `prompt(text, opts?)` — one-shot
+
+```typescript
+function prompt(text: string, opts?: PromptOptions): Promise<{
+  result: string | null
+  sessionId: string | null
+  costUsd: number
+  durationMs: number
+}>
+```
+
+**Exemplo:**
+
+```typescript
+import { prompt } from "openclaude-sdk"
+
+const { result, costUsd } = await prompt("What is 2 + 2?")
+console.log(result) // "4"
+```
+
+### Nota sobre `await using`
+
+`SDKSession` implementa `AsyncDisposable` — `await using` garante cleanup automático mesmo em caso de exceção. Requer TypeScript >= 5.2 com `target: "ES2022"` ou superior.
+
+### Comparação V1 vs V2
+
+| Aspecto | V1 (`query` + `continueSession`) | V2 (`createSession`) |
+|---------|----------------------------------|----------------------|
+| Gerenciamento de sessionId | Manual | Automático |
+| Multi-turn | `continueSession()` a cada turno | `session.send()` encadeia |
+| Cleanup | Manual (`q.close()`) | `await using` |
+| One-shot | `query()` + `collectMessages()` | `prompt()` |
+
+### Tipos exportados
+
+```typescript
+import type {
+  SDKSession,
+  CreateSessionOptions,
+  ResumeSessionOptions,
+  PromptOptions,
+} from "openclaude-sdk"
+```
+
+---
+
 ## Plan Mode
 
 In `"plan"` permission mode the agent pauses before executing tools and emits a permission request. Use `respondToPermission()` on the `Query` object to approve or deny each request.
@@ -592,3 +857,104 @@ Key points:
 - `permissionMode: "plan"` keeps `stdin` open so responses can be sent during iteration
 - `behavior: "deny"` rejects the action — the agent will attempt an alternative approach
 - `message` is optional and provides a reason (shown to the agent on denial)
+
+## MCP Tool Factories
+
+MCP tool factories permitem definir tools inline em TypeScript e registrá-las num servidor in-process, sem precisar de um servidor MCP externo separado.
+
+> **Peer dependencies:** `zod` e `@modelcontextprotocol/sdk` devem estar instalados no seu projeto.
+
+### `tool(name, description, inputSchema, handler, extras?)`
+
+```typescript
+function tool<Schema extends z.ZodRawShape>(
+  name: string,
+  description: string,
+  inputSchema: Schema,
+  handler: (args: z.infer<z.ZodObject<Schema>>, extra: unknown) => Promise<CallToolResult>,
+  extras?: { annotations?: ToolAnnotations },
+): SdkMcpToolDefinition<Schema>
+```
+
+| Parâmetro | Tipo | Descrição |
+|-----------|------|-----------|
+| `name` | `string` | Nome da tool (visível ao agente) |
+| `description` | `string` | Descrição da tool (usada pelo agente para decidir quando invocar) |
+| `inputSchema` | `z.ZodRawShape` | Schema Zod dos parâmetros de entrada |
+| `handler` | `(args, extra) => Promise<CallToolResult>` | Função async que executa a tool |
+| `extras.annotations` | `ToolAnnotations` | Anotações opcionais de comportamento |
+
+### `createSdkMcpServer(options)`
+
+```typescript
+function createSdkMcpServer(options: {
+  name: string
+  version?: string
+  tools?: Array<SdkMcpToolDefinition<any>>
+}): McpSdkServerConfig
+```
+
+Retorna um `McpSdkServerConfig` com `type: "sdk"` que pode ser passado diretamente em `options.mcpServers`. O servidor roda in-process — sem porta de rede, sem processo filho.
+
+### Exemplo end-to-end
+
+```typescript
+import { z } from "zod"
+import { tool, createSdkMcpServer, query, collectMessages } from "openclaude-sdk"
+
+// 1. Definir tools
+const weatherTool = tool(
+  "get_weather",
+  "Get current weather for a city",
+  { city: z.string().describe("City name") },
+  async ({ city }) => ({
+    content: [{ type: "text", text: `Weather in ${city}: 22°C, sunny` }],
+  }),
+)
+
+const timeTool = tool(
+  "get_time",
+  "Get current time in a timezone",
+  { timezone: z.string().describe("IANA timezone") },
+  async ({ timezone }) => ({
+    content: [{ type: "text", text: `Current time in ${timezone}: ${new Date().toISOString()}` }],
+  }),
+  { annotations: { readOnly: true } },
+)
+
+// 2. Criar servidor in-process
+const mcpServer = createSdkMcpServer({
+  name: "my-tools",
+  tools: [weatherTool, timeTool],
+})
+
+// 3. Usar com query
+const q = query({
+  prompt: "What's the weather in Tokyo?",
+  options: {
+    mcpServers: { "my-tools": mcpServer },
+  },
+})
+
+const { result } = await collectMessages(q)
+console.log(result)
+```
+
+### `ToolAnnotations`
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `readOnly` | `boolean` | Tool apenas lê dados, não modifica estado |
+| `destructive` | `boolean` | Tool pode causar efeitos destrutivos |
+| `idempotent` | `boolean` | Múltiplas execuções produzem o mesmo resultado |
+| `openWorld` | `boolean` | Tool acessa recursos externos (rede, filesystem) |
+
+### Tipos exportados
+
+```typescript
+import type {
+  SdkMcpToolDefinition,
+  ToolAnnotations,
+  CallToolResult,
+} from "openclaude-sdk"
+```
