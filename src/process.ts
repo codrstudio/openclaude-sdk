@@ -16,12 +16,33 @@ export function resolveExecutable(options?: Options): {
   prependArgs: string[]
 } {
   const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const extraArgs = options?.executableArgs ?? []
 
+  // Explicit executable: use it as command, base path as first script argument
+  if (options?.executable) {
+    const exe = options.executable // "bun" | "deno" | "node"
+
+    if (process.platform === "win32") {
+      return {
+        command: process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe",
+        prependArgs: ["/c", exe, ...extraArgs, base],
+      }
+    }
+
+    return { command: exe, prependArgs: [...extraArgs, base] }
+  }
+
+  // Default: use base path directly
   if (process.platform === "win32") {
     return {
       command: process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe",
-      prependArgs: ["/c", base],
+      prependArgs: ["/c", ...extraArgs, base],
     }
+  }
+
+  // executableArgs without explicit executable: prepend before base
+  if (extraArgs.length > 0) {
+    return { command: base, prependArgs: [...extraArgs] }
   }
 
   return { command: base, prependArgs: [] }
