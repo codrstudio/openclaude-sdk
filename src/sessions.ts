@@ -2,7 +2,7 @@
 // Session management — espelha @anthropic-ai/claude-agent-sdk
 // ---------------------------------------------------------------------------
 
-import { readdir, stat, readFile, appendFile } from "node:fs/promises"
+import { readdir, stat, readFile, appendFile, unlink } from "node:fs/promises"
 import { join, resolve } from "node:path"
 import { homedir } from "node:os"
 import type {
@@ -55,6 +55,43 @@ function getSessionDir(dir?: string): string {
     return join(getProjectsDir(), sanitizePath(resolve(dir)))
   }
   return getProjectsDir()
+}
+
+async function findSessionFile(
+  projectsDir: string,
+  sessionId: string,
+): Promise<string | null> {
+  // Try root first
+  const rootPath = join(projectsDir, `${sessionId}.jsonl`)
+  try {
+    await stat(rootPath)
+    return rootPath
+  } catch {
+    // not found at root
+  }
+
+  // Iterate subdirectories
+  let entries: string[]
+  try {
+    entries = await readdir(projectsDir)
+  } catch {
+    return null
+  }
+
+  for (const entry of entries) {
+    const entryPath = join(projectsDir, entry)
+    try {
+      const s = await stat(entryPath)
+      if (!s.isDirectory()) continue
+      const candidate = join(entryPath, `${sessionId}.jsonl`)
+      await stat(candidate)
+      return candidate
+    } catch {
+      continue
+    }
+  }
+
+  return null
 }
 
 async function readSessionFile(
@@ -210,12 +247,16 @@ export async function getSessionMessages(
   sessionId: string,
   options: GetSessionMessagesOptions = {},
 ): Promise<SessionMessage[]> {
-  const baseDir = options.dir
-    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
-    : getProjectsDir()
+  const projectsDir = getProjectsDir()
+  let filePath: string
 
-  // Procurar arquivo da sessao
-  const filePath = join(baseDir, `${sessionId}.jsonl`)
+  if (options.dir) {
+    filePath = join(projectsDir, sanitizePath(resolve(options.dir)), `${sessionId}.jsonl`)
+  } else {
+    const found = await findSessionFile(projectsDir, sessionId)
+    if (!found) return []
+    filePath = found
+  }
 
   let data: { messages: unknown[] }
   try {

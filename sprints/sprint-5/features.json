@@ -3,10 +3,11 @@
     "id": "F-038",
     "name": "Session Deep Search",
     "description": "Criar helper privado findSessionFile() em src/sessions.ts que busca um sessionId.jsonl primeiro na raiz de ~/.claude/projects/ e depois iterando subdiretorios. Substituir a resolucao de filePath em getSessionMessages() para usar findSessionFile() quando options.dir nao for fornecido, permitindo deep search automatico. Quando dir e fornecido, manter comportamento atual (resolve direto).",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
     "dependencies": [],
     "tests": [
       "getSessionMessages(sessionId) sem dir retorna mensagens de sessao que vive em subdiretorio de ~/.claude/projects/",
@@ -58,7 +59,9 @@
     "priority": 4,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-038"],
+    "dependencies": [
+      "F-038"
+    ],
     "tests": [
       "deleteSession e exportada em src/index.ts",
       "deleteSession(sessionId) sem dir usa findSessionFile para localizar o arquivo",
@@ -72,11 +75,13 @@
     "id": "F-042",
     "name": "MCP Servers Mapping",
     "description": "Implementar mapeamento de options.mcpServers em buildCliArgs() (src/process.ts): servidores stdio geram --mcp-server name:command args, servidores sse/http geram --mcp-server-sse name:url. Importar tipos McpStdioServerConfig, McpSSEServerConfig, McpHttpServerConfig. Em query() (src/query.ts), apos resolucao de registry, coletar env vars de servidores stdio e mergear em resolvedOptions.env sem mutar o original. Bloco MCP deve ficar antes de extraArgs em buildCliArgs().",
-    "status": "pending",
+    "status": "blocked",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-040"],
+    "dependencies": [
+      "F-040"
+    ],
     "tests": [
       "buildCliArgs com mcpServers stdio gera flags --mcp-server name:command args",
       "buildCliArgs com mcpServers sse gera flags --mcp-server-sse name:url",
@@ -91,11 +96,14 @@
     "id": "F-043",
     "name": "README Completion",
     "description": "Adicionar tres secoes ao README.md: (1) Error Handling — hierarquia de erros tipados com diagrama, tabela fatal/recuperavel, exemplo com instanceof e isRecoverable(). (2) Options Reference — tabela markdown com todos os campos principais de Options incluindo timeoutMs e mcpServers. (3) Permission Mid-Stream — exemplo completo de respondToPermission em plan mode. Inserir apos secao de Sessions. Manter tom e formatacao existentes, texto em ingles.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 6,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-041", "F-042"],
+    "dependencies": [
+      "F-041",
+      "F-042"
+    ],
     "tests": [
       "README.md contem secao Error Handling com hierarquia de erros e exemplo de isRecoverable()",
       "README.md contem secao Options Reference com tabela incluindo timeoutMs e mcpServers",
