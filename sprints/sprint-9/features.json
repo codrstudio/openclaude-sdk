@@ -41,11 +41,12 @@
     "id": "F-069",
     "name": "fixServerToolSignature",
     "description": "Corrigir chamada server.tool() em src/mcp.ts: passar toolDef.inputSchema (ZodRawShape) diretamente como terceiro argumento em vez de { inputSchema: zodShape }. Remover z.object() wrapping desnecessário. Remover import de zod se não houver outro uso.",
-    "status": "pending",
+    "status": "passing",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [],
+    "completed_at": "2026-04-09T00:02:00Z",
     "tests": [
       "server.tool() recebe toolDef.inputSchema diretamente como terceiro argumento",
       "Não existe z.object() wrapping no registro de tools em src/mcp.ts",

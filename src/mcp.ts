@@ -33,7 +33,6 @@ export async function createSdkMcpServer(options: {
 }): Promise<McpSdkServerConfig> {
   // Import dinamico para nao forcar dep em quem nao usa MCP
   const { McpServer } = await import("@modelcontextprotocol/sdk/server/mcp.js")
-  const { z } = await import("zod")
 
   const server = new McpServer({
     name: options.name,
@@ -42,11 +41,10 @@ export async function createSdkMcpServer(options: {
 
   if (options.tools) {
     for (const toolDef of options.tools) {
-      const zodShape = z.object(toolDef.inputSchema)
       server.tool(
         toolDef.name,
         toolDef.description,
-        { inputSchema: zodShape },
+        toolDef.inputSchema,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async (args: unknown, extra: unknown) => {
           return toolDef.handler(args as any, extra) as any
