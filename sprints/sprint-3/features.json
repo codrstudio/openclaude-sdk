@@ -1,0 +1,50 @@
+[
+  {
+    "id": "F-035",
+    "name": "simpleHash — hash djb2 32-bit base36",
+    "description": "Implementar simpleHash(s: string): string em src/sessions.ts como funcao interna (nao exportada). Algoritmo: hash djb2 de 32 bits com coerce para signed int via '| 0', Math.abs(), e conversao para base36 via divisoes sucessivas. Deve produzir resultados identicos a _simple_hash() do Python SDK (ref/sessions.py linhas 69-89). Validar: simpleHash('test') retorna o mesmo valor que a versao Python.",
+    "status": "passing",
+    "completed_at": "2026-04-08T03:00:00Z",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "simpleHash existe como funcao interna em src/sessions.ts",
+      "simpleHash nao e exportada (nem em index.ts)",
+      "simpleHash('test') retorna mesmo valor que _simple_hash('test') do Python (ref/sessions.py)",
+      "simpleHash('') retorna '0'",
+      "simpleHash com string longa (300+ chars) retorna resultado valido em base36",
+      "Resultado e sempre alfanumerico lowercase (base36)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-3/worktree/sprints/sprint-3/3-prps/PRP-014-path-encoding-python-compat.md"
+  },
+  {
+    "id": "F-036",
+    "name": "sanitizePath — encoding Python-compatible com truncacao",
+    "description": "Remover encodeCwd() e substituir por sanitizePath(name: string): string em src/sessions.ts. Algoritmo: single regex /[^a-zA-Z0-9]/g substituindo por '-'. Se resultado > 200 chars, truncar em 200 e concatenar '-' + simpleHash(name). Adicionar constantes SANITIZE_RE e MAX_SANITIZED_LENGTH. Atualizar getSessionDir() para chamar sanitizePath(resolve(dir)) em vez de encodeCwd(). Funcao interna, nao exportada. Alinhado com _sanitize_path() do Python SDK.",
+    "status": "passing",
+    "completed_at": "2026-04-08T04:00:00Z",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-035"
+    ],
+    "tests": [
+      "encodeCwd nao existe mais em src/sessions.ts",
+      "sanitizePath existe como funcao interna em src/sessions.ts",
+      "sanitizePath nao e exportada (nem em index.ts)",
+      "sanitizePath('/foo/bar') retorna '-foo-bar'",
+      "sanitizePath('/foo-bar') retorna '-foo-bar'",
+      "sanitizePath('C:\\Users\\dev') retorna 'C--Users-dev'",
+      "sanitizePath('abc123') retorna 'abc123'",
+      "sanitizePath('') retorna ''",
+      "sanitizePath('a'.repeat(300)) retorna string com <= 200 + 1 + hash chars e comeca com 'aaa...'",
+      "sanitizePath('a'.repeat(300)) termina com '-' + simpleHash('a'.repeat(300))",
+      "getSessionDir() chama sanitizePath(resolve(dir)) em vez de encodeCwd",
+      "SANITIZE_RE e MAX_SANITIZED_LENGTH sao constantes definidas no modulo"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-3/worktree/sprints/sprint-3/3-prps/PRP-014-path-encoding-python-compat.md"
+  }
+]

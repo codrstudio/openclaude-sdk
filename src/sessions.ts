@@ -18,13 +18,32 @@ import type {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Encode cwd para nome de diretorio de sessao (replica logica do CLI) */
-function encodeCwd(dir: string): string {
-  const normalized = resolve(dir)
-  return normalized
-    .replace(/-/g, "_h_")            // hifens literais → _h_
-    .replace(/[/\\:]/g, "_s_")       // separadores de path → _s_
-    .replace(/[^a-zA-Z0-9_]/g, "_")  // demais caracteres especiais → _
+/** Hash djb2 de 32 bits em base36 — compativel com _simple_hash() do Python SDK */
+function simpleHash(s: string): string {
+  let h = 0
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0
+  }
+  let n = Math.abs(h)
+  if (n === 0) return "0"
+  let out = ""
+  while (n > 0) {
+    out = "0123456789abcdefghijklmnopqrstuvwxyz"[n % 36] + out
+    n = Math.floor(n / 36)
+  }
+  return out
+}
+
+const SANITIZE_RE = /[^a-zA-Z0-9]/g
+const MAX_SANITIZED_LENGTH = 200
+
+/** Sanitiza um path para nome de diretorio de sessao — alinhado com _sanitize_path() do Python SDK */
+function sanitizePath(name: string): string {
+  const sanitized = name.replace(SANITIZE_RE, "-")
+  if (sanitized.length > MAX_SANITIZED_LENGTH) {
+    return sanitized.slice(0, MAX_SANITIZED_LENGTH) + "-" + simpleHash(name)
+  }
+  return sanitized
 }
 
 function getProjectsDir(): string {
@@ -33,7 +52,7 @@ function getProjectsDir(): string {
 
 function getSessionDir(dir?: string): string {
   if (dir) {
-    return join(getProjectsDir(), encodeCwd(dir))
+    return join(getProjectsDir(), sanitizePath(resolve(dir)))
   }
   return getProjectsDir()
 }
@@ -141,7 +160,7 @@ export async function listSessions(
 
   if (options.dir) {
     // Busca apenas no diretorio especificado
-    const baseDir = join(projectsDir, encodeCwd(options.dir))
+    const baseDir = join(projectsDir, sanitizePath(resolve(options.dir)))
     sessions = await listSessionsInDir(baseDir, options.dir)
   } else if (deep) {
     // Itera todos os subdiretorios sequencialmente
@@ -192,7 +211,7 @@ export async function getSessionMessages(
   options: GetSessionMessagesOptions = {},
 ): Promise<SessionMessage[]> {
   const baseDir = options.dir
-    ? join(getProjectsDir(), encodeCwd(options.dir))
+    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
     : getProjectsDir()
 
   // Procurar arquivo da sessao
@@ -253,7 +272,7 @@ export async function renameSession(
   options: SessionMutationOptions = {},
 ): Promise<void> {
   const baseDir = options.dir
-    ? join(getProjectsDir(), encodeCwd(options.dir))
+    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
     : getProjectsDir()
 
   const filePath = join(baseDir, `${sessionId}.jsonl`)
@@ -271,7 +290,7 @@ export async function tagSession(
   options: SessionMutationOptions = {},
 ): Promise<void> {
   const baseDir = options.dir
-    ? join(getProjectsDir(), encodeCwd(options.dir))
+    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
     : getProjectsDir()
 
   const filePath = join(baseDir, `${sessionId}.jsonl`)
