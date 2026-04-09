@@ -5,7 +5,7 @@
 import { randomUUID } from "node:crypto"
 import { query, collectMessages } from "./query.js"
 import type { Query } from "./query.js"
-import type { SDKMessage } from "./types/messages.js"
+import type { SDKMessage, SDKUserMessage } from "./types/messages.js"
 import type { Options } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 
@@ -17,9 +17,9 @@ export interface SDKSession {
   /** ID da sessao (gerado ou fornecido) */
   readonly sessionId: string
   /** Envia mensagem e inicia query — retorna stream de mensagens */
-  send(prompt: string, options?: Partial<Options>): Query
+  send(prompt: string | SDKUserMessage, options?: Partial<Options>): Query
   /** Conveniencia: envia mensagem e coleta resultado completo */
-  collect(prompt: string, options?: Partial<Options>): Promise<{
+  collect(prompt: string | SDKUserMessage, options?: Partial<Options>): Promise<{
     messages: SDKMessage[]
     result: string | null
     costUsd: number
@@ -48,7 +48,9 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
   return {
     sessionId,
 
-    send(prompt: string, turnOptions?: Partial<Options>): Query {
+    send(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>): Query {
+      const promptText = typeof prompt === "string" ? prompt : JSON.stringify(prompt.message.content)
+
       if (activeQuery) {
         activeQuery.close()
       }
@@ -64,7 +66,7 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
 
       if (isFirstTurn) {
         activeQuery = query({
-          prompt,
+          prompt: promptText,
           model,
           registry,
           options: { ...mergedOptions, sessionId },
@@ -72,7 +74,7 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
         isFirstTurn = false
       } else {
         activeQuery = query({
-          prompt,
+          prompt: promptText,
           model,
           registry,
           options: { ...mergedOptions, resume: sessionId },
@@ -82,7 +84,7 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
       return activeQuery
     },
 
-    async collect(prompt: string, turnOptions?: Partial<Options>) {
+    async collect(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>) {
       const q = this.send(prompt, turnOptions)
       const result = await collectMessages(q)
       return {
@@ -124,7 +126,9 @@ export function resumeSession(
   return {
     sessionId,
 
-    send(prompt: string, turnOptions?: Partial<Options>): Query {
+    send(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>): Query {
+      const promptText = typeof prompt === "string" ? prompt : JSON.stringify(prompt.message.content)
+
       if (activeQuery) {
         activeQuery.close()
       }
@@ -140,7 +144,7 @@ export function resumeSession(
       }
 
       activeQuery = query({
-        prompt,
+        prompt: promptText,
         model,
         registry,
         options: mergedOptions,
@@ -149,7 +153,7 @@ export function resumeSession(
       return activeQuery
     },
 
-    async collect(prompt: string, turnOptions?: Partial<Options>) {
+    async collect(prompt: string | SDKUserMessage, turnOptions?: Partial<Options>) {
       const q = this.send(prompt, turnOptions)
       const result = await collectMessages(q)
       return {

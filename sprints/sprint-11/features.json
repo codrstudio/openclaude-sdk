@@ -27,10 +27,11 @@
     "id": "F-088",
     "name": "sendAcceptSdkUserMessage",
     "description": "Alterar send() e collect() em createSession() e resumeSession() para aceitar `string | SDKUserMessage` em vez de apenas `string`. Quando receber SDKUserMessage, serializar message.content via JSON.stringify antes de passar ao query(). Importar SDKUserMessage em session-v2.ts.",
-    "status": "pending",
+    "status": "passing",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:00:00.000Z",
     "dependencies": [
       "F-090"
     ],
