@@ -233,7 +233,7 @@
     "id": "F-052",
     "name": "mcpExportsAndDeps",
     "description": "Exportar em src/index.ts: funcoes tool e createSdkMcpServer de ./mcp.js, tipos ToolAnnotations, CallToolResult, SdkMcpToolDefinition de ./mcp.js, tipo McpSdkServerConfig de ./types/options.js. Adicionar peerDependencies opcionais ao package.json: zod >=3.0.0 e @modelcontextprotocol/sdk >=1.0.0 com peerDependenciesMeta optional: true. Validar: exports resolvem, package.json correto.",
-    "status": "pending",
+    "status": "passing",
     "priority": 12,
     "agent": "coder",
     "task": "vibe-code",
@@ -249,7 +249,8 @@
       "npm run typecheck passa sem erros",
       "npm run build compila sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
+    "completed_at": "2026-04-09T09:30:00Z"
   },
   {
     "id": "F-059",
