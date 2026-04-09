@@ -144,6 +144,70 @@ export function buildCliArgs(options: Options = {}): string[] {
     args.push("--debug")
   }
 
+  // Agent
+  if (options.agent) {
+    args.push("--agent", options.agent)
+  }
+
+  // Agents config
+  if (options.agents && Object.keys(options.agents).length > 0) {
+    args.push("--agents-config", JSON.stringify(options.agents))
+  }
+
+  // Fallback model
+  if (options.fallbackModel) {
+    args.push("--fallback-model", options.fallbackModel)
+  }
+
+  // Fork session
+  if (options.forkSession) {
+    args.push("--fork-session")
+  }
+
+  // Include partial messages
+  if (options.includePartialMessages) {
+    args.push("--include-partial-messages")
+  }
+
+  // Max thinking tokens
+  if (options.maxThinkingTokens != null) {
+    args.push("--max-thinking-tokens", String(options.maxThinkingTokens))
+  }
+
+  // Permission prompt tool name
+  if (options.permissionPromptToolName) {
+    args.push("--permission-prompt-tool-name", options.permissionPromptToolName)
+  }
+
+  // Persist session
+  if (options.persistSession) {
+    args.push("--persist-session")
+  }
+
+  // Prompt suggestions (inverted: false means --no-prompt-suggestions)
+  if (options.promptSuggestions === false) {
+    args.push("--no-prompt-suggestions")
+  }
+
+  // Resume session at
+  if (options.resumeSessionAt) {
+    args.push("--resume-session-at", options.resumeSessionAt)
+  }
+
+  // Setting sources
+  if (options.settingSources && options.settingSources.length > 0) {
+    args.push("--setting-sources", options.settingSources.join(","))
+  }
+
+  // Tools
+  if (options.tools) {
+    if (Array.isArray(options.tools)) {
+      args.push("--tools", options.tools.join(","))
+    } else if (options.tools.type === "preset") {
+      args.push("--tools-preset", options.tools.preset)
+    }
+  }
+
   // MCP Servers
   if (options.mcpServers) {
     for (const [name, config] of Object.entries(options.mcpServers)) {
