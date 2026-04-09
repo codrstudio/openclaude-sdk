@@ -3,7 +3,7 @@
     "id": "F-047",
     "name": "parseTranscriptEntries",
     "description": "Implementar em src/sessions.ts: constante TRANSCRIPT_TYPES (Set com 5 tipos), interface TranscriptEntry (type, uuid, parentUuid, sessionId, message, isSidechain, isMeta, isCompactSummary, teamName), funcao parseTranscriptEntries(messages) que filtra entries validas, e funcao isVisibleMessage(entry) que filtra por user/assistant excluindo meta/sidechain/teamName. Todas internas (nao exportadas). Validar: funcoes existem no arquivo, TypeScript compila sem erros.",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
     "agent": "coder",
     "task": "vibe-code",
@@ -16,7 +16,8 @@
       "Nenhuma funcao e exportada publicamente",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
+    "completed_at": "2026-04-09T04:56:53.571Z"
   },
   {
     "id": "F-048",
@@ -26,7 +27,9 @@
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-047"],
+    "dependencies": [
+      "F-047"
+    ],
     "tests": [
       "buildConversationChain([]) retorna []",
       "Entries sem leaf user/assistant retornam []",
@@ -42,11 +45,14 @@
     "id": "F-049",
     "name": "integrateChainPipeline",
     "description": "Substituir o bloco de filtragem ingenua em getSessionMessages() (linhas ~268-291 de src/sessions.ts) pelo pipeline: parseTranscriptEntries(data.messages) -> buildConversationChain(entries) -> chain.filter(isVisibleMessage) -> map para SessionMessage[]. Manter offset/limit existentes operando sobre o resultado. Validar: getSessionMessages retorna mensagens corretas, sessoes simples continuam funcionando.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-047", "F-048"],
+    "dependencies": [
+      "F-047",
+      "F-048"
+    ],
     "tests": [
       "Pipeline parseTranscriptEntries -> buildConversationChain -> filter isVisibleMessage esta integrado",
       "Bloco antigo de filtragem por type foi removido",
@@ -119,11 +125,13 @@
     "id": "F-051",
     "name": "createSdkMcpServer",
     "description": "Implementar createSdkMcpServer(options) em src/mcp.ts que cria McpServer in-process via require() dinamico de @modelcontextprotocol/sdk e zod, registra tools no server, e retorna McpSdkServerConfig {type: 'sdk', instance}. Adicionar interface McpSdkServerConfig em src/types/options.ts na union McpServerConfig. Adicionar guard em buildCliArgs() (src/process.ts) que lanca Error se type=sdk for encontrado. Validar: funcao existe, tipo esta na union, guard impede uso em CLI.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 7,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-050"],
+    "dependencies": [
+      "F-050"
+    ],
     "tests": [
       "createSdkMcpServer existe em src/mcp.ts",
       "McpSdkServerConfig com type='sdk' e instance: unknown existe em src/types/options.ts",
@@ -138,11 +146,13 @@
     "id": "F-055",
     "name": "queryIntrospectionMethods",
     "description": "Criar src/types/query.ts com tipos: SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult. Adicionar 6 metodos a interface Query: initializationResult(), supportedCommands(), supportedModels(), supportedAgents(), mcpServerStatus(), accountInfo() — todos retornam Promise<T> via sendControlRequest(). Exportar tipos em src/index.ts. Validar: tipos existem, metodos usam sendControlRequest, exports estao corretos.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 8,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-054"],
+    "dependencies": [
+      "F-054"
+    ],
     "tests": [
       "src/types/query.ts existe com SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult",
       "Interface Query declara os 6 metodos de introspeccao retornando Promise",
@@ -174,11 +184,13 @@
     "id": "F-057",
     "name": "operationWithResponse",
     "description": "Adicionar 2 metodos request/response a interface Query: rewindFiles(userMessageId, opts?) retorna Promise<RewindFilesResult> com timeout 30s, setMcpServers(servers) retorna Promise<McpSetServersResult> com timeout 30s. Ambos usam pendingRequests e nextRequestId de F-054. Criar tipos RewindFilesResult e McpSetServersResult em src/types/query.ts. Exportar tipos em src/index.ts. Validar: metodos usam pendingRequests, timeout e 30s, tipos existem.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 10,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-054"],
+    "dependencies": [
+      "F-054"
+    ],
     "tests": [
       "RewindFilesResult e McpSetServersResult existem em src/types/query.ts",
       "rewindFiles envia JSON com type, requestId, userMessageId, dryRun",
@@ -211,11 +223,14 @@
     "id": "F-052",
     "name": "mcpExportsAndDeps",
     "description": "Exportar em src/index.ts: funcoes tool e createSdkMcpServer de ./mcp.js, tipos ToolAnnotations, CallToolResult, SdkMcpToolDefinition de ./mcp.js, tipo McpSdkServerConfig de ./types/options.js. Adicionar peerDependencies opcionais ao package.json: zod >=3.0.0 e @modelcontextprotocol/sdk >=1.0.0 com peerDependenciesMeta optional: true. Validar: exports resolvem, package.json correto.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 12,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-050", "F-051"],
+    "dependencies": [
+      "F-050",
+      "F-051"
+    ],
     "tests": [
       "src/index.ts exporta tool e createSdkMcpServer",
       "src/index.ts exporta tipos ToolAnnotations, CallToolResult, SdkMcpToolDefinition, McpSdkServerConfig",
@@ -251,11 +266,13 @@
     "id": "F-060",
     "name": "resumeSession",
     "description": "Implementar em src/session-v2.ts: interface ResumeSessionOptions (model, registry, options) e funcao resumeSession(sessionId, opts?) que retorna SDKSession. Diferenca de createSession: todos os turnos usam resume: sessionId (inclusive o primeiro). Mesma implementacao de send/collect/close/dispose. Validar: funcao existe, sempre usa resume.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 14,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-059"],
+    "dependencies": [
+      "F-059"
+    ],
     "tests": [
       "resumeSession existe em src/session-v2.ts",
       "ResumeSessionOptions interface existe",
@@ -270,11 +287,13 @@
     "id": "F-061",
     "name": "promptOneShot",
     "description": "Implementar em src/session-v2.ts: interface PromptOptions (model, registry, options) e funcao prompt(text, opts?) que faz query() + collectMessages() e retorna {result, sessionId, costUsd, durationMs}. Exportar em src/index.ts: createSession, resumeSession, prompt (funcoes) e SDKSession, CreateSessionOptions, ResumeSessionOptions, PromptOptions (tipos). Validar: prompt funciona como one-shot, exports corretos.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 15,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-059"],
+    "dependencies": [
+      "F-059"
+    ],
     "tests": [
       "prompt() existe em src/session-v2.ts",
       "PromptOptions interface existe",

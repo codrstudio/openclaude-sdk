@@ -240,6 +240,56 @@ export async function listSessions(
 }
 
 // ---------------------------------------------------------------------------
+// Transcript parsing — internal helpers
+// ---------------------------------------------------------------------------
+
+const TRANSCRIPT_TYPES = new Set(["user", "assistant", "progress", "system", "attachment"])
+
+interface TranscriptEntry {
+  type: string
+  uuid: string
+  parentUuid?: string
+  sessionId?: string
+  message?: unknown
+  isSidechain?: boolean
+  isMeta?: boolean
+  isCompactSummary?: boolean
+  teamName?: string
+}
+
+function parseTranscriptEntries(messages: unknown[]): TranscriptEntry[] {
+  const entries: TranscriptEntry[] = []
+  for (const msg of messages) {
+    const obj = msg as Record<string, unknown>
+    const entryType = obj.type as string | undefined
+    const uuid = obj.uuid as string | undefined
+    if (entryType && TRANSCRIPT_TYPES.has(entryType) && typeof uuid === "string") {
+      entries.push({
+        type: entryType,
+        uuid,
+        parentUuid: typeof obj.parentUuid === "string" ? obj.parentUuid : undefined,
+        sessionId: typeof obj.session_id === "string" ? obj.session_id : undefined,
+        message: obj.message,
+        isSidechain: obj.isSidechain === true,
+        isMeta: obj.isMeta === true,
+        isCompactSummary: obj.isCompactSummary === true,
+        teamName: typeof obj.teamName === "string" ? obj.teamName : undefined,
+      })
+    }
+  }
+  return entries
+}
+
+function isVisibleMessage(entry: TranscriptEntry): boolean {
+  if (entry.type !== "user" && entry.type !== "assistant") return false
+  if (entry.isMeta) return false
+  if (entry.isSidechain) return false
+  if (entry.teamName) return false
+  // isCompactSummary e mantido intencionalmente — contem resumo pos-compactacao
+  return true
+}
+
+// ---------------------------------------------------------------------------
 // getSessionMessages()
 // ---------------------------------------------------------------------------
 
