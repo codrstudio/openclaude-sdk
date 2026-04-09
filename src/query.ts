@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 import type { SDKMessage, SDKSystemMessage, PermissionMode } from "./types/messages.js"
-import type { Options, PermissionResponse } from "./types/options.js"
+import type { Options, PermissionResponse, McpServerConfig } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 import type {
   SlashCommand,
@@ -12,6 +12,8 @@ import type {
   McpServerStatusInfo,
   AccountInfo,
   InitializationResult,
+  RewindFilesResult,
+  McpSetServersResult,
 } from "./types/query.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
 import { resolveModelEnv } from "./registry.js"
@@ -62,6 +64,10 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   toggleMcpServer(serverName: string, enabled: boolean): void
   /** Para uma task especifica */
   stopTask(taskId: string): void
+  /** Reverte arquivos alterados pelo agente a um ponto anterior */
+  rewindFiles(userMessageId: string, opts?: { dryRun?: boolean }): Promise<RewindFilesResult>
+  /** Reconfigura MCP servers mid-session */
+  setMcpServers(servers: Record<string, McpServerConfig>): Promise<McpSetServersResult>
 }
 
 // ---------------------------------------------------------------------------
@@ -228,6 +234,47 @@ export function query(params: {
     },
     stopTask(taskId: string): void {
       writeStdin(JSON.stringify({ type: "stop_task", taskId }) + "\n")
+    },
+    rewindFiles(userMessageId: string, opts?: { dryRun?: boolean }): Promise<RewindFilesResult> {
+      const requestId = nextRequestId()
+      return new Promise<RewindFilesResult>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          pendingRequests.delete(requestId)
+          reject(new Error("rewindFiles timed out after 30s"))
+        }, 30_000)
+
+        pendingRequests.set(requestId, {
+          resolve: (data) => { clearTimeout(timeout); resolve(data as RewindFilesResult) },
+          reject: (err) => { clearTimeout(timeout); reject(err) },
+        })
+
+        writeStdin(JSON.stringify({
+          type: "rewind_files",
+          requestId,
+          userMessageId,
+          dryRun: opts?.dryRun ?? false,
+        }) + "\n")
+      })
+    },
+    setMcpServers(servers: Record<string, McpServerConfig>): Promise<McpSetServersResult> {
+      const requestId = nextRequestId()
+      return new Promise<McpSetServersResult>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          pendingRequests.delete(requestId)
+          reject(new Error("setMcpServers timed out after 30s"))
+        }, 30_000)
+
+        pendingRequests.set(requestId, {
+          resolve: (data) => { clearTimeout(timeout); resolve(data as McpSetServersResult) },
+          reject: (err) => { clearTimeout(timeout); reject(err) },
+        })
+
+        writeStdin(JSON.stringify({
+          type: "set_mcp_servers",
+          requestId,
+          servers,
+        }) + "\n")
+      })
     },
   })
 

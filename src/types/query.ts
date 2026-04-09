@@ -40,3 +40,19 @@ export interface InitializationResult {
   model?: string
   permissionMode?: string
 }
+
+// ---------------------------------------------------------------------------
+// Tipos de operacao com request/response (F-057)
+// ---------------------------------------------------------------------------
+
+export interface RewindFilesResult {
+  rewound: boolean
+  filesReverted?: string[]
+  error?: string
+}
+
+export interface McpSetServersResult {
+  success: boolean
+  servers?: McpServerStatusInfo[]
+  error?: string
+}

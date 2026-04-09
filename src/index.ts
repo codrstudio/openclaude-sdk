@@ -175,6 +175,8 @@ export type {
   McpServerStatusInfo,
   AccountInfo,
   InitializationResult,
+  RewindFilesResult,
+  McpSetServersResult,
 } from "./types/query.js"
 
 // ---------------------------------------------------------------------------
