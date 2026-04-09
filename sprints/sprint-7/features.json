@@ -1,0 +1,290 @@
+[
+  {
+    "id": "F-047",
+    "name": "parseTranscriptEntries",
+    "description": "Implementar em src/sessions.ts: constante TRANSCRIPT_TYPES (Set com 5 tipos), interface TranscriptEntry (type, uuid, parentUuid, sessionId, message, isSidechain, isMeta, isCompactSummary, teamName), funcao parseTranscriptEntries(messages) que filtra entries validas, e funcao isVisibleMessage(entry) que filtra por user/assistant excluindo meta/sidechain/teamName. Todas internas (nao exportadas). Validar: funcoes existem no arquivo, TypeScript compila sem erros.",
+    "status": "pending",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "TRANSCRIPT_TYPES contem exatamente 'user', 'assistant', 'progress', 'system', 'attachment'",
+      "parseTranscriptEntries filtra entries sem uuid ou sem type valido",
+      "isVisibleMessage retorna false para entries com isMeta, isSidechain ou teamName",
+      "isVisibleMessage retorna true para user/assistant sem flags",
+      "Nenhuma funcao e exportada publicamente",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md"
+  },
+  {
+    "id": "F-048",
+    "name": "buildConversationChain",
+    "description": "Implementar em src/sessions.ts: funcao buildConversationChain(entries: TranscriptEntry[]) que reconstroi a main conversation chain via parentUuid. Algoritmo: indexar por uuid, encontrar terminais (uuid nao referenciado como parentUuid), caminhar backward ate leaf user/assistant, filtrar sidechain/team/meta, escolher melhor leaf por posicao no array, caminhar de leaf ate root, reverter para ordem cronologica. Nao seguir logicalParentUuid. Validar: funcao compila, algoritmo produz chain correta.",
+    "status": "pending",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-047"],
+    "tests": [
+      "buildConversationChain([]) retorna []",
+      "Entries sem leaf user/assistant retornam []",
+      "Chain linear simples retorna entries na ordem correta (root -> leaf)",
+      "Sessao com sidechain: apenas main chain e retornada",
+      "Deteccao de ciclos via Set nao causa loop infinito",
+      "Tie-breaking escolhe entry com maior indice no array original",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md"
+  },
+  {
+    "id": "F-049",
+    "name": "integrateChainPipeline",
+    "description": "Substituir o bloco de filtragem ingenua em getSessionMessages() (linhas ~268-291 de src/sessions.ts) pelo pipeline: parseTranscriptEntries(data.messages) -> buildConversationChain(entries) -> chain.filter(isVisibleMessage) -> map para SessionMessage[]. Manter offset/limit existentes operando sobre o resultado. Validar: getSessionMessages retorna mensagens corretas, sessoes simples continuam funcionando.",
+    "status": "pending",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-047", "F-048"],
+    "tests": [
+      "Pipeline parseTranscriptEntries -> buildConversationChain -> filter isVisibleMessage esta integrado",
+      "Bloco antigo de filtragem por type foi removido",
+      "SessionMessage[] resultante tem type, uuid, session_id, message, parent_tool_use_id",
+      "offset e limit continuam funcionando sobre sessionMessages",
+      "npm run typecheck passa sem erros",
+      "npm run build compila sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md"
+  },
+  {
+    "id": "F-054",
+    "name": "controlRequestInfra",
+    "description": "Implementar em src/query.ts dentro do closure de query(): Map pendingRequests para correlacao request/response, funcao nextRequestId() com contador + timestamp, funcao sendControlRequest<T>(commandType) que cria requestId, registra no map, envia via writeStdin e aguarda resposta com timeout 10s. Implementar async generator wrapStream(source, pending) que intercepta mensagens type=control_response com responseId, resolve a Promise correspondente e nao propaga ao consumidor. Aplicar wrapper ao stream antes do Object.assign. Validar: infra compila, stream wrapper filtra control_response.",
+    "status": "pending",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "pendingRequests Map e nextRequestId() existem dentro do closure de query()",
+      "sendControlRequest envia JSON com type e requestId via writeStdin",
+      "sendControlRequest rejeita com timeout apos 10s sem resposta",
+      "wrapStream intercepta mensagens com type=control_response e responseId",
+      "wrapStream nao propaga control_response ao consumidor",
+      "Mensagens normais passam pelo wrapStream sem alteracao",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md"
+  },
+  {
+    "id": "F-053",
+    "name": "queryConfigMethods",
+    "description": "Adicionar 3 metodos fire-and-forget a interface Query em src/query.ts: setModel(model?: string) envia {type: 'set_model', model}, setPermissionMode(mode: PermissionMode) envia {type: 'set_permission_mode', permissionMode}, setMaxThinkingTokens(tokens: number|null) envia {type: 'set_max_thinking_tokens', maxThinkingTokens}. Todos enviam JSON + newline via writeStdin existente. Importar PermissionMode se necessario. Validar: metodos existem na interface e implementacao, JSON enviado esta correto.",
+    "status": "pending",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Interface Query declara setModel, setPermissionMode, setMaxThinkingTokens",
+      "setModel envia JSON {type: 'set_model', model: model ?? null}",
+      "setPermissionMode envia JSON {type: 'set_permission_mode', permissionMode: mode}",
+      "setMaxThinkingTokens envia JSON {type: 'set_max_thinking_tokens', maxThinkingTokens: tokens}",
+      "Todos usam writeStdin(payload + newline)",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md"
+  },
+  {
+    "id": "F-050",
+    "name": "toolFactory",
+    "description": "Criar src/mcp.ts com: interface ToolAnnotations (readOnly, destructive, idempotent, openWorld), interface CallToolResult (content array de text|image, isError), interface SdkMcpToolDefinition<Schema> (name, description, inputSchema Zod, handler async, annotations), e funcao tool<Schema>(name, description, inputSchema, handler, extras?) que retorna SdkMcpToolDefinition com type-safety end-to-end via generics Zod. Validar: arquivo existe, tipos estao corretos, tool() infere Schema.",
+    "status": "pending",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Arquivo src/mcp.ts existe",
+      "ToolAnnotations tem campos readOnly, destructive, idempotent, openWorld",
+      "CallToolResult tem content array e isError opcional",
+      "SdkMcpToolDefinition aceita generic Schema extends z.ZodRawShape",
+      "tool() retorna SdkMcpToolDefinition com type inference do inputSchema",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md"
+  },
+  {
+    "id": "F-051",
+    "name": "createSdkMcpServer",
+    "description": "Implementar createSdkMcpServer(options) em src/mcp.ts que cria McpServer in-process via require() dinamico de @modelcontextprotocol/sdk e zod, registra tools no server, e retorna McpSdkServerConfig {type: 'sdk', instance}. Adicionar interface McpSdkServerConfig em src/types/options.ts na union McpServerConfig. Adicionar guard em buildCliArgs() (src/process.ts) que lanca Error se type=sdk for encontrado. Validar: funcao existe, tipo esta na union, guard impede uso em CLI.",
+    "status": "pending",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-050"],
+    "tests": [
+      "createSdkMcpServer existe em src/mcp.ts",
+      "McpSdkServerConfig com type='sdk' e instance: unknown existe em src/types/options.ts",
+      "McpServerConfig union inclui McpSdkServerConfig",
+      "buildCliArgs lanca Error para mcpServers com type=sdk",
+      "Mensagem de erro menciona que in-process transport nao e suportado",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md"
+  },
+  {
+    "id": "F-055",
+    "name": "queryIntrospectionMethods",
+    "description": "Criar src/types/query.ts com tipos: SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult. Adicionar 6 metodos a interface Query: initializationResult(), supportedCommands(), supportedModels(), supportedAgents(), mcpServerStatus(), accountInfo() — todos retornam Promise<T> via sendControlRequest(). Exportar tipos em src/index.ts. Validar: tipos existem, metodos usam sendControlRequest, exports estao corretos.",
+    "status": "pending",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-054"],
+    "tests": [
+      "src/types/query.ts existe com SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult",
+      "Interface Query declara os 6 metodos de introspeccao retornando Promise",
+      "Implementacao usa sendControlRequest com command types corretos",
+      "Tipos exportados em src/index.ts",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md"
+  },
+  {
+    "id": "F-056",
+    "name": "operationFireAndForget",
+    "description": "Adicionar 3 metodos fire-and-forget a interface Query em src/query.ts: reconnectMcpServer(serverName) envia {type: 'reconnect_mcp_server', serverName}, toggleMcpServer(serverName, enabled) envia {type: 'toggle_mcp_server', serverName, enabled}, stopTask(taskId) envia {type: 'stop_task', taskId}. Todos enviam JSON + newline via writeStdin. Validar: metodos existem e enviam payloads corretos.",
+    "status": "pending",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Interface Query declara reconnectMcpServer, toggleMcpServer, stopTask",
+      "reconnectMcpServer envia JSON com type e serverName",
+      "toggleMcpServer envia JSON com type, serverName, enabled",
+      "stopTask envia JSON com type e taskId",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md"
+  },
+  {
+    "id": "F-057",
+    "name": "operationWithResponse",
+    "description": "Adicionar 2 metodos request/response a interface Query: rewindFiles(userMessageId, opts?) retorna Promise<RewindFilesResult> com timeout 30s, setMcpServers(servers) retorna Promise<McpSetServersResult> com timeout 30s. Ambos usam pendingRequests e nextRequestId de F-054. Criar tipos RewindFilesResult e McpSetServersResult em src/types/query.ts. Exportar tipos em src/index.ts. Validar: metodos usam pendingRequests, timeout e 30s, tipos existem.",
+    "status": "pending",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-054"],
+    "tests": [
+      "RewindFilesResult e McpSetServersResult existem em src/types/query.ts",
+      "rewindFiles envia JSON com type, requestId, userMessageId, dryRun",
+      "setMcpServers envia JSON com type, requestId, servers",
+      "Ambos usam timeout de 30000ms (nao 10000ms)",
+      "Tipos exportados em src/index.ts",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md"
+  },
+  {
+    "id": "F-058",
+    "name": "streamInput",
+    "description": "Adicionar metodo streamInput(stream: AsyncIterable<string>): Promise<void> a interface Query em src/query.ts. Implementacao: itera o AsyncIterable, envia cada chunk como {type: 'stream_input', content: chunk} via writeStdin, ao final envia {type: 'stream_input_end'}. Metodo bloqueante — consome iterable inteiro antes de resolver. Validar: metodo existe, envia chunks e end signal.",
+    "status": "pending",
+    "priority": 11,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Interface Query declara streamInput(stream: AsyncIterable<string>): Promise<void>",
+      "Implementacao itera o AsyncIterable com for await",
+      "Cada chunk enviado como JSON {type: 'stream_input', content: chunk}",
+      "Apos iteracao completa, envia {type: 'stream_input_end'}",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md"
+  },
+  {
+    "id": "F-052",
+    "name": "mcpExportsAndDeps",
+    "description": "Exportar em src/index.ts: funcoes tool e createSdkMcpServer de ./mcp.js, tipos ToolAnnotations, CallToolResult, SdkMcpToolDefinition de ./mcp.js, tipo McpSdkServerConfig de ./types/options.js. Adicionar peerDependencies opcionais ao package.json: zod >=3.0.0 e @modelcontextprotocol/sdk >=1.0.0 com peerDependenciesMeta optional: true. Validar: exports resolvem, package.json correto.",
+    "status": "pending",
+    "priority": 12,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-050", "F-051"],
+    "tests": [
+      "src/index.ts exporta tool e createSdkMcpServer",
+      "src/index.ts exporta tipos ToolAnnotations, CallToolResult, SdkMcpToolDefinition, McpSdkServerConfig",
+      "package.json tem peerDependencies com zod e @modelcontextprotocol/sdk",
+      "peerDependenciesMeta marca ambas como optional: true",
+      "npm run typecheck passa sem erros",
+      "npm run build compila sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md"
+  },
+  {
+    "id": "F-059",
+    "name": "createSession",
+    "description": "Criar src/session-v2.ts com: interface SDKSession (sessionId readonly, send(), collect(), close(), [Symbol.asyncDispose]()), interface CreateSessionOptions (model, registry, options, sessionId), funcao createSession(opts?) que retorna SDKSession. send() usa query() com sessionId no primeiro turno e resume nos subsequentes. collect() usa send() + collectMessages(). close() fecha query ativa. AsyncDisposable via Symbol.asyncDispose. Validar: arquivo existe, interface e implementacao corretas.",
+    "status": "pending",
+    "priority": 13,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "src/session-v2.ts existe",
+      "SDKSession interface tem sessionId, send, collect, close, Symbol.asyncDispose",
+      "createSession() gera UUID se sessionId nao fornecido",
+      "Primeiro send() usa sessionId (cria sessao)",
+      "Segundo send() em diante usa resume: sessionId",
+      "send() fecha query anterior se existir",
+      "collect() retorna messages, result, costUsd, durationMs",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md"
+  },
+  {
+    "id": "F-060",
+    "name": "resumeSession",
+    "description": "Implementar em src/session-v2.ts: interface ResumeSessionOptions (model, registry, options) e funcao resumeSession(sessionId, opts?) que retorna SDKSession. Diferenca de createSession: todos os turnos usam resume: sessionId (inclusive o primeiro). Mesma implementacao de send/collect/close/dispose. Validar: funcao existe, sempre usa resume.",
+    "status": "pending",
+    "priority": 14,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-059"],
+    "tests": [
+      "resumeSession existe em src/session-v2.ts",
+      "ResumeSessionOptions interface existe",
+      "Primeiro send() ja usa resume: sessionId (nao sessionId)",
+      "Todos os turnos subsequentes tambem usam resume",
+      "close() e Symbol.asyncDispose funcionam identicamente a createSession",
+      "npm run typecheck passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md"
+  },
+  {
+    "id": "F-061",
+    "name": "promptOneShot",
+    "description": "Implementar em src/session-v2.ts: interface PromptOptions (model, registry, options) e funcao prompt(text, opts?) que faz query() + collectMessages() e retorna {result, sessionId, costUsd, durationMs}. Exportar em src/index.ts: createSession, resumeSession, prompt (funcoes) e SDKSession, CreateSessionOptions, ResumeSessionOptions, PromptOptions (tipos). Validar: prompt funciona como one-shot, exports corretos.",
+    "status": "pending",
+    "priority": 15,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-059"],
+    "tests": [
+      "prompt() existe em src/session-v2.ts",
+      "PromptOptions interface existe",
+      "prompt() chama query() + collectMessages() internamente",
+      "prompt() retorna {result, sessionId, costUsd, durationMs}",
+      "src/index.ts exporta createSession, resumeSession, prompt",
+      "src/index.ts exporta tipos SDKSession, CreateSessionOptions, ResumeSessionOptions, PromptOptions",
+      "npm run typecheck passa sem erros",
+      "npm run build compila sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md"
+  }
+]
