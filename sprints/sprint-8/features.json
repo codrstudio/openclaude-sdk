@@ -3,7 +3,7 @@
     "id": "F-066",
     "name": "Fix buildConversationChain empty mainLeaves",
     "description": "Corrigir buildConversationChain() em src/sessions.ts para retornar [] quando mainLeaves esta vazio, em vez de fazer fallback para um leaf de sidechain/team/meta. Substituir a linha 'const leaf = mainLeaves.length > 0 ? pickBest(mainLeaves) : pickBest(leaves)' por early return [] quando mainLeaves.length === 0.",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
     "agent": "coder",
     "task": "vibe-code",
@@ -15,7 +15,8 @@
       "Quando todos os leaves sao sidechain: buildConversationChain retorna []",
       "Quando todos os leaves sao team messages: buildConversationChain retorna []"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-029-buildconversationchain-empty-mainleaves.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-029-buildconversationchain-empty-mainleaves.md",
+    "completed_at": "2026-04-09T05:51:09.799Z"
   },
   {
     "id": "F-062",
@@ -79,11 +80,13 @@
     "id": "F-064",
     "name": "README Query operation methods",
     "description": "Adicionar categoria 'Operation Methods' na tabela do Query no README, com 3 sub-categorias: Request/Response (rewindFiles, setMcpServers com timeout 30s), Fire-and-Forget (reconnectMcpServer, toggleMcpServer, stopTask), e Stream (streamInput). Incluir exemplos de rewindFiles() com dryRun e streamInput() com AsyncIterable. Listar tipos exportados.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-063"],
+    "dependencies": [
+      "F-063"
+    ],
     "tests": [
       "Categoria 'Operation Methods' presente na tabela do Query apos 'Introspection Methods'",
       "2 request/response operations documentados (rewindFiles, setMcpServers) com timeout 30s",
