@@ -214,7 +214,7 @@
     "id": "F-058",
     "name": "streamInput",
     "description": "Adicionar metodo streamInput(stream: AsyncIterable<string>): Promise<void> a interface Query em src/query.ts. Implementacao: itera o AsyncIterable, envia cada chunk como {type: 'stream_input', content: chunk} via writeStdin, ao final envia {type: 'stream_input_end'}. Metodo bloqueante â€” consome iterable inteiro antes de resolver. Validar: metodo existe, envia chunks e end signal.",
-    "status": "pending",
+    "status": "passing",
     "priority": 11,
     "agent": "coder",
     "task": "vibe-code",
@@ -226,7 +226,8 @@
       "Apos iteracao completa, envia {type: 'stream_input_end'}",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
+    "completed_at": "2026-04-09T09:00:00Z"
   },
   {
     "id": "F-052",

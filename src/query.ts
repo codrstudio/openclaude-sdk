@@ -68,6 +68,8 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   rewindFiles(userMessageId: string, opts?: { dryRun?: boolean }): Promise<RewindFilesResult>
   /** Reconfigura MCP servers mid-session */
   setMcpServers(servers: Record<string, McpServerConfig>): Promise<McpSetServersResult>
+  /** Envia um stream de texto chunk a chunk via stdin, bloqueante ate consumir iterable inteiro */
+  streamInput(stream: AsyncIterable<string>): Promise<void>
 }
 
 // ---------------------------------------------------------------------------
@@ -275,6 +277,12 @@ export function query(params: {
           servers,
         }) + "\n")
       })
+    },
+    async streamInput(stream: AsyncIterable<string>): Promise<void> {
+      for await (const chunk of stream) {
+        writeStdin(JSON.stringify({ type: "stream_input", content: chunk }) + "\n")
+      }
+      writeStdin(JSON.stringify({ type: "stream_input_end" }) + "\n")
     },
   })
 
