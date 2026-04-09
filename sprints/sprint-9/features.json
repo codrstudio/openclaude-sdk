@@ -168,10 +168,11 @@
     "id": "F-075",
     "name": "readmeQueryOperations",
     "description": "Expandir tabela do Query no README.md com duas sub-seções: Introspection Methods (6: initializationResult, supportedCommands, supportedModels, supportedAgents, mcpServerStatus, accountInfo) e Operation Methods (6: reconnectMcpServer, toggleMcpServer, stopTask, rewindFiles, setMcpServers, streamInput). Adicionar exemplo de mcpServerStatus(). Mencionar tipos exportados.",
-    "status": "pending",
+    "status": "passing",
     "priority": 9,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:08:00Z",
     "dependencies": [],
     "tests": [
       "README contém sub-seção de Introspection Methods com 6 métodos listados",
