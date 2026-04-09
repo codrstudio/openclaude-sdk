@@ -110,7 +110,7 @@
     "id": "F-050",
     "name": "toolFactory",
     "description": "Criar src/mcp.ts com: interface ToolAnnotations (readOnly, destructive, idempotent, openWorld), interface CallToolResult (content array de text|image, isError), interface SdkMcpToolDefinition<Schema> (name, description, inputSchema Zod, handler async, annotations), e funcao tool<Schema>(name, description, inputSchema, handler, extras?) que retorna SdkMcpToolDefinition com type-safety end-to-end via generics Zod. Validar: arquivo existe, tipos estao corretos, tool() infere Schema.",
-    "status": "pending",
+    "status": "passing",
     "priority": 6,
     "agent": "coder",
     "task": "vibe-code",
@@ -123,13 +123,14 @@
       "tool() retorna SdkMcpToolDefinition com type inference do inputSchema",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
+    "completed_at": "2026-04-09T07:15:00.000Z"
   },
   {
     "id": "F-051",
     "name": "createSdkMcpServer",
     "description": "Implementar createSdkMcpServer(options) em src/mcp.ts que cria McpServer in-process via require() dinamico de @modelcontextprotocol/sdk e zod, registra tools no server, e retorna McpSdkServerConfig {type: 'sdk', instance}. Adicionar interface McpSdkServerConfig em src/types/options.ts na union McpServerConfig. Adicionar guard em buildCliArgs() (src/process.ts) que lanca Error se type=sdk for encontrado. Validar: funcao existe, tipo esta na union, guard impede uso em CLI.",
-    "status": "blocked",
+    "status": "pending",
     "priority": 7,
     "agent": "coder",
     "task": "vibe-code",
