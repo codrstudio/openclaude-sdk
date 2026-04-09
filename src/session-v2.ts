@@ -55,9 +55,13 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
         activeQuery.close()
       }
 
+      // Strip session-control fields to prevent conflicts with internal management
+      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = opts.options ?? {}
+      const { resume: _r2, sessionId: _s2, continue: _c2, ...safeTurnOptions } = turnOptions ?? {}
+
       const mergedOptions: Options = {
-        ...opts.options,
-        ...turnOptions,
+        ...safeBaseOptions,
+        ...safeTurnOptions,
       }
 
       if (isFirstTurn) {
@@ -128,9 +132,13 @@ export function resumeSession(
         activeQuery.close()
       }
 
+      // Strip session-control fields to prevent conflicts with internal management
+      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = opts.options ?? {}
+      const { resume: _r2, sessionId: _s2, continue: _c2, ...safeTurnOptions } = turnOptions ?? {}
+
       const mergedOptions: Options = {
-        ...opts.options,
-        ...turnOptions,
+        ...safeBaseOptions,
+        ...safeTurnOptions,
         resume: sessionId,
       }
 
