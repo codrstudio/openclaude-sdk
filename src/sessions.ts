@@ -240,6 +240,135 @@ export async function listSessions(
 }
 
 // ---------------------------------------------------------------------------
+// Transcript parsing — internal helpers
+// ---------------------------------------------------------------------------
+
+const TRANSCRIPT_TYPES = new Set(["user", "assistant", "progress", "system", "attachment"])
+
+interface TranscriptEntry {
+  type: string
+  uuid: string
+  parentUuid?: string
+  sessionId?: string
+  message?: unknown
+  isSidechain?: boolean
+  isMeta?: boolean
+  isCompactSummary?: boolean
+  teamName?: string
+}
+
+function parseTranscriptEntries(messages: unknown[]): TranscriptEntry[] {
+  const entries: TranscriptEntry[] = []
+  for (const msg of messages) {
+    const obj = msg as Record<string, unknown>
+    const entryType = obj.type as string | undefined
+    const uuid = obj.uuid as string | undefined
+    if (entryType && TRANSCRIPT_TYPES.has(entryType) && typeof uuid === "string") {
+      entries.push({
+        type: entryType,
+        uuid,
+        parentUuid: typeof obj.parentUuid === "string" ? obj.parentUuid : undefined,
+        sessionId: typeof obj.session_id === "string" ? obj.session_id : undefined,
+        message: obj.message,
+        isSidechain: obj.isSidechain === true,
+        isMeta: obj.isMeta === true,
+        isCompactSummary: obj.isCompactSummary === true,
+        teamName: typeof obj.teamName === "string" ? obj.teamName : undefined,
+      })
+    }
+  }
+  return entries
+}
+
+function isVisibleMessage(entry: TranscriptEntry): boolean {
+  if (entry.type !== "user" && entry.type !== "assistant") return false
+  if (entry.isMeta) return false
+  if (entry.isSidechain) return false
+  if (entry.teamName) return false
+  // isCompactSummary e mantido intencionalmente — contem resumo pos-compactacao
+  return true
+}
+
+function buildConversationChain(entries: TranscriptEntry[]): TranscriptEntry[] {
+  if (entries.length === 0) return []
+
+  // Indexar por uuid para O(1) lookup
+  const byUuid = new Map<string, TranscriptEntry>()
+  for (const entry of entries) {
+    byUuid.set(entry.uuid, entry)
+  }
+
+  // Indexar posicao no arquivo para tie-breaking
+  const entryIndex = new Map<string, number>()
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i]
+    if (e) entryIndex.set(e.uuid, i)
+  }
+
+  // Encontrar terminais: entries cujo uuid nao aparece como parentUuid de nenhuma outra
+  const parentUuids = new Set<string>()
+  for (const entry of entries) {
+    if (entry.parentUuid) parentUuids.add(entry.parentUuid)
+  }
+  const terminals = entries.filter((e) => !parentUuids.has(e.uuid))
+
+  // De cada terminal, caminhar backward para encontrar leaf user/assistant
+  const leaves: TranscriptEntry[] = []
+  for (const terminal of terminals) {
+    let cur: TranscriptEntry | undefined = terminal
+    const seen = new Set<string>()
+    while (cur) {
+      if (seen.has(cur.uuid)) break
+      seen.add(cur.uuid)
+      if (cur.type === "user" || cur.type === "assistant") {
+        leaves.push(cur)
+        break
+      }
+      cur = cur.parentUuid ? byUuid.get(cur.parentUuid) : undefined
+    }
+  }
+
+  if (leaves.length === 0) return []
+
+  // Filtrar leaves da main chain (nao sidechain, nao team, nao meta)
+  const mainLeaves = leaves.filter(
+    (leaf) => !leaf.isSidechain && !leaf.teamName && !leaf.isMeta,
+  )
+
+  // Escolher o melhor leaf (maior posicao no arquivo)
+  function pickBest(candidates: TranscriptEntry[]): TranscriptEntry {
+    let best: TranscriptEntry = candidates[0]!
+    let bestIdx = entryIndex.get(best.uuid) ?? -1
+    for (let i = 1; i < candidates.length; i++) {
+      const candidate = candidates[i]!
+      const curIdx = entryIndex.get(candidate.uuid) ?? -1
+      if (curIdx > bestIdx) {
+        best = candidate
+        bestIdx = curIdx
+      }
+    }
+    return best
+  }
+
+  const leaf = mainLeaves.length > 0 ? pickBest(mainLeaves) : pickBest(leaves)
+
+  // Caminhar de leaf ate root via parentUuid
+  const chain: TranscriptEntry[] = []
+  const chainSeen = new Set<string>()
+  let cur: TranscriptEntry | undefined = leaf
+  while (cur) {
+    if (chainSeen.has(cur.uuid)) break
+    chainSeen.add(cur.uuid)
+    chain.push(cur)
+    cur = cur.parentUuid ? byUuid.get(cur.parentUuid) : undefined
+  }
+
+  // Reverter para ordem cronologica (root -> leaf)
+  chain.reverse()
+  return chain
+}
+
+// ---------------------------------------------------------------------------
 // getSessionMessages()
 // ---------------------------------------------------------------------------
 
@@ -265,21 +394,17 @@ export async function getSessionMessages(
     return []
   }
 
-  const sessionMessages: SessionMessage[] = data.messages
-    .filter((m) => {
-      const obj = m as { type?: string }
-      return obj.type === "user" || obj.type === "assistant"
-    })
-    .map((m) => {
-      const obj = m as Record<string, unknown>
-      return {
-        type: obj.type as "user" | "assistant",
-        uuid: (obj.uuid as string) || "",
-        session_id: (obj.session_id as string) || sessionId,
-        message: obj.message,
-        parent_tool_use_id: null,
-      }
-    })
+  const entries = parseTranscriptEntries(data.messages)
+  const chain = buildConversationChain(entries)
+  const sessionMessages: SessionMessage[] = chain
+    .filter(isVisibleMessage)
+    .map((entry) => ({
+      type: entry.type as "user" | "assistant",
+      uuid: entry.uuid,
+      session_id: entry.sessionId ?? sessionId,
+      message: entry.message,
+      parent_tool_use_id: null,
+    }))
 
   const offset = options.offset ?? 0
   const sliced = sessionMessages.slice(offset)

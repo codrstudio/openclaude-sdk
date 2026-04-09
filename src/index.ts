@@ -6,6 +6,10 @@
 export { query, collectMessages, continueSession } from "./query.js"
 export type { Query } from "./query.js"
 
+// MCP tool factories
+export { tool, createSdkMcpServer } from "./mcp.js"
+export type { ToolAnnotations, CallToolResult, SdkMcpToolDefinition } from "./mcp.js"
+
 // Errors
 export {
   OpenClaudeError,
@@ -99,6 +103,7 @@ export type {
   McpStdioServerConfig,
   McpSSEServerConfig,
   McpHttpServerConfig,
+  McpSdkServerConfig,
   PermissionResult,
   PermissionUpdate,
   PermissionBehavior,
@@ -165,6 +170,21 @@ export type {
 } from "./types/tools.js"
 
 // ---------------------------------------------------------------------------
+// Tipos — Query introspection
+// ---------------------------------------------------------------------------
+
+export type {
+  SlashCommand,
+  ModelInfo,
+  AgentInfo,
+  McpServerStatusInfo,
+  AccountInfo,
+  InitializationResult,
+  RewindFilesResult,
+  McpSetServersResult,
+} from "./types/query.js"
+
+// ---------------------------------------------------------------------------
 // Tipos — Sessions
 // ---------------------------------------------------------------------------
 
@@ -176,3 +196,15 @@ export type {
   SessionMutationOptions,
   SessionMessage,
 } from "./types/sessions.js"
+
+// ---------------------------------------------------------------------------
+// V2 Session API
+// ---------------------------------------------------------------------------
+
+export { createSession, resumeSession, prompt } from "./session-v2.js"
+export type {
+  SDKSession,
+  CreateSessionOptions,
+  ResumeSessionOptions,
+  PromptOptions,
+} from "./session-v2.js"

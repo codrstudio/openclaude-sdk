@@ -26,10 +26,16 @@ export type AgentMcpServerSpec = string | Record<string, McpServerConfig>
 // MCP Server Config
 // ---------------------------------------------------------------------------
 
+export interface McpSdkServerConfig {
+  type: "sdk"
+  instance: unknown // McpServer de @modelcontextprotocol/sdk — tipo opaco para evitar dep direta
+}
+
 export type McpServerConfig =
   | McpStdioServerConfig
   | McpSSEServerConfig
   | McpHttpServerConfig
+  | McpSdkServerConfig
 
 export interface McpStdioServerConfig {
   type?: "stdio"
