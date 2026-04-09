@@ -196,3 +196,15 @@ export type {
   SessionMutationOptions,
   SessionMessage,
 } from "./types/sessions.js"
+
+// ---------------------------------------------------------------------------
+// V2 Session API
+// ---------------------------------------------------------------------------
+
+export { createSession, resumeSession, prompt } from "./session-v2.js"
+export type {
+  SDKSession,
+  CreateSessionOptions,
+  ResumeSessionOptions,
+  PromptOptions,
+} from "./session-v2.js"

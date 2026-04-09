@@ -256,7 +256,7 @@
     "id": "F-059",
     "name": "createSession",
     "description": "Criar src/session-v2.ts com: interface SDKSession (sessionId readonly, send(), collect(), close(), [Symbol.asyncDispose]()), interface CreateSessionOptions (model, registry, options, sessionId), funcao createSession(opts?) que retorna SDKSession. send() usa query() com sessionId no primeiro turno e resume nos subsequentes. collect() usa send() + collectMessages(). close() fecha query ativa. AsyncDisposable via Symbol.asyncDispose. Validar: arquivo existe, interface e implementacao corretas.",
-    "status": "pending",
+    "status": "passing",
     "priority": 13,
     "agent": "coder",
     "task": "vibe-code",
@@ -271,13 +271,14 @@
       "collect() retorna messages, result, costUsd, durationMs",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
+    "completed_at": "2026-04-09T10:00:00.000Z"
   },
   {
     "id": "F-060",
     "name": "resumeSession",
     "description": "Implementar em src/session-v2.ts: interface ResumeSessionOptions (model, registry, options) e funcao resumeSession(sessionId, opts?) que retorna SDKSession. Diferenca de createSession: todos os turnos usam resume: sessionId (inclusive o primeiro). Mesma implementacao de send/collect/close/dispose. Validar: funcao existe, sempre usa resume.",
-    "status": "blocked",
+    "status": "passing",
     "priority": 14,
     "agent": "coder",
     "task": "vibe-code",
@@ -292,13 +293,14 @@
       "close() e Symbol.asyncDispose funcionam identicamente a createSession",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
+    "completed_at": "2026-04-09T10:00:00.000Z"
   },
   {
     "id": "F-061",
     "name": "promptOneShot",
     "description": "Implementar em src/session-v2.ts: interface PromptOptions (model, registry, options) e funcao prompt(text, opts?) que faz query() + collectMessages() e retorna {result, sessionId, costUsd, durationMs}. Exportar em src/index.ts: createSession, resumeSession, prompt (funcoes) e SDKSession, CreateSessionOptions, ResumeSessionOptions, PromptOptions (tipos). Validar: prompt funciona como one-shot, exports corretos.",
-    "status": "blocked",
+    "status": "passing",
     "priority": 15,
     "agent": "coder",
     "task": "vibe-code",
@@ -315,6 +317,7 @@
       "npm run typecheck passa sem erros",
       "npm run build compila sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
+    "completed_at": "2026-04-09T10:00:00.000Z"
   }
 ]
