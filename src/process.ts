@@ -244,6 +244,9 @@ export function spawnAndStream(
     if (proc.stdout) {
       const rl = createInterface({ input: proc.stdout })
 
+      let jsonBuffer = ""
+      const MAX_BUFFER_SIZE = 1_048_576 // 1MB
+
       try {
         for await (const line of rl) {
           if (options.signal?.aborted) break
@@ -251,12 +254,23 @@ export function spawnAndStream(
           const trimmed = line.trim()
           if (!trimmed) continue
 
+          // Skip non-JSON lines when not mid-parse (e.g. [SandboxDebug])
+          if (!jsonBuffer && !trimmed.startsWith("{")) continue
+
+          jsonBuffer += trimmed
+
+          if (jsonBuffer.length > MAX_BUFFER_SIZE) {
+            jsonBuffer = ""
+            throw new Error(`JSON message exceeded max buffer size of ${MAX_BUFFER_SIZE} bytes`)
+          }
+
           try {
-            const parsed = JSON.parse(trimmed) as SDKMessage
+            const parsed = JSON.parse(jsonBuffer) as SDKMessage
+            jsonBuffer = ""
             yield parsed
-          } catch (err) {
-            if (err instanceof SyntaxError) continue
-            throw err
+          } catch {
+            // Partial JSON — continue accumulating
+            continue
           }
         }
       } catch (err) {
