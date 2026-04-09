@@ -180,6 +180,59 @@ export function buildCliArgs(options: Options = {}): string[] {
 }
 
 // ---------------------------------------------------------------------------
+// Helper: split de JSONs concatenados na mesma linha
+// ---------------------------------------------------------------------------
+
+function splitConcatenatedJson(text: string): object[] | null {
+  const objects: object[] = []
+  let depth = 0
+  let start = 0
+  let inString = false
+  let escaped = false
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]
+
+    if (escaped) {
+      escaped = false
+      continue
+    }
+
+    if (ch === "\\") {
+      escaped = true
+      continue
+    }
+
+    if (ch === '"') {
+      inString = !inString
+      continue
+    }
+
+    if (inString) continue
+
+    if (ch === "{") {
+      if (depth === 0) start = i
+      depth++
+    } else if (ch === "}") {
+      depth--
+      if (depth === 0) {
+        const slice = text.slice(start, i + 1)
+        try {
+          objects.push(JSON.parse(slice))
+        } catch {
+          return null // parse failure — not valid concatenated JSON
+        }
+      }
+    }
+  }
+
+  // If depth != 0, text contains incomplete JSON
+  if (depth !== 0) return null
+
+  return objects.length > 1 ? objects : null
+}
+
+// ---------------------------------------------------------------------------
 // Spawn do processo e stream de eventos JSONL
 // ---------------------------------------------------------------------------
 
@@ -347,8 +400,15 @@ export function spawnAndStream(
             jsonBuffer = ""
             yield parsed
           } catch {
-            // Partial JSON — continue accumulating
-            continue
+            // Try splitting concatenated JSONs before continuing accumulation
+            const parts = splitConcatenatedJson(jsonBuffer)
+            if (parts) {
+              jsonBuffer = ""
+              for (const obj of parts) {
+                yield obj as SDKMessage
+              }
+            }
+            // else: partial JSON — continue accumulating
           }
         }
       } catch (err) {
