@@ -16,12 +16,33 @@ export function resolveExecutable(options?: Options): {
   prependArgs: string[]
 } {
   const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const extraArgs = options?.executableArgs ?? []
 
+  // Explicit executable: use it as command, base path as first script argument
+  if (options?.executable) {
+    const exe = options.executable // "bun" | "deno" | "node"
+
+    if (process.platform === "win32") {
+      return {
+        command: process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe",
+        prependArgs: ["/c", exe, ...extraArgs, base],
+      }
+    }
+
+    return { command: exe, prependArgs: [...extraArgs, base] }
+  }
+
+  // Default: use base path directly
   if (process.platform === "win32") {
     return {
       command: process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe",
-      prependArgs: ["/c", base],
+      prependArgs: ["/c", ...extraArgs, base],
     }
+  }
+
+  // executableArgs without explicit executable: prepend before base
+  if (extraArgs.length > 0) {
+    return { command: base, prependArgs: [...extraArgs] }
   }
 
   return { command: base, prependArgs: [] }
@@ -78,8 +99,13 @@ export function buildCliArgs(options: Options = {}): string[] {
   if (options.systemPrompt) {
     if (typeof options.systemPrompt === "string") {
       args.push("--system-prompt", options.systemPrompt)
-    } else if (options.systemPrompt.append) {
-      args.push("--append-system-prompt", options.systemPrompt.append)
+    } else {
+      if ("type" in options.systemPrompt && options.systemPrompt.type === "preset") {
+        args.push("--system-prompt-preset", options.systemPrompt.preset)
+      }
+      if (options.systemPrompt.append) {
+        args.push("--append-system-prompt", options.systemPrompt.append)
+      }
     }
   }
 
@@ -125,10 +151,8 @@ export function buildCliArgs(options: Options = {}): string[] {
   }
 
   // Thinking
-  if (options.thinking?.type === "enabled") {
-    args.push("--thinking", "enabled")
-  } else if (options.thinking?.type === "disabled") {
-    args.push("--thinking", "disabled")
+  if (options.thinking?.type) {
+    args.push("--thinking", options.thinking.type)
   }
 
   // Max budget
@@ -139,6 +163,70 @@ export function buildCliArgs(options: Options = {}): string[] {
   // Debug
   if (options.debug) {
     args.push("--debug")
+  }
+
+  // Agent
+  if (options.agent) {
+    args.push("--agent", options.agent)
+  }
+
+  // Agents config
+  if (options.agents && Object.keys(options.agents).length > 0) {
+    args.push("--agents-config", JSON.stringify(options.agents))
+  }
+
+  // Fallback model
+  if (options.fallbackModel) {
+    args.push("--fallback-model", options.fallbackModel)
+  }
+
+  // Fork session
+  if (options.forkSession) {
+    args.push("--fork-session")
+  }
+
+  // Include partial messages
+  if (options.includePartialMessages) {
+    args.push("--include-partial-messages")
+  }
+
+  // Max thinking tokens
+  if (options.maxThinkingTokens != null) {
+    args.push("--max-thinking-tokens", String(options.maxThinkingTokens))
+  }
+
+  // Permission prompt tool name
+  if (options.permissionPromptToolName) {
+    args.push("--permission-prompt-tool-name", options.permissionPromptToolName)
+  }
+
+  // Persist session
+  if (options.persistSession) {
+    args.push("--persist-session")
+  }
+
+  // Prompt suggestions (inverted: false means --no-prompt-suggestions)
+  if (options.promptSuggestions === false) {
+    args.push("--no-prompt-suggestions")
+  }
+
+  // Resume session at
+  if (options.resumeSessionAt) {
+    args.push("--resume-session-at", options.resumeSessionAt)
+  }
+
+  // Setting sources
+  if (options.settingSources && options.settingSources.length > 0) {
+    args.push("--setting-sources", options.settingSources.join(","))
+  }
+
+  // Tools
+  if (options.tools) {
+    if (Array.isArray(options.tools)) {
+      args.push("--tools", options.tools.join(","))
+    } else if (options.tools.type === "preset") {
+      args.push("--tools-preset", options.tools.preset)
+    }
   }
 
   // MCP Servers
@@ -159,6 +247,11 @@ export function buildCliArgs(options: Options = {}): string[] {
       } else if (config.type === "sse" || config.type === "http") {
         const remote = config as McpSSEServerConfig | McpHttpServerConfig
         args.push("--mcp-server-sse", `${name}:${remote.url}`)
+        if (remote.headers) {
+          for (const [headerName, headerValue] of Object.entries(remote.headers)) {
+            args.push("--mcp-server-header", `${name}:${headerName}:${headerValue}`)
+          }
+        }
       }
     }
   }
@@ -177,6 +270,59 @@ export function buildCliArgs(options: Options = {}): string[] {
 }
 
 // ---------------------------------------------------------------------------
+// Helper: split de JSONs concatenados na mesma linha
+// ---------------------------------------------------------------------------
+
+function splitConcatenatedJson(text: string): object[] | null {
+  const objects: object[] = []
+  let depth = 0
+  let start = 0
+  let inString = false
+  let escaped = false
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]
+
+    if (escaped) {
+      escaped = false
+      continue
+    }
+
+    if (ch === "\\") {
+      escaped = true
+      continue
+    }
+
+    if (ch === '"') {
+      inString = !inString
+      continue
+    }
+
+    if (inString) continue
+
+    if (ch === "{") {
+      if (depth === 0) start = i
+      depth++
+    } else if (ch === "}") {
+      depth--
+      if (depth === 0) {
+        const slice = text.slice(start, i + 1)
+        try {
+          objects.push(JSON.parse(slice))
+        } catch {
+          return null // parse failure — not valid concatenated JSON
+        }
+      }
+    }
+  }
+
+  // If depth != 0, text contains incomplete JSON
+  if (depth !== 0) return null
+
+  return objects.length > 1 ? objects : null
+}
+
+// ---------------------------------------------------------------------------
 // Spawn do processo e stream de eventos JSONL
 // ---------------------------------------------------------------------------
 
@@ -190,6 +336,7 @@ export function spawnAndStream(
     signal?: AbortSignal
     timeoutMs?: number
     permissionMode?: string
+    maxBufferSize?: number
   } = {},
 ): {
   stream: AsyncGenerator<SDKMessage>
@@ -320,7 +467,7 @@ export function spawnAndStream(
       const rl = createInterface({ input: proc.stdout })
 
       let jsonBuffer = ""
-      const MAX_BUFFER_SIZE = 1_048_576 // 1MB
+      const MAX_BUFFER_SIZE = options.maxBufferSize ?? 1_048_576
 
       try {
         for await (const line of rl) {
@@ -344,8 +491,15 @@ export function spawnAndStream(
             jsonBuffer = ""
             yield parsed
           } catch {
-            // Partial JSON — continue accumulating
-            continue
+            // Try splitting concatenated JSONs before continuing accumulation
+            const parts = splitConcatenatedJson(jsonBuffer)
+            if (parts) {
+              jsonBuffer = ""
+              for (const obj of parts) {
+                yield obj as SDKMessage
+              }
+            }
+            // else: partial JSON — continue accumulating
           }
         }
       } catch (err) {

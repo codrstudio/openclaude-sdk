@@ -85,19 +85,20 @@ interface RunningServer {
 
 async function startSdkServers(
   mcpServers: Record<string, import("./types/options.js").McpServerConfig>,
-): Promise<RunningServer[]> {
+): Promise<{ running: RunningServer[]; portMap: Map<string, number> }> {
   const running: RunningServer[] = []
+  const portMap = new Map<string, number>()
 
   for (const [name, config] of Object.entries(mcpServers)) {
     if (config.type !== "sdk") continue
 
     const sdkConfig = config as McpSdkServerConfig
     const { port, close } = await startSdkServerTransport(sdkConfig)
-    sdkConfig._localPort = port
+    portMap.set(name, port)
     running.push({ name, close })
   }
 
-  return running
+  return { running, portMap }
 }
 
 async function stopSdkServers(servers: RunningServer[]): Promise<void> {
@@ -205,13 +206,28 @@ export function query(params: {
 
   async function* lifecycleGenerator(): AsyncGenerator<SDKMessage, void> {
     try {
-      // Start SDK servers and assign _localPort before building CLI args
+      // Start SDK servers and build a local copy with _localPort injected (never mutate the original)
+      let optionsForCli = resolvedOptions
       if (resolvedOptions.mcpServers) {
-        runningServers = await startSdkServers(resolvedOptions.mcpServers)
+        const { running, portMap } = await startSdkServers(resolvedOptions.mcpServers)
+        runningServers = running
+
+        if (portMap.size > 0) {
+          const patchedServers: Record<string, import("./types/options.js").McpServerConfig> = {}
+          for (const [name, config] of Object.entries(resolvedOptions.mcpServers)) {
+            const port = portMap.get(name)
+            if (port != null && config.type === "sdk") {
+              patchedServers[name] = { ...config, _localPort: port } as McpSdkServerConfig
+            } else {
+              patchedServers[name] = config
+            }
+          }
+          optionsForCli = { ...resolvedOptions, mcpServers: patchedServers }
+        }
       }
 
-      // Build CLI args after _localPort is set on SDK server configs
-      const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
+      // Build CLI args using the local copy with ports injected
+      const args = [...prependArgs, ...buildCliArgs(optionsForCli)]
 
       // Spawn CLI process
       const { stream, writeStdin, close: closeProc } = spawnAndStream(command, args, prompt, {
@@ -220,6 +236,7 @@ export function query(params: {
         signal: abortController.signal,
         permissionMode: resolvedOptions.permissionMode,
         timeoutMs: resolvedOptions.timeoutMs,
+        maxBufferSize: resolvedOptions.maxBufferSize,
       })
 
       writeStdinRef = writeStdin

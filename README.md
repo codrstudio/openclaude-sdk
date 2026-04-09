@@ -958,3 +958,116 @@ import type {
   CallToolResult,
 } from "openclaude-sdk"
 ```
+
+## External MCP Servers
+
+Além de MCP tool factories (inline), o SDK suporta conexão a servidores MCP externos via stdio, SSE e HTTP através do campo `mcpServers` em `Options`.
+
+### Servidor stdio (processo local)
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Search for TypeScript best practices",
+  options: {
+    mcpServers: {
+      "brave-search": {
+        type: "stdio",
+        command: "npx",
+        args: ["-y", "@anthropic-ai/brave-search-mcp"],
+        env: { BRAVE_API_KEY: process.env.BRAVE_API_KEY! },
+      },
+    },
+  },
+})
+```
+
+### Servidor SSE com autenticação
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "List recent deployments",
+  options: {
+    mcpServers: {
+      "deploy-api": {
+        type: "sse",
+        url: "https://mcp.example.com/sse",
+        headers: {
+          Authorization: `Bearer ${process.env.API_TOKEN}`,
+        },
+      },
+    },
+  },
+})
+```
+
+### Servidor HTTP com header de API
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Query the database",
+  options: {
+    mcpServers: {
+      "db-server": {
+        type: "http",
+        url: "https://mcp.example.com/mcp",
+        headers: {
+          "X-API-Key": process.env.DB_API_KEY!,
+        },
+      },
+    },
+  },
+})
+```
+
+### Combinando servidores inline e externos
+
+```typescript
+import { query, tool, createSdkMcpServer } from "openclaude-sdk"
+import { z } from "zod"
+
+// Servidor inline (in-process)
+const myTools = await createSdkMcpServer({
+  name: "my-tools",
+  tools: [
+    tool("greet", "Greet a user", { name: z.string() }, async ({ name }) => ({
+      content: [{ type: "text", text: `Hello, ${name}!` }],
+    })),
+  ],
+})
+
+const q = query({
+  prompt: "Search for news and greet the user",
+  options: {
+    mcpServers: {
+      // Servidor externo via stdio
+      "brave-search": {
+        type: "stdio",
+        command: "npx",
+        args: ["-y", "@anthropic-ai/brave-search-mcp"],
+        env: { BRAVE_API_KEY: process.env.BRAVE_API_KEY! },
+      },
+      // Servidor inline SDK
+      "my-tools": myTools,
+    },
+  },
+})
+```
+
+### Tipos de servidor
+
+| Tipo | Interface | Campos | Uso |
+|------|-----------|--------|-----|
+| `stdio` | `McpStdioServerConfig` | `command`, `args?`, `env?` | Servidores locais via stdin/stdout |
+| `sse` | `McpSSEServerConfig` | `url`, `headers?` | Servidores remotos via Server-Sent Events |
+| `http` | `McpHttpServerConfig` | `url`, `headers?` | Servidores remotos via HTTP |
+| `sdk` | `McpSdkServerConfig` | `name`, `instance` | Servidores inline (via `createSdkMcpServer()`) |
+
+### Variáveis de ambiente em servidores stdio
+
+O campo `env` de um servidor stdio é mesclado ao ambiente do processo filho — as variáveis do processo pai (`process.env`) já estão disponíveis automaticamente. Use `env` para adicionar ou sobrescrever variáveis específicas do servidor, como chaves de API.

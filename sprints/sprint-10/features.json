@@ -1,0 +1,214 @@
+[
+  {
+    "id": "F-086",
+    "name": "fixZodPeerDep",
+    "description": "Alterar peerDependencies.zod de '>=3.0.0' para '>=4.0.0' em package.json para alinhar com devDependencies zod@^4.3.6. Contrato de pacote quebrado: usuarios com Zod v3 enfrentam incompatibilidades de tipo ao usar tool() sem warning do package manager.",
+    "status": "passing",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "peerDependencies.zod em package.json e '>=4.0.0'",
+      "devDependencies.zod permanece '^4.3.6' (nao alterado)",
+      "Typecheck (npm run typecheck) passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md",
+    "completed_at": "2026-04-09T15:30:00.000Z"
+  },
+  {
+    "id": "F-081",
+    "name": "fixSharedConfigMutation",
+    "description": "startSdkServers() retorna portMap (Map<string, number>) em vez de mutar _localPort no objeto original. lifecycleGenerator() cria copia local dos McpSdkServerConfig com portas injetadas apenas na copia, passando optionsForCli para buildCliArgs(). Objeto original do usuario nunca e mutado.",
+    "status": "passing",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "startSdkServers() retorna { running, portMap } em vez de RunningServer[]",
+      "lifecycleGenerator() cria optionsForCli com _localPort injetado apenas na copia",
+      "buildCliArgs() recebe optionsForCli (nao resolvedOptions diretamente)",
+      "Objeto McpSdkServerConfig original do usuario nao contem _localPort apos query"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md",
+    "completed_at": "2026-04-09T16:00:00.000Z"
+  },
+  {
+    "id": "F-078",
+    "name": "mapSystemPromptPreset",
+    "description": "Tratar systemPrompt: { type: 'preset', preset: 'claude_code' } em buildCliArgs() gerando --system-prompt-preset. Preset e append NAO sao mutuamente exclusivos — ambas as flags podem ser geradas simultaneamente.",
+    "status": "passing",
+    "completed_at": "2026-04-09T17:00:00.000Z",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "buildCliArgs({ systemPrompt: { type: 'preset', preset: 'claude_code' } }) inclui '--system-prompt-preset claude_code'",
+      "buildCliArgs({ systemPrompt: { type: 'preset', preset: 'claude_code', append: 'Be concise' } }) inclui '--system-prompt-preset claude_code' E '--append-system-prompt Be concise'",
+      "buildCliArgs({ systemPrompt: 'custom' }) continua gerando '--system-prompt custom' (regressao)",
+      "buildCliArgs({ systemPrompt: { append: 'extra' } }) continua gerando '--append-system-prompt extra' sem preset (regressao)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+  },
+  {
+    "id": "F-082",
+    "name": "filterConflictingSessionOptions",
+    "description": "Filtrar resume, sessionId e continue de opts.options e turnOptions em createSession().send() e resumeSession().send() via destructuring antes do merge. Previne conflito com gerenciamento interno de sessionId da SDKSession.",
+    "status": "passing",
+    "completed_at": "2026-04-09T18:00:00.000Z",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "createSession().send('x', { resume: 'old' }) ignora resume externo — usa sessionId interno",
+      "resumeSession('id').send('x', { continue: true }) ignora continue — usa resume: id",
+      "createSession().send('x', { model: 'gpt-4' }) propaga model normalmente (nao filtra campos legitimos)",
+      "opts.options com resume/sessionId/continue tambem sao filtrados (nao apenas turnOptions)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md"
+  },
+  {
+    "id": "F-079",
+    "name": "mapThinkingAdaptive",
+    "description": "Simplificar bloco thinking em buildCliArgs() para args.push('--thinking', options.thinking.type), eliminando switch explicito. Cobre 'adaptive' (antes ignorado) alem de 'enabled' e 'disabled'.",
+    "status": "passing",
+    "completed_at": "2026-04-09T19:00:00.000Z",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "buildCliArgs({ thinking: { type: 'adaptive' } }) inclui '--thinking adaptive'",
+      "buildCliArgs({ thinking: { type: 'enabled' } }) continua gerando '--thinking enabled' (regressao)",
+      "buildCliArgs({ thinking: { type: 'disabled' } }) continua gerando '--thinking disabled' (regressao)",
+      "Sem thinking definido, nenhuma flag --thinking e gerada"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+  },
+  {
+    "id": "F-084",
+    "name": "splitConcatenatedJson",
+    "description": "Helper splitConcatenatedJson() com rastreamento de profundidade de chaves e tratamento de strings/escape. Integrado no catch do parser em streamGen(): quando JSON.parse() falha, tentar split antes de continuar acumulando.",
+    "status": "passing",
+    "completed_at": "2026-04-09T20:00:00.000Z",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Linha '{\"a\":1}{\"b\":2}' e separada em 2 objetos yielded individualmente",
+      "Linha '{\"a\":1}{\"b\":2}{\"c\":3}' e separada em 3 objetos yielded",
+      "JSON parcial '{\"a\":' continua acumulando normalmente (regressao)",
+      "JSON unico valido por linha continua funcionando sem passar pelo split (regressao)",
+      "Chaves dentro de strings JSON nao confundem o parser: '{\"x\":\"{}\"}' e 1 objeto"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-036-json-parser-robustness.md"
+  },
+  {
+    "id": "F-077",
+    "name": "mapUnmappedOptions",
+    "description": "Mapear 12 campos Options silenciosamente ignorados por buildCliArgs(): agent (--agent), agents (--agents-config JSON), fallbackModel (--fallback-model), forkSession (--fork-session), includePartialMessages (--include-partial-messages), maxThinkingTokens (--max-thinking-tokens), permissionPromptToolName (--permission-prompt-tool-name), persistSession (--persist-session), promptSuggestions (--no-prompt-suggestions quando false), resumeSessionAt (--resume-session-at), settingSources (--setting-sources comma-separated), tools (--tools ou --tools-preset).",
+    "status": "passing",
+    "completed_at": "2026-04-09T21:00:00.000Z",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "buildCliArgs({ agent: 'coder' }) inclui '--agent coder'",
+      "buildCliArgs({ agents: { x: {} } }) inclui '--agents-config' com JSON stringificado",
+      "buildCliArgs({ fallbackModel: 'gpt-4' }) inclui '--fallback-model gpt-4'",
+      "buildCliArgs({ forkSession: true }) inclui '--fork-session'",
+      "buildCliArgs({ includePartialMessages: true }) inclui '--include-partial-messages'",
+      "buildCliArgs({ maxThinkingTokens: 1000 }) inclui '--max-thinking-tokens 1000'",
+      "buildCliArgs({ permissionPromptToolName: 'x' }) inclui '--permission-prompt-tool-name x'",
+      "buildCliArgs({ persistSession: true }) inclui '--persist-session'",
+      "buildCliArgs({ promptSuggestions: false }) inclui '--no-prompt-suggestions'",
+      "buildCliArgs({ promptSuggestions: true }) nao gera flag (padrao do CLI)",
+      "buildCliArgs({ tools: ['Read','Write'] }) inclui '--tools Read,Write'",
+      "buildCliArgs({ tools: { type: 'preset', preset: 'claude_code' } }) inclui '--tools-preset claude_code'",
+      "Campos undefined nao geram flags extras"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+  },
+  {
+    "id": "F-083",
+    "name": "mapExecutableOptions",
+    "description": "resolveExecutable() usa Options.executable ('bun'|'deno'|'node') como comando e base path como argumento de script. executableArgs sao inseridos entre o executable e o script path. Windows wrapping em cmd.exe /c mantido em todos os cenarios.",
+    "status": "passing",
+    "completed_at": "2026-04-09T22:00:00.000Z",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "executable: 'node', executableArgs: ['--experimental-vm-modules'] gera 'node --experimental-vm-modules openclaude ...'",
+      "executable: 'bun' no Windows gera 'cmd.exe /c bun openclaude ...'",
+      "Sem executable nem executableArgs, comportamento identico ao atual (regressao)",
+      "executableArgs sem executable sao prepended antes do base path"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md"
+  },
+  {
+    "id": "F-080",
+    "name": "mapMcpServerHeaders",
+    "description": "Iterar sobre headers de MCP SSE/HTTP servers em buildCliArgs() e gerar --mcp-server-header <server-name>:<header-name>:<value> para cada header. Sem headers, comportamento identico ao atual.",
+    "status": "passing",
+    "completed_at": "2026-04-09T23:00:00.000Z",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "MCP SSE server com headers: { Authorization: 'Bearer tk' } gera '--mcp-server-header name:Authorization:Bearer tk'",
+      "MCP HTTP server com multiplos headers gera uma flag --mcp-server-header por header",
+      "MCP SSE server sem headers gera apenas '--mcp-server-sse name:url' (regressao)",
+      "MCP stdio e sdk servers nao sao afetados por esta mudanca"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+  },
+  {
+    "id": "F-085",
+    "name": "configurableMaxBufferSize",
+    "description": "Options.maxBufferSize opcional (number) propagado de query() ate streamGen() via spawnAndStream(). Default 1MB (1_048_576). Adicionar campo em Options, parametro em spawnAndStream(), e usar em streamGen() no lugar do hardcoded MAX_BUFFER_SIZE.",
+    "status": "passing",
+    "completed_at": "2026-04-09T23:30:00.000Z",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Sem maxBufferSize, limite permanece 1MB (default identico ao atual)",
+      "maxBufferSize: 10_485_760 permite buffer de ate 10MB antes de erro",
+      "Mensagem de erro ao exceder limite mostra o valor configurado",
+      "maxBufferSize e propagado de query() → spawnAndStream() → streamGen()"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-036-json-parser-robustness.md"
+  },
+  {
+    "id": "F-087",
+    "name": "readmeExternalMcpServers",
+    "description": "Nova secao 'External MCP Servers' no README.md apos 'MCP Tool Factories'. Conteudo: introducao, exemplo stdio (brave-search), exemplo SSE com headers (Authorization), exemplo HTTP com headers (X-API-Key), exemplo combinado (inline + external), tabela de tipos de servidor (stdio/sse/http/sdk), nota sobre env em stdio.",
+    "status": "passing",
+    "completed_at": "2026-04-09T23:59:00.000Z",
+    "priority": 11,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-080"
+    ],
+    "tests": [
+      "README.md contem secao 'External MCP Servers' posicionada apos 'MCP Tool Factories'",
+      "Exemplo stdio com brave-search presente e compilavel (imports corretos)",
+      "Exemplo SSE com headers Authorization presente",
+      "Exemplo HTTP com headers X-API-Key presente",
+      "Exemplo combinado com inline SDK + external stdio presente",
+      "Tabela de tipos (stdio, sse, http, sdk) com campos e uso presente",
+      "Secoes existentes do README nao foram removidas ou reordenadas"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md"
+  }
+]
