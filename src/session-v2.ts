@@ -35,15 +35,13 @@ export interface SDKSession {
 // createSession
 // ---------------------------------------------------------------------------
 
-export interface CreateSessionOptions {
-  model?: string
+export interface CreateSessionOptions extends Partial<Options> {
   registry?: ProviderRegistry
-  options?: Options
-  sessionId?: string
 }
 
 export function createSession(opts: CreateSessionOptions = {}): SDKSession {
-  const sessionId = opts.sessionId ?? randomUUID()
+  const { model, registry, sessionId: providedSessionId, ...options } = opts
+  const sessionId = providedSessionId ?? randomUUID()
   let activeQuery: Query | null = null
   let isFirstTurn = true
 
@@ -56,7 +54,7 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
       }
 
       // Strip session-control fields to prevent conflicts with internal management
-      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = opts.options ?? {}
+      const { resume: _r, continue: _c, ...safeBaseOptions } = options
       const { resume: _r2, sessionId: _s2, continue: _c2, ...safeTurnOptions } = turnOptions ?? {}
 
       const mergedOptions: Options = {
@@ -67,16 +65,16 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
       if (isFirstTurn) {
         activeQuery = query({
           prompt,
-          model: opts.model,
-          registry: opts.registry,
+          model,
+          registry,
           options: { ...mergedOptions, sessionId },
         })
         isFirstTurn = false
       } else {
         activeQuery = query({
           prompt,
-          model: opts.model,
-          registry: opts.registry,
+          model,
+          registry,
           options: { ...mergedOptions, resume: sessionId },
         })
       }
@@ -112,16 +110,15 @@ export function createSession(opts: CreateSessionOptions = {}): SDKSession {
 // resumeSession
 // ---------------------------------------------------------------------------
 
-export interface ResumeSessionOptions {
-  model?: string
+export interface ResumeSessionOptions extends Partial<Options> {
   registry?: ProviderRegistry
-  options?: Options
 }
 
 export function resumeSession(
   sessionId: string,
   opts: ResumeSessionOptions = {},
 ): SDKSession {
+  const { model, registry, ...options } = opts
   let activeQuery: Query | null = null
 
   return {
@@ -133,7 +130,7 @@ export function resumeSession(
       }
 
       // Strip session-control fields to prevent conflicts with internal management
-      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = opts.options ?? {}
+      const { resume: _r, sessionId: _s, continue: _c, ...safeBaseOptions } = options
       const { resume: _r2, sessionId: _s2, continue: _c2, ...safeTurnOptions } = turnOptions ?? {}
 
       const mergedOptions: Options = {
@@ -144,8 +141,8 @@ export function resumeSession(
 
       activeQuery = query({
         prompt,
-        model: opts.model,
-        registry: opts.registry,
+        model,
+        registry,
         options: mergedOptions,
       })
 
@@ -180,10 +177,8 @@ export function resumeSession(
 // prompt() — one-shot convenience
 // ---------------------------------------------------------------------------
 
-export interface PromptOptions {
-  model?: string
+export interface PromptOptions extends Partial<Options> {
   registry?: ProviderRegistry
-  options?: Options
 }
 
 export async function prompt(
@@ -195,11 +190,12 @@ export async function prompt(
   costUsd: number
   durationMs: number
 }> {
+  const { model, registry, ...options } = opts
   const q = query({
     prompt: text,
-    model: opts.model,
-    registry: opts.registry,
-    options: opts.options,
+    model,
+    registry,
+    options,
   })
   return collectMessages(q)
 }
