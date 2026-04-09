@@ -78,8 +78,13 @@ export function buildCliArgs(options: Options = {}): string[] {
   if (options.systemPrompt) {
     if (typeof options.systemPrompt === "string") {
       args.push("--system-prompt", options.systemPrompt)
-    } else if (options.systemPrompt.append) {
-      args.push("--append-system-prompt", options.systemPrompt.append)
+    } else {
+      if ("type" in options.systemPrompt && options.systemPrompt.type === "preset") {
+        args.push("--system-prompt-preset", options.systemPrompt.preset)
+      }
+      if (options.systemPrompt.append) {
+        args.push("--append-system-prompt", options.systemPrompt.append)
+      }
     }
   }
 
