@@ -247,6 +247,11 @@ export function buildCliArgs(options: Options = {}): string[] {
       } else if (config.type === "sse" || config.type === "http") {
         const remote = config as McpSSEServerConfig | McpHttpServerConfig
         args.push("--mcp-server-sse", `${name}:${remote.url}`)
+        if (remote.headers) {
+          for (const [headerName, headerValue] of Object.entries(remote.headers)) {
+            args.push("--mcp-server-header", `${name}:${headerName}:${headerValue}`)
+          }
+        }
       }
     }
   }
