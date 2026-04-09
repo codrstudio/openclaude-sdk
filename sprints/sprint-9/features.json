@@ -128,10 +128,11 @@
     "id": "F-072",
     "name": "readmeV2SessionApi",
     "description": "Inserir seção 'V2 Session API' no README.md após 'Session Management' e antes de 'Plan Mode'. Incluir: createSession() com assinatura e CreateSessionOptions, tabela SDKSession (send, collect, close, Symbol.asyncDispose), exemplo multi-turn com streaming, resumeSession() com exemplo, prompt() one-shot, nota sobre await using (TS >= 5.2), comparação V1 vs V2, tipos exportados.",
-    "status": "pending",
+    "status": "passing",
     "priority": 7,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:06:00Z",
     "dependencies": [],
     "tests": [
       "README.md contém seção '## V2 Session API' ou equivalente",
