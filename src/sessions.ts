@@ -18,6 +18,22 @@ import type {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/** Hash djb2 de 32 bits em base36 — compativel com _simple_hash() do Python SDK */
+function simpleHash(s: string): string {
+  let h = 0
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0
+  }
+  let n = Math.abs(h)
+  if (n === 0) return "0"
+  let out = ""
+  while (n > 0) {
+    out = "0123456789abcdefghijklmnopqrstuvwxyz"[n % 36] + out
+    n = Math.floor(n / 36)
+  }
+  return out
+}
+
 /** Encode cwd para nome de diretorio de sessao (replica logica do CLI) */
 function encodeCwd(dir: string): string {
   const normalized = resolve(dir)
