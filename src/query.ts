@@ -45,20 +45,21 @@ export function query(params: {
   const { prompt, model, registry, options = {} } = params
 
   // Quando registry + model sao fornecidos, gerar env vars automaticamente
+  let resolvedOptions = options
   if (registry && model) {
     const envFromRegistry = resolveModelEnv(registry, model)
-    options.env = { ...options.env, ...envFromRegistry }
+    resolvedOptions = { ...options, env: { ...options.env, ...envFromRegistry } }
   }
 
-  const { command, prependArgs } = resolveExecutable(options)
-  const args = [...prependArgs, ...buildCliArgs(options)]
-  const abortController = options.abortController ?? new AbortController()
+  const { command, prependArgs } = resolveExecutable(resolvedOptions)
+  const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
+  const abortController = resolvedOptions.abortController ?? new AbortController()
 
   const { stream, writeStdin } = spawnAndStream(command, args, prompt, {
-    cwd: options.cwd,
-    env: options.env,
+    cwd: resolvedOptions.cwd,
+    env: resolvedOptions.env,
     signal: abortController.signal,
-    permissionMode: options.permissionMode,
+    permissionMode: resolvedOptions.permissionMode,
   })
 
   // Decorar o stream com metodos extras da interface Query
