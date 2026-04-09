@@ -85,10 +85,11 @@
     "id": "F-071",
     "name": "sdkServerLifecycle",
     "description": "Implementar funções auxiliares startSdkServers() e stopSdkServers() em src/query.ts. Integrar lifecycle lazy no query(): iniciar SDK servers no primeiro next() do async generator (antes do spawn), encerrar no finally. stopSdkServers() usa Promise.allSettled para garantir cleanup mesmo com falhas. close() do Query também encerra SDK servers. Assinatura pública de query() permanece síncrona.",
-    "status": "pending",
+    "status": "passing",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-09T00:04:00Z",
     "dependencies": [
       "F-070"
     ],
@@ -182,7 +183,7 @@
     "id": "F-074",
     "name": "readmeMcpToolFactories",
     "description": "Inserir seção 'MCP Tool Factories' no README.md após 'MCP Servers'. Incluir: assinatura de tool() com genérico Zod, assinatura de createSdkMcpServer() ASYNC (pós PRP-030), tabela de tipos exportados (ToolAnnotations, CallToolResult, SdkMcpToolDefinition), exemplo end-to-end com weatherTool + createSdkMcpServer + query, nota sobre peerDependencies opcionais (zod, @modelcontextprotocol/sdk).",
-    "status": "blocked",
+    "status": "pending",
     "priority": 10,
     "agent": "coder",
     "task": "vibe-code",
