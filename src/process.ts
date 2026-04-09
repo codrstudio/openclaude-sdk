@@ -203,17 +203,31 @@ export function spawnAndStream(
   })
 
   // Abort handling
-  let sigintFallbackTimer: ReturnType<typeof setTimeout> | undefined
+  let shutdownFallbackTimer: ReturnType<typeof setTimeout> | undefined
   const onAbort = () => {
-    if (process.platform === "win32") {
-      proc.stdin?.write("\x03")
-    } else {
-      proc.kill("SIGINT")
-    }
-    // Fallback: if process hasn't exited in 5s, escalate to SIGTERM
-    sigintFallbackTimer = setTimeout(() => {
-      if (!proc.killed && proc.exitCode === null) {
+    // Stage 1: close stdin (signals EOF to CLI for graceful save)
+    stdinClosed = true
+    proc.stdin?.end()
+
+    let sigkillTimer: ReturnType<typeof setTimeout> | undefined
+
+    // Limpar timers quando o processo sair
+    proc.once("exit", () => {
+      if (shutdownFallbackTimer) clearTimeout(shutdownFallbackTimer)
+      if (sigkillTimer) clearTimeout(sigkillTimer)
+    })
+
+    // Stage 2: after 5s without exit, escalate to SIGTERM
+    shutdownFallbackTimer = setTimeout(() => {
+      if (proc.exitCode === null) {
         proc.kill("SIGTERM")
+
+        // Stage 3: after 5s without exit, escalate to SIGKILL
+        sigkillTimer = setTimeout(() => {
+          if (proc.exitCode === null) {
+            proc.kill("SIGKILL")
+          }
+        }, 5000)
       }
     }, 5000)
   }
@@ -340,7 +354,7 @@ export function spawnAndStream(
     })
 
     if (timer) clearTimeout(timer)
-    if (sigintFallbackTimer) clearTimeout(sigintFallbackTimer)
+    if (shutdownFallbackTimer) clearTimeout(shutdownFallbackTimer)
     options.signal?.removeEventListener("abort", onAbort)
 
     if (stderr && !options.signal?.aborted) {
