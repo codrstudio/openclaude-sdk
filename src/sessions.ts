@@ -289,6 +289,85 @@ function isVisibleMessage(entry: TranscriptEntry): boolean {
   return true
 }
 
+function buildConversationChain(entries: TranscriptEntry[]): TranscriptEntry[] {
+  if (entries.length === 0) return []
+
+  // Indexar por uuid para O(1) lookup
+  const byUuid = new Map<string, TranscriptEntry>()
+  for (const entry of entries) {
+    byUuid.set(entry.uuid, entry)
+  }
+
+  // Indexar posicao no arquivo para tie-breaking
+  const entryIndex = new Map<string, number>()
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i]
+    if (e) entryIndex.set(e.uuid, i)
+  }
+
+  // Encontrar terminais: entries cujo uuid nao aparece como parentUuid de nenhuma outra
+  const parentUuids = new Set<string>()
+  for (const entry of entries) {
+    if (entry.parentUuid) parentUuids.add(entry.parentUuid)
+  }
+  const terminals = entries.filter((e) => !parentUuids.has(e.uuid))
+
+  // De cada terminal, caminhar backward para encontrar leaf user/assistant
+  const leaves: TranscriptEntry[] = []
+  for (const terminal of terminals) {
+    let cur: TranscriptEntry | undefined = terminal
+    const seen = new Set<string>()
+    while (cur) {
+      if (seen.has(cur.uuid)) break
+      seen.add(cur.uuid)
+      if (cur.type === "user" || cur.type === "assistant") {
+        leaves.push(cur)
+        break
+      }
+      cur = cur.parentUuid ? byUuid.get(cur.parentUuid) : undefined
+    }
+  }
+
+  if (leaves.length === 0) return []
+
+  // Filtrar leaves da main chain (nao sidechain, nao team, nao meta)
+  const mainLeaves = leaves.filter(
+    (leaf) => !leaf.isSidechain && !leaf.teamName && !leaf.isMeta,
+  )
+
+  // Escolher o melhor leaf (maior posicao no arquivo)
+  function pickBest(candidates: TranscriptEntry[]): TranscriptEntry {
+    let best: TranscriptEntry = candidates[0]!
+    let bestIdx = entryIndex.get(best.uuid) ?? -1
+    for (let i = 1; i < candidates.length; i++) {
+      const candidate = candidates[i]!
+      const curIdx = entryIndex.get(candidate.uuid) ?? -1
+      if (curIdx > bestIdx) {
+        best = candidate
+        bestIdx = curIdx
+      }
+    }
+    return best
+  }
+
+  const leaf = mainLeaves.length > 0 ? pickBest(mainLeaves) : pickBest(leaves)
+
+  // Caminhar de leaf ate root via parentUuid
+  const chain: TranscriptEntry[] = []
+  const chainSeen = new Set<string>()
+  let cur: TranscriptEntry | undefined = leaf
+  while (cur) {
+    if (chainSeen.has(cur.uuid)) break
+    chainSeen.add(cur.uuid)
+    chain.push(cur)
+    cur = cur.parentUuid ? byUuid.get(cur.parentUuid) : undefined
+  }
+
+  // Reverter para ordem cronologica (root -> leaf)
+  chain.reverse()
+  return chain
+}
+
 // ---------------------------------------------------------------------------
 // getSessionMessages()
 // ---------------------------------------------------------------------------

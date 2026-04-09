@@ -23,7 +23,7 @@
     "id": "F-048",
     "name": "buildConversationChain",
     "description": "Implementar em src/sessions.ts: funcao buildConversationChain(entries: TranscriptEntry[]) que reconstroi a main conversation chain via parentUuid. Algoritmo: indexar por uuid, encontrar terminais (uuid nao referenciado como parentUuid), caminhar backward ate leaf user/assistant, filtrar sidechain/team/meta, escolher melhor leaf por posicao no array, caminhar de leaf ate root, reverter para ordem cronologica. Nao seguir logicalParentUuid. Validar: funcao compila, algoritmo produz chain correta.",
-    "status": "pending",
+    "status": "passing",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
@@ -39,13 +39,14 @@
       "Tie-breaking escolhe entry com maior indice no array original",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
+    "completed_at": "2026-04-09T05:10:00.000Z"
   },
   {
     "id": "F-049",
     "name": "integrateChainPipeline",
     "description": "Substituir o bloco de filtragem ingenua em getSessionMessages() (linhas ~268-291 de src/sessions.ts) pelo pipeline: parseTranscriptEntries(data.messages) -> buildConversationChain(entries) -> chain.filter(isVisibleMessage) -> map para SessionMessage[]. Manter offset/limit existentes operando sobre o resultado. Validar: getSessionMessages retorna mensagens corretas, sessoes simples continuam funcionando.",
-    "status": "blocked",
+    "status": "pending",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
