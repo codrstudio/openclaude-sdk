@@ -20,7 +20,7 @@
     "id": "F-081",
     "name": "fixSharedConfigMutation",
     "description": "startSdkServers() retorna portMap (Map<string, number>) em vez de mutar _localPort no objeto original. lifecycleGenerator() cria copia local dos McpSdkServerConfig com portas injetadas apenas na copia, passando optionsForCli para buildCliArgs(). Objeto original do usuario nunca e mutado.",
-    "status": "pending",
+    "status": "passing",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
@@ -31,7 +31,8 @@
       "buildCliArgs() recebe optionsForCli (nao resolvedOptions diretamente)",
       "Objeto McpSdkServerConfig original do usuario nao contem _localPort apos query"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md",
+    "completed_at": "2026-04-09T16:00:00.000Z"
   },
   {
     "id": "F-078",
