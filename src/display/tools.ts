@@ -21,6 +21,7 @@ import {
   DisplayStepsSchema,
   DisplayAlertSchema,
   DisplayChoicesSchema,
+  DisplayReactSchema,
 } from "./schemas.js"
 
 // display_highlight: metric, price, alert, choices
@@ -49,13 +50,14 @@ const cardSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("image"), ...DisplayImageSchema.shape }),
 ])
 
-// display_visual: chart, map, code, progress, steps
+// display_visual: chart, map, code, progress, steps, react
 const visualSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("chart"), ...DisplayChartSchema.shape }),
   z.object({ action: z.literal("map"), ...DisplayMapSchema.shape }),
   z.object({ action: z.literal("code"), ...DisplayCodeSchema.shape }),
   z.object({ action: z.literal("progress"), ...DisplayProgressSchema.shape }),
   z.object({ action: z.literal("steps"), ...DisplayStepsSchema.shape }),
+  z.object({ action: z.literal("react"), ...DisplayReactSchema.shape }),
 ])
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,7 +104,8 @@ export function createDisplayTools(): Array<SdkMcpToolDefinition<any>> {
         "Visualizacao especializada de dados ou fluxos.",
         "Actions: chart (grafico bar/line/pie/area/donut), map (mapa com pins),",
         "code (bloco com syntax highlighting), progress (barra de progresso com etapas),",
-        "steps (timeline/checklist de etapas).",
+        "steps (timeline/checklist de etapas),",
+        "react (live React component with Framer Motion).",
       ].join(" "),
       visualSchema,
       async (args) => ({ content: [{ type: "text" as const, text: JSON.stringify(args) }] }),

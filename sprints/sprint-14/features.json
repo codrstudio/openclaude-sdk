@@ -23,10 +23,11 @@
     "id": "F-116",
     "name": "Action react no visualSchema",
     "description": "Adicionar action 'react' ao visualSchema em src/display/tools.ts como 6a entry no discriminated union, importar DisplayReactSchema e atualizar descricao do display_visual",
-    "status": "blocked",
+    "status": "passing",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-11T05:00:00Z",
     "dependencies": [
       "F-115"
     ],
