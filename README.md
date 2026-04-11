@@ -1176,3 +1176,55 @@ import type {
   DisplayToolName,
 } from "openclaude-sdk"
 ```
+
+### Ask User
+
+Enable `askUser` to let the agent pause and ask the user structured questions mid-task:
+
+```typescript
+import { query } from "openclaude-sdk"
+import type { AskUserRequest } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Book a meeting for next week with the marketing team",
+  options: { askUser: true },
+})
+
+q.onAskUser((req: AskUserRequest) => {
+  console.log(`[agent asks] ${req.question}`)
+
+  if (req.inputType === "choice" && req.choices) {
+    q.respondToAskUser(req.callId, { type: "choice", id: req.choices[0].id })
+  } else {
+    q.respondToAskUser(req.callId, { type: "text", value: "Tuesday 2pm" })
+  }
+})
+
+for await (const msg of q) {
+  // process messages...
+}
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `askUser` | `boolean` | `false` | Enable the ask_user built-in tool |
+| `askUserTimeoutMs` | `number` | `undefined` | Auto-cancel unanswered questions after N ms |
+
+**Input types:**
+
+| inputType | Answer type | When to use |
+|-----------|-------------|-------------|
+| `text` | `{ type: "text", value: string }` | Free-form text input |
+| `number` | `{ type: "number", value: number }` | Numeric values |
+| `boolean` | `{ type: "boolean", value: boolean }` | Yes/no confirmations |
+| `choice` | `{ type: "choice", id: string }` | Discrete options (requires `choices` array) |
+
+To cancel a pending question:
+
+```typescript
+q.respondToAskUser(req.callId, { type: "cancelled" })
+```
+
+`askUser` and `richOutput` are orthogonal — both can be enabled simultaneously.

@@ -223,8 +223,9 @@
     "id": "F-114",
     "name": "README Ask User Section",
     "description": "Add 'Ask User' section to README.md after the 'Rich Output' section. Include: description, end-to-end TypeScript example with query({askUser:true})+onAskUser+respondToAskUser, Options table (askUser boolean, askUserTimeoutMs number), inputTypes table (text/number/boolean/choice with answer types), cancellation example, note that askUser and richOutput are orthogonal. See PRP-045 Feature F-114.",
-    "status": "pending",
+    "status": "passing",
     "priority": 11,
+    "completed_at": "2026-04-10T00:00:00.000Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
