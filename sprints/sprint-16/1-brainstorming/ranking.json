@@ -1,0 +1,1109 @@
+[
+  {
+    "id": "D-001",
+    "type": "feature",
+    "description": "Configurar o package para distribuiÃ§Ã£o: package.json com name, version, exports, types, files, scripts de build",
+    "score": 9,
+    "justification": "PrÃ©-requisito para qualquer uso do SDK",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-002",
+    "type": "feature",
+    "description": "Produzir README.md da SDK com documentaÃ§Ã£o da API pÃºblica",
+    "score": 9,
+    "justification": "DocumentaÃ§Ã£o essencial para adoÃ§Ã£o",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-003",
+    "type": "feature",
+    "description": "Completar buildCliArgs() mapeando Options ausentes: additionalDirectories, betas, effort, thinking, etc.",
+    "score": 7,
+    "justification": "Mapeamento de opÃ§Ãµes faltantes no CLI",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-004",
+    "type": "feature",
+    "description": "Implementar suporte a structured output: mapear outputFormat para flags CLI",
+    "score": 7,
+    "justification": "Essencial para JSON schema output",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-005",
+    "type": "feature",
+    "description": "Criar hierarquia de erros tipados: OpenClaudeError base class com subclasses por categoria",
+    "score": 6,
+    "justification": "Tratamento de erros tipado",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-006",
+    "type": "feature",
+    "description": "Implementar suporte a permission mid-stream em plan mode: expor mecanismo de permissÃ£o programÃ¡tica",
+    "score": 5,
+    "justification": "Controle de permissÃµes sem interaÃ§Ã£o humana",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-007",
+    "type": "improvement",
+    "description": "Melhorar listSessions() para suportar deep search: quando diretÃ³rio nÃ£o encontrado, buscar recursivamente",
+    "score": 5,
+    "justification": "Robustez no listing de sessÃµes",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-008",
+    "type": "bug",
+    "description": "Corrigir interrupt(): usar SIGINT em vez de SIGTERM para interromper o processo Claude Code",
+    "score": 5,
+    "justification": "SIGTERM nÃ£o interrompe corretamente o CLI",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-009",
+    "type": "improvement",
+    "description": "Deduplicar a resoluÃ§Ã£o do comando do subprocess: unificar em resolveExecutable()",
+    "score": 4,
+    "justification": "DRY na resoluÃ§Ã£o do executÃ¡vel",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-010",
+    "type": "feature",
+    "description": "Adicionar continueSession(sessionId, prompt, options) como funÃ§Ã£o de conveniÃªncia",
+    "score": 4,
+    "justification": "API simplificada para multi-turn",
+    "sprint": 1,
+    "implemented": true
+  },
+  {
+    "id": "D-011",
+    "type": "bug",
+    "description": "Corrigir cast inseguro de options.env em process.ts",
+    "score": 7,
+    "justification": "Cast inseguro pode causar erros de runtime",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-012",
+    "type": "bug",
+    "description": "Corrigir spawnAndStream() para nÃ£o emitir mais mensagens apÃ³s close()",
+    "score": 6,
+    "justification": "Prevenir emissÃ£o apÃ³s fechamento",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-013",
+    "type": "bug",
+    "description": "Corrigir listSessions() quando ~/.claude/projects/ nÃ£o existe",
+    "score": 5,
+    "justification": "Crash em instalaÃ§Ãµes novas",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-014",
+    "type": "feature",
+    "description": "Adicionar campo costUsd ao SDKResultMessage e calculÃ¡-lo em collectMessages()",
+    "score": 5,
+    "justification": "Rastreamento de custos",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-015",
+    "type": "feature",
+    "description": "Adicionar suporte a OpenRouter como provider externo: criar createOpenRouterRegistry()",
+    "score": 5,
+    "justification": "Multi-provider support",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-016",
+    "type": "feature",
+    "description": "Implementar getSessionMessages(sessionId, options?): lÃª o arquivo JSONL da sessÃ£o",
+    "score": 6,
+    "justification": "Acesso ao histÃ³rico de mensagens",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-017",
+    "type": "feature",
+    "description": "Implementar getSessionInfo(sessionId, options?): retorna metadados da sessÃ£o",
+    "score": 4,
+    "justification": "InspeÃ§Ã£o de sessÃµes existentes",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-018",
+    "type": "feature",
+    "description": "Implementar renameSession(sessionId, newTitle, options?) e tagSession()",
+    "score": 4,
+    "justification": "Gerenciamento de sessÃµes",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-019",
+    "type": "docs",
+    "description": "Adicionar JSDoc em todas as funÃ§Ãµes pÃºblicas da SDK",
+    "score": 3,
+    "justification": "Developer experience com IntelliSense",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-020",
+    "type": "bug",
+    "description": "Corrigir race condition em query() quando abort Ã© chamado antes do processo iniciar",
+    "score": 4,
+    "justification": "Race condition no abort precoce",
+    "sprint": 2,
+    "implemented": true
+  },
+  {
+    "id": "D-021",
+    "type": "feature",
+    "description": "Implementar resolveModelEnv() no registry: dado um ProviderRegistry, resolve variÃ¡veis de ambiente",
+    "score": 6,
+    "justification": "ConfiguraÃ§Ã£o via env vars",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-022",
+    "type": "feature",
+    "description": "Adicionar suporte a hooks de permissÃ£o programÃ¡ticos: Options.onPermission()",
+    "score": 6,
+    "justification": "AprovaÃ§Ã£o automÃ¡tica de permissÃµes",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-023",
+    "type": "feature",
+    "description": "Adicionar suporte a hooks de evento em Options: onMessage(msg) callback",
+    "score": 5,
+    "justification": "Observabilidade sem streaming",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-024",
+    "type": "bug",
+    "description": "Corrigir buildCliArgs() para nÃ£o adicionar --output-format= quando desnecessÃ¡rio",
+    "score": 5,
+    "justification": "Flag redundante causando warnings",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-025",
+    "type": "feature",
+    "description": "Adicionar DEFAULT_MODEL exportado: constante com o modelo padrÃ£o do SDK",
+    "score": 4,
+    "justification": "Constante pÃºblica para configuraÃ§Ã£o padrÃ£o",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-026",
+    "type": "bug",
+    "description": "Corrigir getSessionInfo() para retornar null quando sessionId nÃ£o encontrado",
+    "score": 4,
+    "justification": "Comportamento correto vs exceÃ§Ã£o",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-027",
+    "type": "feature",
+    "description": "Exportar todos os tipos de mensagem SDKMessage e suas variantes do index.ts",
+    "score": 4,
+    "justification": "Tipos necessÃ¡rios para consumidores do SDK",
+    "sprint": 3,
+    "implemented": true
+  },
+  {
+    "id": "D-028",
+    "type": "feature",
+    "description": "Implementar Options.abortController?: AbortController em query()",
+    "score": 6,
+    "justification": "Cancelamento externo via AbortController",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-029",
+    "type": "feature",
+    "description": "Adicionar timeoutMs?: number ao Options e conectÃ¡-lo ao spawn do processo",
+    "score": 6,
+    "justification": "Timeout configurÃ¡vel por query",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-030",
+    "type": "bug",
+    "description": "Corrigir mutaÃ§Ã£o de options.env em query.ts â€” 'options.env = {}' muta objeto do caller",
+    "score": 7,
+    "justification": "MutaÃ§Ã£o silenciosa de parÃ¢metro externo",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-031",
+    "type": "bug",
+    "description": "Corrigir getSessionMessages() para fazer deep search quando diretÃ³rio nÃ£o encontrado diretamente",
+    "score": 9,
+    "justification": "SessÃµes em subdirs nÃ£o encontradas",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-032",
+    "type": "feature",
+    "description": "Implementar mapeamento de mcpServers em buildCliArgs(): Options.mcpServers[] para flags --mcp-server-*",
+    "score": 5,
+    "justification": "Suporte a MCP servers externos via CLI",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-033",
+    "type": "docs",
+    "description": "Completar README.md: adicionar seÃ§Ã£o de Error Handling com exemplos de cada tipo de erro",
+    "score": 6,
+    "justification": "DocumentaÃ§Ã£o de tratamento de erros",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-034",
+    "type": "feature",
+    "description": "Implementar deleteSession(sessionId, options?): remove o arquivo JSONL da sessÃ£o",
+    "score": 4,
+    "justification": "Limpeza de sessÃµes antigas",
+    "sprint": 4,
+    "implemented": true
+  },
+  {
+    "id": "D-035",
+    "type": "bug",
+    "description": "Implementar shutdown de 3 estÃ¡gios em close() (SIGINT â†’ SIGTERM â†’ SIGKILL)",
+    "score": 9,
+    "justification": "Shutdown graceful do processo filho",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-036",
+    "type": "bug",
+    "description": "Atualizar onAbort handler em spawnAndStream() para usar shutdown de 3 estÃ¡gios",
+    "score": 7,
+    "justification": "ConsistÃªncia no shutdown via abort",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-037",
+    "type": "bug",
+    "description": "Adicionar flag stdinClosed em spawnAndStream() que Ã© setada quando stdin Ã© fechado",
+    "score": 8,
+    "justification": "Evitar escrita em stdin apÃ³s fechamento",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-038",
+    "type": "bug",
+    "description": "Reimplementar getSessionMessages() com algoritmo de conversaÃ§Ã£o encadeada (buildConversationChain)",
+    "score": 8,
+    "justification": "Mensagens fora de ordem em sessÃµes longas",
+    "sprint": 5,
+    "implemented": true
+  },
+  {
+    "id": "D-039",
+    "type": "feature",
+    "description": "Implementar tool() factory: cria SdkMcpToolDefinition<Schema> com Zod schema",
+    "score": 6,
+    "justification": "API de alto nÃ­vel para MCP tools",
+    "sprint": 6,
+    "implemented": true
+  },
+  {
+    "id": "D-040",
+    "type": "feature",
+    "description": "Implementar createSdkMcpServer() que cria McpServer in-process via @modelcontextprotocol/sdk",
+    "score": 6,
+    "justification": "MCP server inline para automaÃ§Ãµes",
+    "sprint": 6,
+    "implemented": true
+  },
+  {
+    "id": "D-041",
+    "type": "feature",
+    "description": "Implementar mÃ©todos de configuraÃ§Ã£o mid-session no Query: setModel, setSystemPrompt, addMcpServers",
+    "score": 7,
+    "justification": "Controle dinÃ¢mico de sessÃ£o em andamento",
+    "sprint": 6,
+    "implemented": true
+  },
+  {
+    "id": "D-042",
+    "type": "feature",
+    "description": "Implementar mÃ©todos de introspecÃ§Ã£o no Query: initializationResult(), listSlashCommands(), etc.",
+    "score": 5,
+    "justification": "InspeÃ§Ã£o do estado interno da sessÃ£o CLI",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-043",
+    "type": "feature",
+    "description": "Implementar mÃ©todos de operaÃ§Ã£o avanÃ§ada no Query: rewindToMessage(), forkSession(), etc.",
+    "score": 5,
+    "justification": "OperaÃ§Ãµes avanÃ§adas de controle de sessÃ£o",
+    "sprint": 7,
+    "implemented": true
+  },
+  {
+    "id": "D-044",
+    "type": "feature",
+    "description": "Implementar V2 Session API: createSession(options): SDKSession com send() e collect()",
+    "score": 5,
+    "justification": "Interface de alto nÃ­vel para multi-turn",
+    "sprint": 8,
+    "implemented": true
+  },
+  {
+    "id": "D-045",
+    "type": "feature",
+    "description": "Implementar resumeSession(sessionId, options): SDKSession para retomar sessÃ£o existente",
+    "score": 4,
+    "justification": "ContinuaÃ§Ã£o de sessÃµes existentes via V2 API",
+    "sprint": 8,
+    "implemented": true
+  },
+  {
+    "id": "D-046",
+    "type": "docs",
+    "description": "Documentar V2 Session API no README.md: seÃ§Ã£o com exemplos de createSession, resumeSession, prompt",
+    "score": 9,
+    "justification": "DocumentaÃ§Ã£o essencial para adoÃ§Ã£o da V2 API",
+    "sprint": 8,
+    "implemented": true
+  },
+  {
+    "id": "D-047",
+    "type": "docs",
+    "description": "Documentar Query control methods no README.md: tabela atualizada com todos os mÃ©todos",
+    "score": 7,
+    "justification": "DocumentaÃ§Ã£o dos mÃ©todos de controle de Query",
+    "sprint": 8,
+    "implemented": true
+  },
+  {
+    "id": "D-048",
+    "type": "docs",
+    "description": "Documentar MCP tool factories no README.md: seÃ§Ã£o com exemplos de tool() e createSdkMcpServer()",
+    "score": 6,
+    "justification": "DocumentaÃ§Ã£o de MCP inline servers",
+    "sprint": 8,
+    "implemented": true
+  },
+  {
+    "id": "D-049",
+    "type": "docs",
+    "description": "Documentar Query introspection e operation methods avanÃ§ados no README.md",
+    "score": 5,
+    "justification": "DocumentaÃ§Ã£o de mÃ©todos avanÃ§ados",
+    "sprint": 9,
+    "implemented": true
+  },
+  {
+    "id": "D-050",
+    "type": "bug",
+    "description": "Edge case em buildConversationChain(): quando mainLeaves estÃ¡ vazio, retornar array vazio",
+    "score": 3,
+    "justification": "Edge case raro em sessÃµes vazias",
+    "sprint": 9,
+    "implemented": true
+  },
+  {
+    "id": "D-051",
+    "type": "bug",
+    "description": "Fix buildCliArgs() em process.ts â€” remover throw para opÃ§Ãµes desconhecidas que bloqueavam execuÃ§Ã£o",
+    "score": 9,
+    "justification": "Bug crÃ­tico que bloqueava queries normais",
+    "sprint": 9,
+    "implemented": true
+  },
+  {
+    "id": "D-052",
+    "type": "bug",
+    "description": "Fix require() em mcp.ts â€” substituir require('@modelcontextprotocol/sdk') por import dinÃ¢mico ESM",
+    "score": 9,
+    "justification": "CommonJS/ESM mismatch causava falha em runtime",
+    "sprint": 9,
+    "implemented": true
+  },
+  {
+    "id": "D-053",
+    "type": "bug",
+    "description": "Fix server.tool() em mcp.ts â€” corrigir assinatura do McpServer.tool() para API real do SDK MCP",
+    "score": 8,
+    "justification": "API incorreta causava falha ao registrar tools",
+    "sprint": 9,
+    "implemented": true
+  },
+  {
+    "id": "D-054",
+    "type": "feature",
+    "description": "Adicionar campo name: string Ã  interface McpSdkServerConfig para identificaÃ§Ã£o no CLI",
+    "score": 7,
+    "justification": "Nome necessÃ¡rio para --mcp-server-sdk flag",
+    "sprint": 9,
+    "implemented": true
+  },
+  {
+    "id": "D-055",
+    "type": "feature",
+    "description": "Implementar lifecycle management de SDK MCP servers em query.ts: start/stop automÃ¡tico",
+    "score": 8,
+    "justification": "Gerenciamento automÃ¡tico do ciclo de vida dos servers MCP",
+    "sprint": 9,
+    "implemented": true
+  },
+  {
+    "id": "D-056",
+    "type": "bug",
+    "description": "Corrigir incompatibilidade de versÃ£o do Zod: devDependencies usa v4 mas peerDependencies aceita v3 â€” restringir peerDep para >=4.0.0",
+    "score": 7,
+    "justification": "Incompatibilidade de tipo entre Zod v3/v4 pode travar usuÃ¡rios em produÃ§Ã£o que usem tool() com schema Zod",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-057",
+    "type": "feature",
+    "description": "Mapear opÃ§Ãµes nÃ£o implementadas em buildCliArgs(): agent, agents, fallbackModel, forkSession, includePartialMessages, maxThinkingTokens, permissionPromptToolName, persistSession, promptSuggestions, resumeSessionAt, settingSources, tools",
+    "score": 7,
+    "justification": "12+ opÃ§Ãµes silenciosamente ignoradas violam princÃ­pio de menor surpresa â€” usuÃ¡rios configuram opÃ§Ãµes que nÃ£o tÃªm efeito",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-058",
+    "type": "improvement",
+    "description": "Implementar suporte a Options.executable e Options.executableArgs em resolveExecutable(): permitir invocar o CLI com node/bun/deno e argumentos extras",
+    "score": 4,
+    "justification": "CustomizaÃ§Ã£o de runtime ignorada silenciosamente â€” edge case para ambientes nÃ£o-padrÃ£o",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-059",
+    "type": "bug",
+    "description": "Corrigir mutaÃ§Ã£o de McpSdkServerConfig._localPort em startSdkServers(): usar Map interno em vez de mutar o objeto do caller",
+    "score": 7,
+    "justification": "MutaÃ§Ã£o do objeto compartilhado causa falha silenciosa em queries concorrentes que reutilizam a mesma config",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-060",
+    "type": "bug",
+    "description": "Corrigir createSession() e resumeSession() para filtrar options.resume, options.sessionId e options.continue conflitantes passados pelo caller",
+    "score": 5,
+    "justification": "OpÃ§Ãµes conflitantes causavam comportamento ambÃ­guo no CLI com --session-id e --resume simultÃ¢neos",
+    "sprint": 10,
+    "implemented": true
+  },
+  {
+    "id": "D-061",
+    "type": "bug",
+    "description": "Mapear thinking: { type: 'adaptive' } em buildCliArgs(): o branch adaptive cai no else sem gerar flag, ignorado silenciosamente",
+    "score": 5,
+    "justification": "Terceiro valor vÃ¡lido do enum ignorado sem erro â€” comportamento incorreto esperado pelo usuÃ¡rio",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-062",
+    "type": "bug",
+    "description": "Mapear systemPrompt: { type: 'preset', preset: 'claude_code' } em buildCliArgs(): o caso preset cai no else sem gerar flag --system-prompt-preset",
+    "score": 6,
+    "justification": "Preset de system prompt nÃ£o ativado â€” comportamento errado sem erro visÃ­vel",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-063",
+    "type": "improvement",
+    "description": "Passar McpSSEServerConfig.headers e McpHttpServerConfig.headers ao CLI via flag --mcp-server-header: MCP servers com autenticaÃ§Ã£o ficam inacessÃ­veis",
+    "score": 5,
+    "justification": "Servidores MCP externos que requerem Authorization header ficam inacessÃ­veis silenciosamente",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-064",
+    "type": "docs",
+    "description": "Adicionar seÃ§Ã£o 'External MCP Servers' no README.md com exemplos prÃ¡ticos de mcpServers stdio, SSE e HTTP: Brave Search, databases, APIs externas",
+    "score": 4,
+    "justification": "AusÃªncia de exemplos dificulta adoÃ§Ã£o de MCP servers externos â€” caso de uso real nÃ£o documentado",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-065",
+    "type": "bug",
+    "description": "Corrigir parser JSON em process.ts para tratar mÃºltiplos JSONs concatenados na mesma linha (split por newline nÃ£o suficiente quando CLI emite flush agressivo)",
+    "score": 5,
+    "justification": "Parser falha em edge cases de flush â€” raro em uso normal mas pode corromper o stream silenciosamente",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-066",
+    "type": "improvement",
+    "description": "Tornar MAX_BUFFER_SIZE configurÃ¡vel via Options.maxBufferSize?: number â€” atualmente hardcoded em 1MB, insuficiente para payloads com imagens base64 grandes",
+    "score": 3,
+    "justification": "Payloads com imagens ou ferramentas de retorno extenso podem exceder 1MB legitimamente",
+    "sprint": 10,
+    "implemented": false
+  },
+  {
+    "id": "D-067",
+    "type": "feature",
+    "description": "Adicionar suporte a SDKUserMessage em SDKSession.send(): aceitar string | SDKUserMessage para permitir conteÃºdo multi-modal (imagens) em sessÃµes V2",
+    "score": 5,
+    "justification": "TASK.md especifica send(message: string | SDKUserMessage) â€” conteÃºdo multi-modal bloqueado pela assinatura atual",
+    "sprint": 11,
+    "implemented": false
+  },
+  {
+    "id": "D-068",
+    "type": "improvement",
+    "description": "Ajustar prompt() one-shot para retornar SDKResultMessage completo em vez de subconjunto â€” incluir is_error, subtype, usage completo",
+    "score": 4,
+    "justification": "TASK.md especifica Promise<SDKResultMessage> mas implementaÃ§Ã£o retorna formato interno parcial",
+    "sprint": 11,
+    "implemented": false
+  },
+  {
+    "id": "D-069",
+    "type": "improvement",
+    "description": "Flatten ergonomia de CreateSessionOptions: evitar nesting createSession({ options: { ... } }) â€” model ao nÃ­vel raiz mas demais Options um nÃ­vel abaixo Ã© inconsistente",
+    "score": 2,
+    "justification": "InconsistÃªncia de ergonomia menor â€” nÃ£o Ã© bug, apenas API ligeiramente desconfortÃ¡vel",
+    "sprint": 11,
+    "implemented": false
+  },
+  {
+    "id": "D-070",
+    "type": "improvement",
+    "description": "Adicionar getter currentQuery?: Query em SDKSession para acesso externo Ã  Query ativa sem precisar chamar close()",
+    "score": 2,
+    "justification": "Caso de uso avanÃ§ado raro â€” close() jÃ¡ resolve o cancelamento na maioria dos cenÃ¡rios",
+    "sprint": 11,
+    "implemented": false
+  },
+  {
+    "id": "D-071",
+    "type": "feature",
+    "description": "Criar src/display/schemas.ts com 19 schemas Zod portados de agentic-sdk/src/display-schemas.ts (sem import 'ai') + DisplayToolRegistry + DisplayToolName + 19 tipos inferidos",
+    "score": 9,
+    "justification": "Base de todo o mÃ³dulo display â€” prÃ©-requisito de D-072, D-073, D-079",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-072",
+    "type": "feature",
+    "description": "Criar src/display/tools.ts com 4 meta-tools (display_highlight, display_collection, display_card, display_visual) usando tool() nativo e z.discriminatedUnion('action', [...])",
+    "score": 9,
+    "justification": "Define a interface de tools que o modelo vÃª â€” discriminated union reduz 19 tools para 4 mais gerenciÃ¡veis",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-073",
+    "type": "feature",
+    "description": "Criar src/display/server.ts com createDisplayMcpServer(): Promise<McpSdkServerConfig> usando createSdkMcpServer() com as 4 meta-tools",
+    "score": 8,
+    "justification": "Ponto de montagem do MCP server display â€” necessÃ¡rio para D-077 integrar em query.ts",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-074",
+    "type": "feature",
+    "description": "Criar src/display/prompt.ts com constante DISPLAY_SYSTEM_PROMPT (string em inglÃªs explicando as 4 display tools)",
+    "score": 7,
+    "justification": "Sem o prompt, o modelo nÃ£o sabe quando usar as display tools",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-075",
+    "type": "feature",
+    "description": "Criar src/display/index.ts como barrel do mÃ³dulo display: reexporta schemas, tools, server, prompt, registry, tipos",
+    "score": 7,
+    "justification": "OrganizaÃ§Ã£o modular â€” permite imports limpos de ./display/index.js",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-076",
+    "type": "feature",
+    "description": "Adicionar richOutput?: boolean Ã  interface Options em src/types/options.ts (default false, zero overhead quando ausente)",
+    "score": 9,
+    "justification": "Flag de entrada da feature â€” prÃ©-requisito de D-077",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-077",
+    "type": "feature",
+    "description": "Integrar richOutput em query.ts: quando true, await createDisplayMcpServer() + merge em mcpServers['display'] + mergeSystemPromptAppend()",
+    "score": 9,
+    "justification": "Sem essa integraÃ§Ã£o a flag nÃ£o tem efeito â€” ponto de ativaÃ§Ã£o da feature",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-078",
+    "type": "feature",
+    "description": "Implementar mergeSystemPromptAppend(existing, append) cobrindo 3 formatos: undefinedâ†’preset+append, stringâ†’concat, {type:'preset',append?}â†’concat no append",
+    "score": 8,
+    "justification": "Sem cobrir os 3 formatos o system prompt pode ser sobrescrito ou perdido em configuraÃ§Ãµes existentes",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-079",
+    "type": "feature",
+    "description": "Exportar 19 schemas Zod, 19 tipos inferidos, DisplayToolRegistry e DisplayToolName de src/index.ts via re-export de ./display/index.js",
+    "score": 7,
+    "justification": "Completude do barrel pÃºblico â€” clientes precisam dos schemas para validar tool_use.input",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-080",
+    "type": "docs",
+    "description": "Atualizar README.md com seÃ§Ã£o 'Rich Output': flag richOutput, tabela das 4 meta-tools com actions, exemplo end-to-end com detecÃ§Ã£o de block.name.startsWith('display_')",
+    "score": 6,
+    "justification": "DocumentaÃ§Ã£o necessÃ¡ria para adoÃ§Ã£o â€” sem ela a feature Ã© invisÃ­vel para consumidores",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-081",
+    "type": "bug",
+    "description": "Verificar e ajustar compatibilidade da assinatura tool()/SdkMcpToolDefinition com ZodDiscriminatedUnion: tool() usa Schema extends ZodRawShape mas meta-tools usam ZodTypeAny â€” pode exigir overload ou generalizaÃ§Ã£o da tipagem",
+    "score": 9,
+    "justification": "Bloqueante para D-072: se tool() nÃ£o aceitar ZodDiscriminatedUnion, a meta-tool nÃ£o compila",
+    "sprint": 12,
+    "implemented": true
+  },
+  {
+    "id": "D-082",
+    "type": "feature",
+    "description": "Adicionar Options.askUser?: boolean e Options.askUserTimeoutMs?: number Ã  interface Options â€” flags de ativaÃ§Ã£o com zero overhead quando false/absent",
+    "score": 9,
+    "justification": "Ponto de entrada da feature â€” sem a flag nÃ£o hÃ¡ como ativar o built-in; mesmo padrÃ£o que richOutput",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-083",
+    "type": "feature",
+    "description": "Criar src/ask-user/types.ts: AskUserRequest (callId, question, context?, inputType, choices?, placeholder?) e AskUserAnswer (discriminated union: text/number/boolean/choice/cancelled)",
+    "score": 8,
+    "justification": "Tipos centrais do contrato clienteâ†”SDK â€” prÃ©-requisito para onAskUser handler e respondToAskUser",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-084",
+    "type": "feature",
+    "description": "Criar src/ask-user/schema.ts: Zod schema askUserSchema com campos question, context?, inputType (enum text/number/boolean/choice), choices?, placeholder?",
+    "score": 8,
+    "justification": "Schema Zod define o contrato que o modelo recebe ao invocar a tool â€” base do handler MCP",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-085",
+    "type": "feature",
+    "description": "Criar src/ask-user/server.ts: createAskUserMcpServer(onAskUser, pendingMap, timeoutMs?) com handler bloqueante via Promise e formatAnswer(answer) â†’ string",
+    "score": 9,
+    "justification": "NÃºcleo da feature â€” MCP server com pending map e desbloqueio via respondToAskUser; bloqueante mas nÃ£o polling",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-086",
+    "type": "feature",
+    "description": "Criar src/ask-user/prompt.ts: constante ASK_USER_SYSTEM_PROMPT descrevendo quando usar ask_user, inputType=choice para opÃ§Ãµes discretas, perguntas concisas",
+    "score": 7,
+    "justification": "Sem instruÃ§Ã£o explÃ­cita o modelo nÃ£o sabe quando usar a tool ou como formatar a pergunta",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-087",
+    "type": "feature",
+    "description": "Criar src/ask-user/index.ts: barrel exportando types, schema, server, prompt",
+    "score": 6,
+    "justification": "OrganizaÃ§Ã£o modular seguindo o padrÃ£o display/ â€” imports limpos de ./ask-user/index.js",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-088",
+    "type": "feature",
+    "description": "Adicionar Query.onAskUser(handler: (req: AskUserRequest) => void): void â€” mÃ©todo de subscriÃ§Ã£o que armazena callback e Ã© chamado pelo server handler",
+    "score": 9,
+    "justification": "Interface cliente para receber perguntas â€” sem onAskUser o cliente nÃ£o tem como interceptar a pergunta do agente",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-089",
+    "type": "feature",
+    "description": "Adicionar Query.respondToAskUser(callId: string, answer: AskUserAnswer): void â€” desbloqueia o Promise pendente correspondente; no-op + warn para callId desconhecido",
+    "score": 9,
+    "justification": "Interface cliente para responder â€” sem respondToAskUser o agente fica bloqueado indefinidamente (ou atÃ© timeout)",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-090",
+    "type": "feature",
+    "description": "Integrar ask_user em query.ts: quando Options.askUser=true, criar server + injetar em mcpServers['ask_user'] + mergeSystemPromptAppend(ASK_USER_SYSTEM_PROMPT); ortogonal a richOutput",
+    "score": 9,
+    "justification": "Sem integraÃ§Ã£o a flag nÃ£o tem efeito â€” conecta o mÃ³dulo ao ciclo de vida da query; zero overhead quando false",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-091",
+    "type": "feature",
+    "description": "Concurrent question guard em server.ts: se ask_user invocado com pergunta pendente retornar CallToolResult com isError=true e mensagem 'previous question not yet answered'",
+    "score": 6,
+    "justification": "TASK.md define explicitamente one-question-at-a-time para o primeiro release â€” sem guard o segundo invoke trava indefinidamente",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-092",
+    "type": "feature",
+    "description": "Exportar AskUserRequest e AskUserAnswer de src/index.ts â€” tipos pÃºblicos necessÃ¡rios para o cliente tipar o handler de onAskUser",
+    "score": 7,
+    "justification": "Sem exportar os tipos o cliente precisa usar any ou redefini-los â€” quebra type safety no consumidor",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-093",
+    "type": "docs",
+    "description": "Atualizar README.md com seÃ§Ã£o 'Ask User': flag askUser/askUserTimeoutMs, tabela de inputTypes, exemplo end-to-end mostrando onAskUser + respondToAskUser, nota de ortogonalidade com richOutput",
+    "score": 6,
+    "justification": "DocumentaÃ§Ã£o necessÃ¡ria para adoÃ§Ã£o â€” feature invisÃ­vel sem exemplo concreto",
+    "sprint": 13,
+    "implemented": true
+  },
+  {
+    "id": "D-094",
+    "type": "feature",
+    "description": "Adicionar reactOutput?: boolean Ã  interface Options em src/types/options.ts â€” flag de ativaÃ§Ã£o do React Rich Output, sÃ³ tem efeito quando richOutput tambÃ©m Ã© true",
+    "score": 9,
+    "justification": "Ponto de entrada da feature â€” sem a flag nÃ£o hÃ¡ como ativar o canal React; gate silencioso quando richOutput estÃ¡ ausente",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-095",
+    "type": "feature",
+    "description": "Criar DisplayReactSchema em src/display/schemas.ts com todos os campos: version, title, description, code, language, entry, imports (array de {module, symbols}), initialProps, layout ({height, aspectRatio, maxWidth}), theme",
+    "score": 9,
+    "justification": "Schema Zod define o payload que o modelo emite e o cliente valida antes de transpilar â€” prÃ©-requisito de D-096",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-096",
+    "type": "feature",
+    "description": "Adicionar action 'react' ao visualSchema em src/display/tools.ts: z.object({ action: z.literal('react'), ...DisplayReactSchema.shape })",
+    "score": 9,
+    "justification": "Sem a entry no discriminated union o modelo nÃ£o pode invocar display_visual com action=react",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-097",
+    "type": "feature",
+    "description": "Integrar reactOutput em query.ts: dentro do bloco richOutput, apÃ³s merge do DISPLAY_SYSTEM_PROMPT, se reactOutput=true fazer segundo mergeSystemPromptAppend com REACT_OUTPUT_SYSTEM_PROMPT",
+    "score": 9,
+    "justification": "Gate natural â€” reactOutput sÃ³ Ã© alcanÃ§ado dentro do if(richOutput), implementando silenciosamente o comportamento correto de gate",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-098",
+    "type": "feature",
+    "description": "Criar REACT_OUTPUT_SYSTEM_PROMPT em src/display/prompt.ts com regras completas: MODULE SHAPE (export default, sem side effects, sem async), IMPORTS whitelist (react + framer-motion), STYLING (inline style apenas), DATA (usar initialProps), ANIMATION (framer-motion primitives), LAYOUT (self-contained, declarar height/aspectRatio)",
+    "score": 8,
+    "justification": "Sem instruÃ§Ã£o explÃ­cita o modelo produz JSX com imports invÃ¡lidos, Tailwind classes ou fetch calls â€” rejeitado pelo cliente",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-099",
+    "type": "feature",
+    "description": "Atualizar src/display/index.ts: exportar DisplayReactSchema, tipo DisplayReact e REACT_OUTPUT_SYSTEM_PROMPT",
+    "score": 7,
+    "justification": "Barrel incompleto quebra tree-shaking e impede que consumidores do mÃ³dulo display usem os novos exports sem path direto",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-100",
+    "type": "feature",
+    "description": "Atualizar src/index.ts: adicionar exports pÃºblicos de DisplayReactSchema e tipo DisplayReact via re-export de ./display/index.js",
+    "score": 7,
+    "justification": "Sem exports pÃºblicos os consumidores do SDK nÃ£o conseguem tipar o payload React recebido no tool_use.input",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-101",
+    "type": "docs",
+    "description": "Atualizar README.md com seÃ§Ã£o 'React Rich Output': tabela de gate das duas flags (richOutput Ã— reactOutput), exemplo end-to-end com detecÃ§Ã£o de action='react', pipeline cliente obrigatÃ³rio (validate â†’ transpile â†’ sandbox â†’ inject scope â†’ render â†’ theme), nota de seguranÃ§a sobre sandbox obrigatÃ³rio",
+    "score": 6,
+    "justification": "DocumentaÃ§Ã£o normativa â€” pipeline de sandbox Ã© requisito de seguranÃ§a, sem documentaÃ§Ã£o o host pode executar JSX no documento principal expondo dados do usuÃ¡rio",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-102",
+    "type": "feature",
+    "description": "Atualizar demo endpoint GET /display em .tmp/demo/server.mjs para listar a nova action 'react' em display_visual",
+    "score": 5,
+    "justification": "Demo desatualizado confunde desenvolvedores que tentam entender as capacidades da API via exploraÃ§Ã£o",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-103",
+    "type": "improvement",
+    "description": "Verificar que typecheck passa (tsc --noEmit) e build passa (tsup) apÃ³s todos os deltas da wave 14 â€” incluindo a nova entry no discriminated union e os novos exports",
+    "score": 6,
+    "justification": "Discriminated union com novo member pode quebrar exhaustiveness checks existentes; exports novos podem criar circular deps se mal posicionados",
+    "sprint": 14,
+    "implemented": true
+  },
+  {
+    "id": "D-104",
+    "type": "feature",
+    "description": "Criar src/locale/types.ts: tipo SupportedLocale = 'pt-BR' | 'en-US' | 'es-ES' e constante SUPPORTED_LOCALES readonly",
+    "score": 9,
+    "justification": "Base de todo o modulo de locale. SupportedLocale e o tipo central referenciado por normalizeLocale e pelo campo locale em Options. SUPPORTED_LOCALES permite iteracao e documentacao dos locales suportados.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-105",
+    "type": "feature",
+    "description": "Criar src/locale/normalize.ts: normalizeLocale(input: string | undefined): SupportedLocale com regras BCP 47 - undefined default pt-BR, case+underscore insensitive, lang primary match (pt=pt-BR, es=es-ES, en=en-US), fallback en-US",
+    "score": 9,
+    "justification": "Funcao core da feature. Sem ela nao ha normalizacao de locale. Implementa todas as regras do TASK.md: default pt-BR quando undefined, normalizacao de case/underscores, match por lang primary e fallback final en-US para desconhecidos.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-106",
+    "type": "feature",
+    "description": "Criar src/locale/index.ts: barrel exportando SupportedLocale, SUPPORTED_LOCALES e normalizeLocale",
+    "score": 8,
+    "justification": "Necessario para imports limpos pelo resto do SDK. Segue o padrao dos modulos existentes (display/index.ts, ask-user/index.ts). Sem barrel, cada importador precisaria referenciar arquivos internos do modulo.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-107",
+    "type": "feature",
+    "description": "Adicionar locale?: string a interface Options em src/types/options.ts com JSDoc explicitando que NAO afeta o idioma do agente (apenas strings geradas pelo SDK) e exemplos pt-BR/en-US/es-ES",
+    "score": 9,
+    "justification": "Entry point publico da feature. Sem esse campo os 4 entry points (query, prompt, createSession, resumeSession) nao recebem locale. O JSDoc e critico para evitar confusao: locale nao faz o agente responder em outro idioma.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-108",
+    "type": "feature",
+    "description": "Adicionar exports publicos em src/index.ts: normalizeLocale, SUPPORTED_LOCALES e type SupportedLocale re-exportados de src/locale/index.js",
+    "score": 7,
+    "justification": "Consumidores podem precisar de normalizeLocale para validar/normalizar locale antes de passar para o SDK. SUPPORTED_LOCALES facilita listar opcoes em UI. Segue padrao dos outros modulos ja exportados em src/index.ts.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-109",
+    "type": "validation",
+    "description": "Verificar por inspecao que locale nao aparece em buildCliArgs() em src/process.ts - locale e SDK-side only e nao corresponde a nenhuma flag do openclaude CLI",
+    "score": 7,
+    "justification": "Criterio de aceite explicito no TASK.md. Garante que locale nao vaza para o subprocesso CLI. A verificacao e por inspecao: locale nao deve estar mapeado em buildCliArgs.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-110",
+    "type": "test",
+    "description": "Criar .tmp/demo/test-locale.mjs com os 18 casos de teste do TASK.md cobrindo: undefined, null, string vazia, variacoes pt-BR/en-US/es-ES (case, underscore, lang primary, regional fallback), locale desconhecido, whitespace",
+    "score": 7,
+    "justification": "O TASK.md especifica explicitamente 18 casos de teste manuais. O script permite validacao rapida apos build sem necessidade de framework de testes. Cobre todas as regras de normalizacao incluindo edge cases.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-111",
+    "type": "validation",
+    "description": "Verificar que typecheck passa (tsc --noEmit) e build passa (tsup) apos implementacao do modulo locale e campo Options.locale",
+    "score": 8,
+    "justification": "Gate de qualidade obrigatorio. Criterio de aceite final no TASK.md. Garante que os novos tipos nao introduziram erros de TypeScript e que o build distribuivel esta correto.",
+    "sprint": 15,
+    "implemented": true
+  },
+  {
+    "id": "D-112",
+    "type": "feature",
+    "description": "Adicionar SDKPresenceMessage ao discriminated union SDKMessage em src/types/messages.ts com campos type: 'presence', ts: number, seq: number, elapsedMs: number",
+    "score": 9,
+    "justification": "Base de tudo. Sem o tipo, nenhuma outra parte da feature pode ser implementada. O union SDKMessage precisa incluir essa entrada para que o TypeScript reconheca a mensagem como valida em type narrowing.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-113",
+    "type": "feature",
+    "description": "Adicionar presenceIntervalMs?: number em Options em src/types/options.ts com JSDoc: default 15000, 0 ou negativo desabilita, explica que e liveness para SSE consumers",
+    "score": 8,
+    "justification": "Entry point de configuracao. Permite consumidores desabilitarem (batch, testes) ou ajustarem o intervalo. O JSDoc precisa deixar claro que 0=desabilitado e que undefined=default 15s.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-114",
+    "type": "feature",
+    "description": "Implementar timer + heartbeat queue no lifecycleGenerator em src/query.ts: setInterval que empurra SDKPresenceMessage em fila, heartbeatSeq monotonic, turnStart para elapsedMs",
+    "score": 9,
+    "justification": "Core da feature. O timer nao chama yield diretamente — empurra em fila para ser drenada pelo generator. Sem isso nenhum heartbeat e emitido. Depende de D-112 e D-113.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-115",
+    "type": "feature",
+    "description": "Implementar Promise.race entre iter.next() e heartbeatReady no loop principal do lifecycleGenerator para emitir heartbeats durante gaps longos do CLI sem esperar proxima mensagem real",
+    "score": 9,
+    "justification": "Sem Promise.race, o for await bloqueia durante gaps e os heartbeats acumulam sem chegar ao consumer — exatamente o cenario que queremos cobrir. E a peca critica que torna o heartbeat util. TASK.md fornece pseudocodigo completo.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-116",
+    "type": "feature",
+    "description": "Cleanup no finally do lifecycleGenerator: clearInterval(heartbeatTimer) para evitar leak de timers quando o turno termina normalmente ou com erro",
+    "score": 8,
+    "justification": "Criterio de aceite explicito no TASK.md. Timer sem cleanup vaza entre turnos e pode causar comportamento inesperado em uso prolongado do SDK. Deve ficar no finally junto com stopOnce().",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-117",
+    "type": "feature",
+    "description": "Adicionar filtro em collectMessages() em src/query.ts: ignorar silenciosamente mensagens com msg.type === 'presence' — sao liveness signals, nao conteudo semantico",
+    "score": 8,
+    "justification": "Sem filtro, consumidores batch que chamam collectMessages() recebem presence na lista de mensagens — tipo errado, polui o resultado. O filtro deve ser silencioso (sem log, sem erro).",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-118",
+    "type": "validation",
+    "description": "Verificar que session-v2 collect() herda o filtro de presence automaticamente via collectMessages() e que nao ha outro caminho que capture presence por engano",
+    "score": 6,
+    "justification": "TASK.md exige confirmacao explicita. session.collect() chama collectMessages() por baixo, entao herda automaticamente — mas precisa ser verificado. Se existir outro caminho de coleta em session-v2.ts, deve ser filtrado tambem.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-119",
+    "type": "feature",
+    "description": "Adicionar export publico de SDKPresenceMessage em src/index.ts para consumidores fazerem type narrowing no discriminated union",
+    "score": 7,
+    "justification": "Segue o padrao de todos os tipos publicos do SDK. Consumidores que fazem switch (msg.type) ou if (msg.type === 'presence') precisam do tipo para TypeScript reconhecer. Simples re-export de types/messages.js.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-120",
+    "type": "test",
+    "description": "Criar .tmp/demo/test-heartbeat.mjs com prompt que forca gap de 40s (Bash sleep) e presenceIntervalMs: 5000 para verificar presenca de pelo menos 5-6 linhas PRESENCE intercaladas",
+    "score": 7,
+    "justification": "Validacao manual do criterio de aceite principal: heartbeats chegam durante gaps longos do CLI. O intervalo de 5s (vs 15s padrao) acelera o debug. TASK.md fornece o script completo.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-121",
+    "type": "improvement",
+    "description": "Refatorar .tmp/demo/server.mjs: remover setInterval local (HEARTBEAT_INTERVAL_MS, HEARTBEAT_POLL_MS, lastEmitAt, heartbeatSeq, heartbeatTimer), adicionar relay de SDKPresenceMessage via for await do query()",
+    "score": 8,
+    "justification": "Remove o hot-patch de complexidade do servidor. Com SDK emitindo SDKPresenceMessage, o relay e trivial: if (msg.type === 'presence') emit SSE event:ping. Simplifica server.mjs significativamente e centraliza logica no SDK.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-122",
+    "type": "validation",
+    "description": "Confirmar que requestTimeout=0 e headersTimeout=0 permanecem em server.mjs apos refatoracao — protecoes ortogonais ao heartbeat contra timeouts da infra Node 18+",
+    "score": 7,
+    "justification": "Node 18+ tem default 300s que mata turnos longos independente de heartbeat. Os dois campos sao ortogonais: heartbeat resolve liveness do cliente, timeouts resolvem timeout da infra. Devem coexistir.",
+    "sprint": 16,
+    "implemented": false
+  },
+  {
+    "id": "D-123",
+    "type": "validation",
+    "description": "Typecheck (tsc --noEmit) e build (tsup) passando apos todas as implementacoes da wave",
+    "score": 8,
+    "justification": "Gate de qualidade final. SDKPresenceMessage deve ser reconhecida pelo TypeScript como membro valido do union SDKMessage. O build garante que o dist/ exporta os tipos corretamente.",
+    "sprint": 16,
+    "implemented": false
+  }
+]
