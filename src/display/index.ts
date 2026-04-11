@@ -19,6 +19,7 @@ export {
   DisplayAlertSchema,
   DisplayChoicesSchema,
   DisplayToolRegistry,
+  DisplayReactSchema,
 } from "./schemas.js"
 
 export type {
@@ -42,10 +43,11 @@ export type {
   DisplaySteps,
   DisplayAlert,
   DisplayChoices,
+  DisplayReact,
 } from "./schemas.js"
 
 export { createDisplayTools } from "./tools.js"
 
-export { DISPLAY_SYSTEM_PROMPT, mergeSystemPromptAppend } from "./prompt.js"
+export { DISPLAY_SYSTEM_PROMPT, REACT_OUTPUT_SYSTEM_PROMPT, mergeSystemPromptAppend } from "./prompt.js"
 
 export { createDisplayMcpServer } from "./server.js"

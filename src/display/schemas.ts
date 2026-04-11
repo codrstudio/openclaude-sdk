@@ -62,7 +62,7 @@ export const DisplayTableSchema = z.object({
     type: z.enum(["text", "number", "money", "image", "link", "badge"]).default("text"),
     align: z.enum(["left", "center", "right"]).default("left"),
   })),
-  rows: z.array(z.record(z.unknown())),
+  rows: z.array(z.record(z.string(), z.unknown())),
   sortable: z.boolean().default(false),
 })
 
@@ -227,6 +227,61 @@ export const DisplayChoicesSchema = z.object({
   layout: z.enum(["buttons", "cards", "list"]).default("buttons"),
 })
 
+// 7. REACT RICO
+
+export const DisplayReactSchema = z.object({
+  // Schema version — permite evoluir sem quebrar clientes antigos
+  version: z.literal("1"),
+
+  // UI chrome
+  title: z.string().optional()
+    .describe("Titulo exibido acima do componente"),
+  description: z.string().optional()
+    .describe("Subtitulo ou contexto curto"),
+
+  // Codigo-fonte ESM com exactly one default export
+  code: z.string()
+    .describe(
+      "ES module source. Must contain exactly one " +
+      "`export default function Component(props) { ... }`. " +
+      "Max 8 KB."
+    ),
+
+  language: z.enum(["jsx", "tsx"]).default("jsx")
+    .describe("Source language — determines transpiler preset"),
+
+  entry: z.literal("default").default("default")
+    .describe("Reserved for future expansion; always 'default' in v1"),
+
+  // Dependencias explicitas — cliente valida contra whitelist
+  imports: z.array(
+    z.object({
+      module: z.enum(["react", "framer-motion"]),
+      symbols: z.array(z.string()).min(1),
+    })
+  ).describe(
+    "Every import used in `code` must be declared here. " +
+    "Mismatch with actual imports rejects the payload."
+  ),
+
+  // Dados iniciais passados como props (separado do code pra nao inflar JSX)
+  initialProps: z.record(z.string(), z.unknown()).optional()
+    .describe("Props passed to the component on mount. Max 32 KB serialized."),
+
+  // Dimensionamento — iframe/container precisa saber o alvo
+  layout: z.object({
+    height: z.union([z.number(), z.literal("auto")]).optional()
+      .describe("Height in px, or 'auto' for ResizeObserver-driven"),
+    aspectRatio: z.string().optional()
+      .describe("CSS aspect-ratio string, e.g. '16/9'"),
+    maxWidth: z.number().optional()
+      .describe("Max width in px; default: 100% of container"),
+  }).optional(),
+
+  // Preferencia visual — cliente decide se respeita
+  theme: z.enum(["light", "dark", "auto"]).optional(),
+})
+
 // --- Registry (mapa nome → schema) ---
 
 export const DisplayToolRegistry = {
@@ -274,3 +329,4 @@ export type DisplaySpreadsheet = z.infer<typeof DisplaySpreadsheetSchema>
 export type DisplaySteps = z.infer<typeof DisplayStepsSchema>
 export type DisplayAlert = z.infer<typeof DisplayAlertSchema>
 export type DisplayChoices = z.infer<typeof DisplayChoicesSchema>
+export type DisplayReact = z.infer<typeof DisplayReactSchema>
