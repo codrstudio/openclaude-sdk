@@ -2,7 +2,7 @@
 // query() — interface principal, espelha @anthropic-ai/claude-agent-sdk
 // ---------------------------------------------------------------------------
 
-import type { SDKMessage, SDKSystemMessage, PermissionMode } from "./types/messages.js"
+import type { SDKMessage, SDKSystemMessage, SDKPresenceMessage, PermissionMode } from "./types/messages.js"
 import type { Options, PermissionResponse, McpServerConfig } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
 import type {
@@ -214,6 +214,7 @@ export function query(params: {
   // ---------------------------------------------------------------------------
 
   async function* lifecycleGenerator(): AsyncGenerator<SDKMessage, void> {
+    let heartbeatTimer: ReturnType<typeof setInterval> | null = null
     try {
       // Start SDK servers and build a local copy with _localPort injected (never mutate the original)
       let optionsForCli = resolvedOptions
@@ -306,8 +307,37 @@ export function query(params: {
       writeStdinRef = writeStdin
       closeProcRef = closeProc
 
-      // Yield messages, routing control_response internally
-      for await (const msg of stream) {
+      // ---------------------------------------------------------------------------
+      // Heartbeat (presence) setup
+      // ---------------------------------------------------------------------------
+
+      const presenceIntervalMs = resolvedOptions.presenceIntervalMs
+      const heartbeatEnabled = presenceIntervalMs === undefined || presenceIntervalMs > 0
+      const HEARTBEAT_INTERVAL_MS = heartbeatEnabled ? (presenceIntervalMs ?? 15_000) : 0
+      const heartbeatQueue: SDKPresenceMessage[] = []
+      const turnStart = Date.now()
+      let heartbeatSeq = 0
+
+      if (heartbeatEnabled) {
+        heartbeatTimer = setInterval(() => {
+          heartbeatSeq++
+          heartbeatQueue.push({
+            type: "presence",
+            ts: Date.now(),
+            seq: heartbeatSeq,
+            elapsedMs: Date.now() - turnStart,
+          })
+        }, HEARTBEAT_INTERVAL_MS)
+      }
+
+      function* drainHeartbeats(): Generator<SDKPresenceMessage> {
+        while (heartbeatQueue.length > 0) {
+          yield heartbeatQueue.shift()!
+        }
+      }
+
+      function processMsg(msg: SDKMessage): boolean {
+        // Returns true if msg was a control_response (consumed internally)
         const obj = msg as Record<string, unknown>
         if (obj["type"] === "control_response" && typeof obj["responseId"] === "string") {
           const entry = pendingRequests.get(obj["responseId"])
@@ -315,11 +345,82 @@ export function query(params: {
             pendingRequests.delete(obj["responseId"])
             entry.resolve(obj["data"])
           }
-          continue
+          return true
         }
-        yield msg
+        return false
+      }
+
+      // ---------------------------------------------------------------------------
+      // Main message loop — gap-aware when heartbeat is enabled
+      // ---------------------------------------------------------------------------
+
+      if (heartbeatEnabled) {
+        const iter = stream[Symbol.asyncIterator]()
+        let nextPromise: Promise<IteratorResult<SDKMessage, void>> = iter.next()
+
+        while (true) {
+          // Promise that resolves when the heartbeatQueue has items (polls every 100ms)
+          let checkInterval: ReturnType<typeof setInterval> | null = null
+          const heartbeatReady = new Promise<"heartbeat">((resolve) => {
+            if (heartbeatQueue.length > 0) {
+              resolve("heartbeat")
+              return
+            }
+            checkInterval = setInterval(() => {
+              if (heartbeatQueue.length > 0) {
+                clearInterval(checkInterval!)
+                checkInterval = null
+                resolve("heartbeat")
+              }
+            }, 100)
+          })
+
+          const winner = await Promise.race([
+            nextPromise.then(() => "next" as const),
+            heartbeatReady,
+          ])
+
+          // Clean up the polling interval if it's still running
+          if (checkInterval !== null) {
+            clearInterval(checkInterval)
+            checkInterval = null
+          }
+
+          if (winner === "heartbeat") {
+            // Drain accumulated heartbeats without consuming nextPromise
+            yield* drainHeartbeats()
+            continue
+          }
+
+          // winner === "next" — consume the now-resolved promise
+          const result = await nextPromise
+          if (result.done) break
+
+          // Drain any heartbeats that arrived while awaiting
+          yield* drainHeartbeats()
+
+          // Process real message
+          if (!processMsg(result.value)) {
+            yield result.value
+          }
+
+          nextPromise = iter.next()
+        }
+
+        // Drain final heartbeats after CLI stream closes
+        yield* drainHeartbeats()
+      } else {
+        // Original simple loop when heartbeat is disabled
+        for await (const msg of stream) {
+          if (!processMsg(msg)) {
+            yield msg
+          }
+        }
       }
     } finally {
+      if (heartbeatTimer !== null) {
+        clearInterval(heartbeatTimer)
+      }
       await stopOnce()
     }
   }
