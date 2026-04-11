@@ -1177,6 +1177,66 @@ import type {
 } from "openclaude-sdk"
 ```
 
+### React Rich Output
+
+A flag `reactOutput` estende o Rich Output adicionando a action `react` ao `display_visual`, permitindo que o modelo emita **componentes React funcionais com Framer Motion** que o cliente transpila e renderiza como widgets animados.
+
+`reactOutput` só tem efeito quando `richOutput` também está ativo — caso contrário é ignorado silenciosamente (sem warn, sem erro).
+
+#### Gate das duas flags
+
+| `richOutput` | `reactOutput` | Resultado |
+|---|---|---|
+| `false` / ausente | qualquer | Nada injetado — zero overhead |
+| `true` | `false` / ausente | Display tools ativas **sem** action `react` |
+| `true` | `true` | Display tools ativas **com** action `react` + system prompt React |
+
+#### Exemplo end-to-end
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Monta um dashboard animado com 4 KPIs de vendas e um chart de linha",
+  options: {
+    richOutput: true,
+    reactOutput: true,
+  },
+})
+
+for await (const msg of q) {
+  if (msg.type === "assistant") {
+    for (const block of msg.message.content) {
+      if (block.type === "tool_use" && block.name === "display_visual") {
+        const input = block.input as { action: string }
+        if (input.action === "react") {
+          console.log("[react payload]", input)
+          // host: validate -> transpile -> sandbox -> render
+        }
+      }
+    }
+  }
+}
+```
+
+#### Pipeline obrigatório do cliente
+
+O SDK **não renderiza** — apenas transmite o payload. O host é responsável por seguir este pipeline antes de montar o componente:
+
+1. **VALIDATE** — `version === "1"`, todos os `imports[].module` na whitelist (`react` | `framer-motion`), nenhum import no `code` fora dos declarados em `imports`, `code.length <= 8 KB`, `JSON.stringify(initialProps).length <= 32 KB`.
+
+2. **TRANSPILE** — Use Babel standalone com preset `["react"]` (+ `"typescript"` se `language === "tsx"`), ou sucrase com transforms `["jsx", "typescript"]`. Extrai o `export default`.
+
+3. **SANDBOX** — Renderize dentro de um `<iframe sandbox="allow-scripts">` em origin distinto, ou shadow DOM com escopo restrito.
+
+4. **INJECT SCOPE** — Forneça apenas `react` e `framer-motion` como resolver de módulos. Qualquer outro import deve lançar erro em tempo de resolução.
+
+5. **RENDER** — Monte como `<Component {...payload.initialProps} />` dentro de um error boundary. Envolva em `<MotionConfig reducedMotion="user">`. Respeite `layout.height` / `layout.aspectRatio` no container.
+
+6. **THEME** — Se `payload.theme` estiver definido, exponha as variáveis CSS (`--fg`, `--bg`, `--accent`, `--muted`) no container host antes de montar.
+
+> **Nota de segurança:** O passo 3 (sandbox) é **obrigatório**. Avaliar código gerado por LLM no origin principal com acesso a dados do usuário é uma vulnerabilidade crítica. Hosts que pulam o sandbox expõem usuários a execução arbitrária de código.
+
 ### Ask User
 
 Enable `askUser` to let the agent pause and ask the user structured questions mid-task:
