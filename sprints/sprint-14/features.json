@@ -1,0 +1,174 @@
+[
+  {
+    "id": "F-115",
+    "name": "DisplayReactSchema",
+    "description": "Criar DisplayReactSchema em src/display/schemas.ts com todos os campos (version, title, description, code, language, entry, imports, initialProps, layout, theme) e tipo DisplayReact inferido",
+    "status": "pending",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "DisplayReactSchema existe em src/display/schemas.ts",
+      "Parse com { version: '1', code: '...', imports: [{ module: 'react', symbols: ['useState'] }] } sucede",
+      "Parse com { version: '2', code: '...' } falha (version deve ser '1')",
+      "Parse com imports[].module: 'lodash' falha (fora da whitelist)",
+      "Parse com imports[].symbols: [] falha (min 1)",
+      "Tipo DisplayReact exportado de schemas.ts"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-046-display-react-schema.md"
+  },
+  {
+    "id": "F-116",
+    "name": "Action react no visualSchema",
+    "description": "Adicionar action 'react' ao visualSchema em src/display/tools.ts como 6a entry no discriminated union, importar DisplayReactSchema e atualizar descricao do display_visual",
+    "status": "pending",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-115"],
+    "tests": [
+      "visualSchema.parse({ action: 'react', version: '1', code: '...', imports: [...] }) sucede",
+      "visualSchema.parse({ action: 'react' }) falha (code e imports required)",
+      "Descricao do display_visual menciona 'react (live React component with Framer Motion)'"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-046-display-react-schema.md"
+  },
+  {
+    "id": "F-117",
+    "name": "REACT_OUTPUT_SYSTEM_PROMPT",
+    "description": "Criar constante REACT_OUTPUT_SYSTEM_PROMPT em src/display/prompt.ts com 6 secoes normativas: MODULE SHAPE, IMPORTS whitelist (react + framer-motion), STYLING, DATA, ANIMATION, LAYOUT",
+    "status": "pending",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "REACT_OUTPUT_SYSTEM_PROMPT exportado de src/display/prompt.ts",
+      "Contem secao MODULE SHAPE com regra de export default",
+      "Contem whitelist react (7 symbols) e framer-motion (9 symbols)",
+      "Contem instrucao de inline style only (sem Tailwind)",
+      "Contem instrucao de initialProps para dados grandes",
+      "Contem instrucao de layout self-contained"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-047-react-output-prompt-flag-integration.md"
+  },
+  {
+    "id": "F-118",
+    "name": "Flag reactOutput em Options",
+    "description": "Adicionar reactOutput?: boolean a interface Options em src/types/options.ts, posicionado logo apos richOutput",
+    "status": "pending",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "reactOutput?: boolean existe na interface Options",
+      "Posicionado entre richOutput e askUser",
+      "tsc --noEmit passa com a nova propriedade"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-047-react-output-prompt-flag-integration.md"
+  },
+  {
+    "id": "F-119",
+    "name": "Integracao reactOutput em query.ts",
+    "description": "Dentro do bloco if(richOutput) em query.ts, importar REACT_OUTPUT_SYSTEM_PROMPT e fazer segundo mergeSystemPromptAppend condicional quando reactOutput=true. Gate silencioso: reactOutput sem richOutput nao tem efeito",
+    "status": "pending",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-117", "F-118"],
+    "tests": [
+      "Import destrutured inclui REACT_OUTPUT_SYSTEM_PROMPT",
+      "let mergedPrompt em vez de const",
+      "if (optionsForCli.reactOutput) faz segundo mergeSystemPromptAppend",
+      "richOutput=true + reactOutput=true resulta em ambos os prompts concatenados",
+      "reactOutput=true sem richOutput=true nao injeta nada (gate silencioso)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-047-react-output-prompt-flag-integration.md"
+  },
+  {
+    "id": "F-120",
+    "name": "Barrel exports display/index.ts",
+    "description": "Reexportar DisplayReactSchema, DisplayReact e REACT_OUTPUT_SYSTEM_PROMPT de src/display/index.ts nos blocos existentes",
+    "status": "pending",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-115", "F-117"],
+    "tests": [
+      "DisplayReactSchema exportado de src/display/index.ts",
+      "tipo DisplayReact exportado de src/display/index.ts",
+      "REACT_OUTPUT_SYSTEM_PROMPT exportado de src/display/index.ts",
+      "Exports adicionados nos blocos existentes (sem criar blocos novos)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-048-react-output-exports-readme-demo.md"
+  },
+  {
+    "id": "F-121",
+    "name": "Exports publicos src/index.ts",
+    "description": "Reexportar DisplayReactSchema e tipo DisplayReact de src/index.ts na secao Display — Rich Output. NAO exportar REACT_OUTPUT_SYSTEM_PROMPT (interno)",
+    "status": "pending",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-120"],
+    "tests": [
+      "import { DisplayReactSchema } from 'openclaude-sdk' funciona",
+      "import type { DisplayReact } from 'openclaude-sdk' funciona",
+      "REACT_OUTPUT_SYSTEM_PROMPT NAO e exportado de src/index.ts"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-048-react-output-exports-readme-demo.md"
+  },
+  {
+    "id": "F-123",
+    "name": "Demo endpoint react action",
+    "description": "Atualizar endpoint GET /display em .tmp/demo/server.mjs para listar action 'react' no array de actions do display_visual",
+    "status": "pending",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-116"],
+    "tests": [
+      "Array de actions do display_visual inclui 'react'",
+      "Demo server inicia sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-048-react-output-exports-readme-demo.md"
+  },
+  {
+    "id": "F-122",
+    "name": "README secao React Rich Output",
+    "description": "Inserir secao 'React Rich Output' no README.md apos Rich Output e antes de Ask User: tabela de gate das duas flags, exemplo end-to-end, pipeline cliente obrigatorio (6 passos), nota de seguranca sobre sandbox",
+    "status": "pending",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-119"],
+    "tests": [
+      "Secao '### React Rich Output' existe no README",
+      "Tabela de gate com 3 cenarios (false/any, true/false, true/true)",
+      "Exemplo end-to-end com deteccao de action === 'react'",
+      "Pipeline de 6 passos: VALIDATE, TRANSPILE, SANDBOX, INJECT SCOPE, RENDER, THEME",
+      "Nota de seguranca sobre sandbox obrigatorio",
+      "Posicionada apos Rich Output e antes de Ask User"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-048-react-output-exports-readme-demo.md"
+  },
+  {
+    "id": "F-124",
+    "name": "Build validation",
+    "description": "Validar que tsc --noEmit e tsup passam sem erro apos todos os deltas da wave 14. Corrigir qualquer falha de exhaustiveness check, import circular ou tipo incompativel",
+    "status": "pending",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-115", "F-116", "F-117", "F-118", "F-119", "F-120", "F-121", "F-122", "F-123"],
+    "tests": [
+      "tsc --noEmit passa sem erro",
+      "tsup build passa sem erro",
+      "Nenhum import circular detectado",
+      "Discriminated union com action 'react' compila corretamente"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-14/worktree/sprints/sprint-14/3-prps/PRP-048-react-output-exports-readme-demo.md"
+  }
+]
