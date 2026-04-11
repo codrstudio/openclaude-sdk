@@ -76,8 +76,9 @@
     "id": "F-108",
     "name": "Ask User MCP Server",
     "description": "Create src/ask-user/server.ts with createAskUserMcpServer() that registers ask_user tool as MCP server. Handler blocks via Promise until client responds. Concurrent guard rejects with isError:true if question already pending. Timeout via optional timeoutMs resolves with cancelled. Uses tool() and createSdkMcpServer() from ../mcp.js. See PRP-043 Feature F-108.",
-    "status": "pending",
+    "status": "passing",
     "priority": 5,
+    "completed_at": "2026-04-10T00:00:00.000Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
@@ -100,8 +101,9 @@
     "id": "F-109",
     "name": "formatAnswer",
     "description": "Implement and export formatAnswer(answer, timeoutMs?) in src/ask-user/server.ts. Converts AskUserAnswer to human-readable text for the model. Covers all 5 variants: text→'User answered: <value>', number→'User answered: <value>', boolean→'User answered: yes/no', choice→'User chose: <id>', cancelled→timeout message or 'User cancelled the question.' See PRP-043 Feature F-109.",
-    "status": "blocked",
+    "status": "passing",
     "priority": 6,
+    "completed_at": "2026-04-10T00:00:00.000Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
