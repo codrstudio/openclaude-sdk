@@ -17,6 +17,7 @@ import type {
 } from "./types/query.js"
 import type { AskUserRequest, AskUserAnswer } from "./ask-user/types.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
+import { applyToolIntentionFilter } from "./tool-intention/index.js"
 import { startSdkServerTransport } from "./mcp.js"
 import type { McpSdkServerConfig } from "./types/options.js"
 import { resolveModelEnv } from "./registry.js"
@@ -401,7 +402,13 @@ export function query(params: {
 
           // Process real message
           if (!processMsg(result.value)) {
-            yield result.value
+            if (optionsForCli.toolOutputMode !== "full") {
+              const filtered = applyToolIntentionFilter(result.value, optionsForCli.locale)
+              if (filtered === null) { nextPromise = iter.next(); continue }
+              yield filtered
+            } else {
+              yield result.value
+            }
           }
 
           nextPromise = iter.next()
@@ -413,7 +420,13 @@ export function query(params: {
         // Original simple loop when heartbeat is disabled
         for await (const msg of stream) {
           if (!processMsg(msg)) {
-            yield msg
+            if (optionsForCli.toolOutputMode !== "full") {
+              const filtered = applyToolIntentionFilter(msg, optionsForCli.locale)
+              if (filtered === null) continue
+              yield filtered
+            } else {
+              yield msg
+            }
           }
         }
       }

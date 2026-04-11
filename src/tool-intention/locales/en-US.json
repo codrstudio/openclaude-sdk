@@ -1,0 +1,170 @@
+{
+  "Task": [
+    "Running a parallel task",
+    "Spawning a subtask",
+    "Delegating work to another agent",
+    "Launching a background operation",
+    "Starting a parallel operation"
+  ],
+  "AskUserQuestion": [
+    "Asking the user a question",
+    "Requesting input from user",
+    "Seeking clarification from user",
+    "Consulting the user about something",
+    "Checking with the user"
+  ],
+  "Bash": [
+    "Running a terminal command",
+    "Executing a shell operation",
+    "Processing a system command",
+    "Running a shell script",
+    "Performing a terminal operation"
+  ],
+  "Edit": [
+    "Editing a file",
+    "Modifying file contents",
+    "Updating a section of code",
+    "Applying a change to a file",
+    "Altering part of a file"
+  ],
+  "EnterPlanMode": [
+    "Entering planning mode",
+    "Activating structured planning",
+    "Starting a planning session",
+    "Switching to plan mode",
+    "Opening the planning interface"
+  ],
+  "EnterWorktree": [
+    "Accessing a worktree",
+    "Entering a workspace context",
+    "Navigating to a worktree",
+    "Opening a workspace branch",
+    "Switching to a worktree"
+  ],
+  "ExitPlanMode": [
+    "Leaving planning mode",
+    "Deactivating plan mode",
+    "Finishing the planning session",
+    "Returning from plan mode",
+    "Closing the planning interface"
+  ],
+  "ExitWorktree": [
+    "Leaving the current worktree",
+    "Exiting workspace context",
+    "Returning from a worktree",
+    "Closing the worktree context",
+    "Leaving a workspace branch"
+  ],
+  "Glob": [
+    "Searching files by pattern",
+    "Finding files in the project",
+    "Listing files matching a pattern",
+    "Locating matching files",
+    "Looking up files by glob pattern"
+  ],
+  "Grep": [
+    "Searching file contents",
+    "Looking for patterns in code",
+    "Finding occurrences in codebase",
+    "Performing a text search",
+    "Scanning files for patterns"
+  ],
+  "NotebookEdit": [
+    "Editing a notebook",
+    "Modifying notebook cells",
+    "Updating notebook content",
+    "Changing a notebook block",
+    "Applying changes to notebook"
+  ],
+  "Read": [
+    "Reading a file",
+    "Checking the contents of a file",
+    "Opening a file for review",
+    "Accessing a document",
+    "Viewing file contents"
+  ],
+  "SendMessage": [
+    "Sending a message",
+    "Communicating with another agent",
+    "Passing a message along",
+    "Transmitting information to an agent",
+    "Notifying another agent"
+  ],
+  "Skill": [
+    "Invoking a skill",
+    "Running a configured skill",
+    "Activating a specialized capability",
+    "Using an available skill",
+    "Executing a system skill"
+  ],
+  "TaskOutput": [
+    "Retrieving task output",
+    "Reading results from a task",
+    "Getting parallel task output",
+    "Checking subtask results",
+    "Accessing task output"
+  ],
+  "TaskStop": [
+    "Stopping a task",
+    "Canceling a running task",
+    "Terminating a parallel operation",
+    "Halting an active subtask",
+    "Ending a running task"
+  ],
+  "TeamCreate": [
+    "Creating an agent team",
+    "Forming a working team",
+    "Setting up a group of agents",
+    "Assembling an execution team",
+    "Starting a collaborative team"
+  ],
+  "TeamDelete": [
+    "Removing an agent team",
+    "Dissolving a working team",
+    "Deleting a group of agents",
+    "Disbanding an execution team",
+    "Tearing down a team"
+  ],
+  "TodoWrite": [
+    "Updating the task list",
+    "Recording work items",
+    "Managing the todo list",
+    "Writing progress items",
+    "Organizing pending tasks"
+  ],
+  "ToolSearch": [
+    "Looking up an available tool",
+    "Searching for system tools",
+    "Finding a specific tool",
+    "Searching tools by name",
+    "Browsing the tool catalog"
+  ],
+  "WebFetch": [
+    "Fetching web content",
+    "Accessing an online page",
+    "Retrieving data from a URL",
+    "Loading content from a URL",
+    "Requesting a web resource"
+  ],
+  "WebSearch": [
+    "Searching the web",
+    "Looking up information online",
+    "Querying the internet",
+    "Performing a web search",
+    "Finding data on the web"
+  ],
+  "Write": [
+    "Writing a file",
+    "Creating a new file",
+    "Saving content to a file",
+    "Storing data in a file",
+    "Persisting content to disk"
+  ],
+  "_fallback": [
+    "Using a tool",
+    "Performing an operation",
+    "Executing an action",
+    "Processing a task",
+    "Working on a resource"
+  ]
+}

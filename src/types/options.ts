@@ -342,6 +342,28 @@ export interface Options {
    * **Nota**: este campo e puramente SDK-side e nao gera nenhuma flag CLI.
    */
   presenceIntervalMs?: number
+  /**
+   * Controla quanto do conteudo interno de `tool_use` blocks e exposto
+   * ao consumer:
+   *
+   * - `"intention"` (default): substitui o campo `input` de cada bloco
+   *   `tool_use` por uma frase curta descrevendo a _intencao_ da chamada,
+   *   no idioma definido por `options.locale`. Protege contra leak de
+   *   paths absolutos, comandos, argumentos e queries sensiveis que o
+   *   agente invoca internamente.
+   *
+   * - `"full"`: passa o `tool_use` original sem nenhuma modificacao. Use
+   *   apenas em contextos de desenvolvimento/debug ou em UIs que voce
+   *   confia 100% (ex: ferramentas de observabilidade internas).
+   *
+   * Display tools (`mcp__display__*`) **nunca** sao filtradas independente
+   * deste campo — elas SAO o conteudo visual renderizado pelo cliente.
+   *
+   * Este campo e **puramente SDK-side** e nao gera nenhuma flag CLI.
+   *
+   * Default: `"intention"`
+   */
+  toolOutputMode?: "intention" | "full"
   sandbox?: SandboxSettings
   sessionId?: string
   settingSources?: SettingSource[]

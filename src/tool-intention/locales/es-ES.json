@@ -1,0 +1,170 @@
+{
+  "Task": [
+    "Ejecutando una tarea en paralelo",
+    "Lanzando una subtarea",
+    "Delegando trabajo a otro agente",
+    "Iniciando una operación en segundo plano",
+    "Comenzando una operación paralela"
+  ],
+  "AskUserQuestion": [
+    "Consultando al usuario",
+    "Haciendo una pregunta al usuario",
+    "Solicitando información al usuario",
+    "Pidiendo confirmación al usuario",
+    "Aclarando una duda con el usuario"
+  ],
+  "Bash": [
+    "Ejecutando un comando de terminal",
+    "Procesando una operación del sistema",
+    "Corriendo un script de shell",
+    "Realizando una operación de terminal",
+    "Ejecutando un comando del sistema"
+  ],
+  "Edit": [
+    "Editando un archivo",
+    "Modificando el contenido de un archivo",
+    "Actualizando una sección del código",
+    "Aplicando un cambio en el archivo",
+    "Alterando parte de un archivo"
+  ],
+  "EnterPlanMode": [
+    "Entrando al modo de planificación",
+    "Activando la planificación estructurada",
+    "Iniciando una sesión de planificación",
+    "Cambiando al modo de plan",
+    "Abriendo la interfaz de planificación"
+  ],
+  "EnterWorktree": [
+    "Accediendo a un área de trabajo",
+    "Entrando a un contexto de worktree",
+    "Navegando a un área de trabajo",
+    "Abriendo una rama de trabajo",
+    "Cambiando a un worktree"
+  ],
+  "ExitPlanMode": [
+    "Saliendo del modo de planificación",
+    "Desactivando el modo de plan",
+    "Finalizando la sesión de planificación",
+    "Regresando del modo de plan",
+    "Cerrando la interfaz de planificación"
+  ],
+  "ExitWorktree": [
+    "Saliendo del worktree actual",
+    "Abandonando el contexto de trabajo",
+    "Regresando desde el worktree",
+    "Cerrando el contexto de worktree",
+    "Dejando el área de trabajo"
+  ],
+  "Glob": [
+    "Buscando archivos por patrón",
+    "Localizando archivos en el proyecto",
+    "Listando archivos que coinciden",
+    "Encontrando archivos con un patrón",
+    "Buscando archivos por glob"
+  ],
+  "Grep": [
+    "Buscando contenido en archivos",
+    "Buscando patrones en el código",
+    "Encontrando ocurrencias en el código",
+    "Realizando una búsqueda de texto",
+    "Escaneando archivos por patrones"
+  ],
+  "NotebookEdit": [
+    "Editando un notebook",
+    "Modificando celdas del notebook",
+    "Actualizando contenido del notebook",
+    "Cambiando un bloque del notebook",
+    "Aplicando cambios al notebook"
+  ],
+  "Read": [
+    "Leyendo un archivo",
+    "Consultando el contenido de un archivo",
+    "Abriendo un archivo para revisión",
+    "Accediendo a un documento",
+    "Revisando el contenido de un archivo"
+  ],
+  "SendMessage": [
+    "Enviando un mensaje",
+    "Comunicándose con otro agente",
+    "Transmitiendo un mensaje",
+    "Pasando información a un agente",
+    "Notificando a otro agente"
+  ],
+  "Skill": [
+    "Invocando una habilidad",
+    "Ejecutando un skill configurado",
+    "Activando una capacidad especializada",
+    "Usando una habilidad disponible",
+    "Corriendo un skill del sistema"
+  ],
+  "TaskOutput": [
+    "Obteniendo resultado de una tarea",
+    "Leyendo la salida de una tarea",
+    "Recuperando output de tarea paralela",
+    "Verificando resultados de subtarea",
+    "Accediendo al resultado de una tarea"
+  ],
+  "TaskStop": [
+    "Deteniendo una tarea",
+    "Cancelando una tarea en curso",
+    "Terminando una operación paralela",
+    "Parando una subtarea activa",
+    "Finalizando una tarea en marcha"
+  ],
+  "TeamCreate": [
+    "Creando un equipo de agentes",
+    "Formando un grupo de trabajo",
+    "Configurando un conjunto de agentes",
+    "Montando un equipo de ejecución",
+    "Iniciando un equipo colaborativo"
+  ],
+  "TeamDelete": [
+    "Eliminando un equipo de agentes",
+    "Disolviendo un grupo de trabajo",
+    "Borrando un conjunto de agentes",
+    "Desmantelando un equipo de ejecución",
+    "Suprimiendo un equipo"
+  ],
+  "TodoWrite": [
+    "Actualizando la lista de tareas",
+    "Registrando elementos de trabajo",
+    "Gestionando la lista de pendientes",
+    "Escribiendo elementos de progreso",
+    "Organizando tareas pendientes"
+  ],
+  "ToolSearch": [
+    "Buscando una herramienta disponible",
+    "Buscando herramientas del sistema",
+    "Localizando una herramienta específica",
+    "Buscando herramientas por nombre",
+    "Consultando el catálogo de herramientas"
+  ],
+  "WebFetch": [
+    "Obteniendo contenido de la web",
+    "Accediendo a una página en línea",
+    "Recuperando datos de una URL",
+    "Cargando contenido desde una URL",
+    "Solicitando un recurso web"
+  ],
+  "WebSearch": [
+    "Buscando en internet",
+    "Consultando información en línea",
+    "Realizando una búsqueda web",
+    "Buscando datos en la web",
+    "Explorando la internet"
+  ],
+  "Write": [
+    "Escribiendo un archivo",
+    "Creando un nuevo archivo",
+    "Guardando contenido en un archivo",
+    "Almacenando datos en un archivo",
+    "Persistiendo contenido en disco"
+  ],
+  "_fallback": [
+    "Usando una herramienta",
+    "Realizando una operación",
+    "Ejecutando una acción",
+    "Procesando una tarea",
+    "Trabajando en un recurso"
+  ]
+}
