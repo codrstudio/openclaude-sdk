@@ -308,6 +308,23 @@ export interface Options {
   reactOutput?: boolean
   askUser?: boolean
   askUserTimeoutMs?: number
+  /**
+   * Locale BCP 47 (ex: "pt-BR", "en-US", "es-ES") usado por strings
+   * narrativas que o SDK gera por conta propria (tool intentions, mensagens
+   * de erro estruturadas, etc).
+   *
+   * **NAO afeta o idioma da resposta do agente.** O agente responde no idioma
+   * do prompt do usuario — este campo controla apenas strings que o proprio
+   * SDK escreve autonomamente.
+   *
+   * Aceita variacoes case-insensitive e underscores: "pt-br", "pt_BR",
+   * "PT-BR" sao todos normalizados para "pt-BR" internamente via normalizeLocale().
+   *
+   * Locales nao suportados caem em "en-US" via fallback chain.
+   *
+   * Default: "pt-BR" quando ausente.
+   */
+  locale?: string
   sandbox?: SandboxSettings
   sessionId?: string
   settingSources?: SettingSource[]
