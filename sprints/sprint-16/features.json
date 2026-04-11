@@ -1,0 +1,143 @@
+[
+  {
+    "id": "F-131",
+    "name": "SDKPresenceMessage tipo e union",
+    "description": "Adicionar interface SDKPresenceMessage com campos type:'presence', ts:number, seq:number, elapsedMs:number em src/types/messages.ts e incluir como ultimo membro do discriminated union SDKMessage. type e literal 'presence', seq comeca em 1 (nao 0), elapsedMs e relativo ao inicio do query(). Interface NAO tem uuid, session_id nem outros campos.",
+    "status": "pending",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Interface SDKPresenceMessage existe em src/types/messages.ts com campos type:'presence', ts:number, seq:number, elapsedMs:number",
+      "SDKPresenceMessage esta no discriminated union SDKMessage como ultimo membro antes do fechamento",
+      "type e literal 'presence' (nao string generico)",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+  },
+  {
+    "id": "F-132",
+    "name": "presenceIntervalMs em Options",
+    "description": "Adicionar campo presenceIntervalMs?: number em src/types/options.ts na interface Options, apos o campo locale e antes de sandbox. JSDoc completo explicando: default 15000 (15s), 0 ou negativo desabilita, heartbeats emitidos como SDKMessage tipo presence para manter SSE vivas. O campo NAO gera flag CLI — puramente SDK-side.",
+    "status": "pending",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Campo presenceIntervalMs?: number existe em Options em src/types/options.ts",
+      "Campo esta posicionado apos locale e antes de sandbox",
+      "JSDoc documenta semantica: undefined=15000ms, 0=desabilitado, negativo=desabilitado, positivo=intervalo customizado",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+  },
+  {
+    "id": "F-133",
+    "name": "Timer + Promise.race gap-aware no lifecycleGenerator",
+    "description": "Em src/query.ts, dentro de lifecycleGenerator(): (1) Apos spawn do CLI, criar constantes/estado: resolvedOptions.presenceIntervalMs, heartbeatEnabled, HEARTBEAT_INTERVAL_MS, heartbeatQueue, turnStart, heartbeatSeq, heartbeatTimer via setInterval. (2) Criar drainHeartbeats() generator helper. (3) Substituir for-await simples por loop com Promise.race entre iter.next() e check de heartbeatQueue (polling 100ms). Quando winner=heartbeat: drena fila sem consumir nextPromise. Quando winner=next: drena residual + processa msg real. Apos loop: drena fila final. (4) No finally: clearInterval(heartbeatTimer) ANTES de stopOnce(). (5) Import de SDKPresenceMessage no topo. Preservar logica existente de control_response intacta. Quando heartbeatEnabled=false, usar loop original sem Promise.race.",
+    "status": "pending",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-131", "F-132"],
+    "tests": [
+      "heartbeatTimer criado com setInterval usando HEARTBEAT_INTERVAL_MS quando heartbeatEnabled=true",
+      "drainHeartbeats() generator existe e drena heartbeatQueue",
+      "Loop usa Promise.race entre iter.next() e heartbeatReady quando heartbeat habilitado",
+      "Heartbeats sao emitidos durante gaps longos sem esperar proxima mensagem real",
+      "clearInterval(heartbeatTimer) chamado no finally antes de stopOnce()",
+      "Quando presenceIntervalMs=0, nenhum timer e criado e loop original e usado",
+      "Logica existente de control_response preservada intacta",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+  },
+  {
+    "id": "F-134",
+    "name": "Filtro presence em collectMessages()",
+    "description": "Em src/query.ts, na funcao collectMessages(), adicionar 'if (msg.type === \"presence\") continue' no inicio do loop for-await, antes de messages.push(msg). Mensagens presence sao liveness signals, nao conteudo semantico — devem ser ignoradas silenciosamente. Verificar por inspecao que session-v2 collect() chama collectMessages() e herda o filtro automaticamente, sem necessidade de mudanca em session-v2.ts.",
+    "status": "pending",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-131"],
+    "tests": [
+      "collectMessages() tem 'if (msg.type === \"presence\") continue' antes de messages.push(msg)",
+      "Mensagens presence NAO aparecem no array retornado por collectMessages()",
+      "session-v2.ts NAO foi alterado (herda filtro via collectMessages())",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+  },
+  {
+    "id": "F-135",
+    "name": "Export publico SDKPresenceMessage",
+    "description": "Em src/index.ts, na secao 'Tipos — Messages', adicionar SDKPresenceMessage ao bloco de export type junto aos outros tipos de mensagem. Posicionar antes de SDKMessage (penultimo membro). Extensao .js no import path (ESM). Export como 'export type' para tree-shaking.",
+    "status": "pending",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-131"],
+    "tests": [
+      "SDKPresenceMessage esta no bloco de export type de src/index.ts",
+      "Posicionado antes de SDKMessage no bloco de exports",
+      "Import path usa extensao .js",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+  },
+  {
+    "id": "F-137",
+    "name": "Refatoracao server.mjs para relay SDKPresenceMessage",
+    "description": "Em .tmp/demo/server.mjs, na funcao pipeQueryToSSE: (1) Remover constantes HEARTBEAT_INTERVAL_MS, HEARTBEAT_POLL_MS, variaveis heartbeatSeq, lastEmitAt, heartbeatTimer, setInterval local e logica de check de gap. (2) No loop for-await principal, adicionar: if (msg.type === 'presence') { writeSSE event:'ping' com data JSON {ts, seq, elapsedMs}; continue }. (3) Manter httpServer.requestTimeout=0 e headersTimeout=0. (4) Adicionar presenceIntervalMs nas options do query() se necessario. Wire format preservado: event:ping com data:{ts,seq,elapsedMs}.",
+    "status": "pending",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-133"],
+    "tests": [
+      "HEARTBEAT_INTERVAL_MS, HEARTBEAT_POLL_MS, heartbeatSeq, lastEmitAt, heartbeatTimer removidos de pipeQueryToSSE",
+      "setInterval local de heartbeat removido",
+      "Loop for-await tem relay: msg.type==='presence' → writeSSE event:'ping' com data:{ts,seq,elapsedMs}",
+      "httpServer.requestTimeout===0 e headersTimeout===0 mantidos",
+      "Wire format preservado: event:ping, data com ts/seq/elapsedMs"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+  },
+  {
+    "id": "F-138",
+    "name": "Validacao typecheck e build",
+    "description": "Executar npx tsc --noEmit (typecheck) e npx tsup (build) apos todas as mudancas de codigo. Ambos devem passar sem erro. Se falhar, corrigir antes de considerar completo. dist/ deve estar atualizado.",
+    "status": "pending",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-131", "F-132", "F-133", "F-134", "F-135"],
+    "tests": [
+      "npx tsc --noEmit passa com zero erros",
+      "npx tsup passa com zero erros e dist/ atualizado",
+      "Nenhum erro de tipo introduzido pelas mudancas de presence heartbeat"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+  },
+  {
+    "id": "F-136",
+    "name": "Script de teste manual test-heartbeat.mjs",
+    "description": "Criar .tmp/demo/test-heartbeat.mjs que importa query de ../../dist/index.js, envia prompt forcando gap de 40s via Bash sleep, com presenceIntervalMs:5000 (debug), richOutput:false, permissionMode:'bypassPermissions'. Loop for-await imprime linhas PRESENCE com seq e elapsedMs para tipo presence, e msg.type para demais. Espera-se 7-8 linhas PRESENCE intercaladas.",
+    "status": "pending",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-138"],
+    "tests": [
+      "Arquivo .tmp/demo/test-heartbeat.mjs existe",
+      "Importa query de ../../dist/index.js",
+      "Usa presenceIntervalMs:5000, richOutput:false, permissionMode:'bypassPermissions'",
+      "Prompt forca gap de 40s via Bash sleep",
+      "Loop imprime PRESENCE com seq e elapsedMs para tipo presence"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+  }
+]
