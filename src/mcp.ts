@@ -5,10 +5,11 @@ import type { McpSdkServerConfig } from "./types/options.js"
 type AnyToolSchema = z.ZodRawShape | z.ZodTypeAny
 
 export interface ToolAnnotations {
-  readOnly?: boolean
-  destructive?: boolean
-  idempotent?: boolean
-  openWorld?: boolean
+  title?: string
+  readOnlyHint?: boolean
+  destructiveHint?: boolean
+  idempotentHint?: boolean
+  openWorldHint?: boolean
 }
 
 export interface CallToolResult {

@@ -62,7 +62,7 @@ export const DisplayTableSchema = z.object({
     type: z.enum(["text", "number", "money", "image", "link", "badge"]).default("text"),
     align: z.enum(["left", "center", "right"]).default("left"),
   })),
-  rows: z.array(z.record(z.unknown())),
+  rows: z.array(z.record(z.string(), z.unknown())),
   sortable: z.boolean().default(false),
 })
 
@@ -265,7 +265,7 @@ export const DisplayReactSchema = z.object({
   ),
 
   // Dados iniciais passados como props (separado do code pra nao inflar JSX)
-  initialProps: z.record(z.unknown()).optional()
+  initialProps: z.record(z.string(), z.unknown()).optional()
     .describe("Props passed to the component on mount. Max 32 KB serialized."),
 
   // Dimensionamento — iframe/container precisa saber o alvo
