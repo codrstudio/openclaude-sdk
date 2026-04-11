@@ -1,0 +1,240 @@
+[
+  {
+    "id": "F-139",
+    "name": "toolOutputMode em Options",
+    "description": "Adicionar campo toolOutputMode?: 'intention' | 'full' em src/types/options.ts na interface Options, apos presenceIntervalMs e antes de sandbox. JSDoc completo explicando: 'intention' (default) substitui tool_use.input por frase narrativa no locale ativo, 'full' passa original sem modificacao. Display tools (mcp__display__*) nunca sao filtradas. Campo NAO gera flag CLI — puramente SDK-side. Tipo union literal, NAO string generico.",
+    "status": "pending",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Campo toolOutputMode?: 'intention' | 'full' existe em Options em src/types/options.ts",
+      "Campo esta posicionado apos presenceIntervalMs e antes de sandbox",
+      "JSDoc documenta semantica: intention=default filtra tool_use.input, full=bypass, display tools nunca filtradas",
+      "Tipo e union literal 'intention' | 'full', nao string generico",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+  },
+  {
+    "id": "F-140",
+    "name": "ToolIntentionPayload tipo",
+    "description": "Criar src/tool-intention/types.ts com interface ToolIntentionPayload contendo 4 campos: _intention (string — frase de intencao no locale ativo), _toolName (string — nome original da tool), _toolUseId (string — ID do bloco tool_use), _filtered (literal true — marcador de que input foi substituido). Todos os campos com prefixo _ (underline leading) como convencao de metadado do SDK.",
+    "status": "pending",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Arquivo src/tool-intention/types.ts existe",
+      "Interface ToolIntentionPayload exportada com campos _intention: string, _toolName: string, _toolUseId: string, _filtered: true",
+      "Campo _filtered tem tipo literal true (nao boolean)",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+  },
+  {
+    "id": "F-141",
+    "name": "Dicionarios JSON pt-BR, en-US, es-ES",
+    "description": "Criar tres arquivos JSON em src/tool-intention/locales/: pt-BR.json, en-US.json, es-ES.json. Cada arquivo com 24 chaves (23 tools built-in + _fallback), cada chave com array de exatamente 5 strings. Tools cobertas: Task, AskUserQuestion, Bash, Edit, EnterPlanMode, EnterWorktree, ExitPlanMode, ExitWorktree, Glob, Grep, NotebookEdit, Read, SendMessage, Skill, TaskOutput, TaskStop, TeamCreate, TeamDelete, TodoWrite, ToolSearch, WebFetch, WebSearch, Write. Strings curtas (max 6 palavras), neutras, no gerundio/forma equivalente, sem emoji, sem giria, sem pontuacao final. NAO traduzir literalmente — usar formas idiomaticas de cada idioma.",
+    "status": "pending",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Arquivo src/tool-intention/locales/pt-BR.json existe com exatamente 24 chaves",
+      "Arquivo src/tool-intention/locales/en-US.json existe com exatamente 24 chaves",
+      "Arquivo src/tool-intention/locales/es-ES.json existe com exatamente 24 chaves",
+      "Cada chave tem array de exatamente 5 strings",
+      "Nenhuma string tem mais de 6 palavras",
+      "Chave _fallback presente em todos os tres arquivos",
+      "23 tools built-in cobertas: Task, AskUserQuestion, Bash, Edit, EnterPlanMode, EnterWorktree, ExitPlanMode, ExitWorktree, Glob, Grep, NotebookEdit, Read, SendMessage, Skill, TaskOutput, TaskStop, TeamCreate, TeamDelete, TodoWrite, ToolSearch, WebFetch, WebSearch, Write"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+  },
+  {
+    "id": "F-142",
+    "name": "pickIntention funcao de selecao",
+    "description": "Criar src/tool-intention/picker.ts com funcao pickIntention(toolName: string, locale: string | undefined): string. Importa os 3 JSONs com import assertions (with { type: 'json' }), importa normalizeLocale e SupportedLocale de ../locale/index.js. Cria Record DICTS mapeando locale→dicionario. Fallback em duas etapas para MCP tools: (1) tenta nome completo, (2) extrai ultimo segmento apos __ e tenta, (3) usa _fallback, (4) ultimo recurso retorna 'Usando uma ferramenta'. Selecao aleatoria com Math.random(). 100% sincrono — zero await, zero fetch, zero dependencia externa.",
+    "status": "pending",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-141"
+    ],
+    "tests": [
+      "Arquivo src/tool-intention/picker.ts existe e exporta funcao pickIntention",
+      "pickIntention aceita (toolName: string, locale: string | undefined) e retorna string",
+      "Imports dos 3 JSONs usam 'with { type: \"json\" }' assertion",
+      "Import de normalizeLocale e SupportedLocale de ../locale/index.js",
+      "Fallback funciona: tool desconhecida retorna variante de _fallback",
+      "MCP tool 'mcp__server__Read' encontra variante de Read via ultimo segmento",
+      "Funcao e 100% sincrona — nenhum await no codigo",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+  },
+  {
+    "id": "F-143",
+    "name": "applyToolIntentionFilter funcao de filtro",
+    "description": "Criar src/tool-intention/filter.ts com funcao applyToolIntentionFilter(msg: SDKMessage, locale: string | undefined): SDKMessage | null. Para assistant msgs com tool_use blocks: substitui input por ToolIntentionPayload (exceto mcp__display__*). Para user msgs com conteudo somente tool_result: retorna null (suprime). Qualquer outro tipo: retorna inalterado. Helper isOnlyToolResult verifica se todos os blocks sao tool_result. Usa satisfies ToolIntentionPayload para type safety. Shallow copy com spread — NAO muta original. 100% sincrono.",
+    "status": "pending",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-140",
+      "F-142"
+    ],
+    "tests": [
+      "Arquivo src/tool-intention/filter.ts existe e exporta applyToolIntentionFilter",
+      "tool_use blocks tem input substituido por objeto com _intention, _toolName, _toolUseId, _filtered",
+      "tool_result user messages retornam null (suprimidas)",
+      "mcp__display__* tool_use blocks passam integral sem filtro",
+      "Mensagens de outros tipos passam inalteradas",
+      "Funcao e 100% sincrona — nenhum await no codigo",
+      "Usa satisfies ToolIntentionPayload para garantir type safety",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+  },
+  {
+    "id": "F-144",
+    "name": "Barrel src/tool-intention/index.ts",
+    "description": "Criar src/tool-intention/index.ts como barrel re-exportando: pickIntention de ./picker.js, applyToolIntentionFilter de ./filter.js, e type ToolIntentionPayload de ./types.js. Extensao .js nos import paths (ESM). ToolIntentionPayload como export type para tree-shaking.",
+    "status": "pending",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-142",
+      "F-143"
+    ],
+    "tests": [
+      "Arquivo src/tool-intention/index.ts existe",
+      "Re-exporta pickIntention de ./picker.js",
+      "Re-exporta applyToolIntentionFilter de ./filter.js",
+      "Re-exporta type ToolIntentionPayload de ./types.js",
+      "Extensoes .js nos import paths",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+  },
+  {
+    "id": "F-145",
+    "name": "Exports publicos em src/index.ts",
+    "description": "Adicionar nova secao de exports em src/index.ts para Tool Intention Filter: export pickIntention e applyToolIntentionFilter de ./tool-intention/index.js, e export type ToolIntentionPayload de ./tool-intention/index.js. Posicionado apos a secao de Locale exports, seguindo ordem logica do milestone-04. Extensao .js no import path. ToolIntentionPayload como export type.",
+    "status": "pending",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-144"
+    ],
+    "tests": [
+      "src/index.ts exporta pickIntention de ./tool-intention/index.js",
+      "src/index.ts exporta applyToolIntentionFilter de ./tool-intention/index.js",
+      "src/index.ts exporta type ToolIntentionPayload de ./tool-intention/index.js",
+      "Secao posicionada apos Locale exports",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+  },
+  {
+    "id": "F-146",
+    "name": "Integracao do filtro no lifecycleGenerator",
+    "description": "Em src/query.ts: importar applyToolIntentionFilter de ./tool-intention/index.js. Integrar em DOIS pontos do lifecycleGenerator: (1) No loop com heartbeat (Promise.race), apos yield* drainHeartbeats() e processMsg(), antes do yield — se toolOutputMode !== 'full', aplicar filtro e skip se null. (2) No loop simples (heartbeat desabilitado), mesmo padrao. Quando toolOutputMode e undefined, tratar como 'intention' (check e !== 'full'). filtered === null faz continue. Filtro aplicado APOS processMsg() e APOS drainHeartbeats().",
+    "status": "pending",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-139",
+      "F-144"
+    ],
+    "tests": [
+      "src/query.ts importa applyToolIntentionFilter de ./tool-intention/index.js",
+      "Loop com heartbeat (Promise.race) aplica filtro apos drainHeartbeats() e processMsg()",
+      "Loop simples (sem heartbeat) aplica filtro apos processMsg()",
+      "Check usa optionsForCli.toolOutputMode !== 'full' (undefined tratado como intention)",
+      "filtered === null causa continue (mensagem suprimida nao e emitida)",
+      "optionsForCli.locale passado como segundo argumento do filtro",
+      "npx tsc --noEmit passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+  },
+  {
+    "id": "F-147",
+    "name": "Script translate-locale.ts",
+    "description": "Criar scripts/translate-locale.ts invocado via npm run translate -- xx-YY. Fluxo: (1) valida formato BCP 47 (/^[a-z]{2}-[A-Z]{2}$/i), (2) verifica se arquivo destino existe (aborta sem --force), (3) carrega pt-BR.json como origem, (4) para cada tool chama prompt() do SDK com systemPrompt de traducao e userPrompt com variantes, (5) parseia JSON e valida 5 strings, (6) retry 1x em falha, fallback pt-BR se persistir, (7) escreve locale JSON, (8) imprime resumo. Usa prompt() com toolOutputMode:'full', presenceIntervalMs:0, permissionMode:'bypassPermissions', richOutput:false, mcpServers:{}.",
+    "status": "pending",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-139",
+      "F-141"
+    ],
+    "tests": [
+      "Arquivo scripts/translate-locale.ts existe",
+      "Valida formato BCP 47 — rejeita argumentos invalidos com mensagem clara",
+      "Aborta se arquivo destino existe sem --force",
+      "Carrega pt-BR.json como origem",
+      "Chama prompt() do SDK para traducao de cada tool",
+      "Retry 1x em falha de parse/validacao",
+      "Fallback para pt-BR em falha persistente",
+      "Imprime resumo com contagem de sucessos e falhas"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
+  },
+  {
+    "id": "F-148",
+    "name": "Script translate no package.json",
+    "description": "Adicionar script 'translate' no package.json: 'tsx scripts/translate-locale.ts'. Uso: npm run translate -- pt-PT. tsx ja e devDependency — NAO adicionar dependencia nova.",
+    "status": "pending",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-147"
+    ],
+    "tests": [
+      "package.json tem entrada 'translate': 'tsx scripts/translate-locale.ts' na secao scripts",
+      "tsx ja esta em devDependencies (nenhuma dependencia nova adicionada)",
+      "npm run translate -- --help nao causa erro de resolucao de script"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
+  },
+  {
+    "id": "F-149",
+    "name": "Validacao typecheck e build",
+    "description": "Validar que npm run typecheck (tsc --noEmit) e npm run build (tsup) passam sem erro com todas as mudancas do sprint. Pontos de atencao: resolveJsonModule em tsconfig para JSON imports, import assertions with { type: 'json' } requer TS 5.3+, noUncheckedIndexedAccess com dict[toolName], satisfies ToolIntentionPayload requer TS 4.9+, JSON files em src/tool-intention/locales/ devem ser incluidos no bundle. Nenhum @ts-ignore ou as any adicionado. Se falhar, corrigir antes de considerar concluido.",
+    "status": "pending",
+    "priority": 11,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-139",
+      "F-140",
+      "F-141",
+      "F-142",
+      "F-143",
+      "F-144",
+      "F-145",
+      "F-146",
+      "F-147",
+      "F-148"
+    ],
+    "tests": [
+      "npm run typecheck (tsc --noEmit) passa com zero erros",
+      "npm run build (tsup) passa com zero erros e produz output em dist/",
+      "Nenhum @ts-ignore ou as any adicionado para contornar erros",
+      "resolveJsonModule esta ativo em tsconfig.json (adicionar se necessario)",
+      "Import assertions with { type: 'json' } funcionam corretamente"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
+  }
+]
