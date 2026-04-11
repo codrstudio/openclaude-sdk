@@ -257,6 +257,13 @@ export type {
 export type { AskUserRequest, AskUserAnswer } from "./ask-user/index.js"
 
 // ---------------------------------------------------------------------------
+// Locale
+// ---------------------------------------------------------------------------
+
+export { normalizeLocale, SUPPORTED_LOCALES } from "./locale/index.js"
+export type { SupportedLocale } from "./locale/index.js"
+
+// ---------------------------------------------------------------------------
 // V2 Session API
 // ---------------------------------------------------------------------------
 
