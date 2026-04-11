@@ -46,6 +46,6 @@ export type {
 
 export { createDisplayTools } from "./tools.js"
 
-export { DISPLAY_SYSTEM_PROMPT } from "./prompt.js"
+export { DISPLAY_SYSTEM_PROMPT, mergeSystemPromptAppend } from "./prompt.js"
 
 export { createDisplayMcpServer } from "./server.js"
