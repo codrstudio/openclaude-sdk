@@ -112,8 +112,9 @@
     "id": "F-130",
     "name": "Validacao locale: CLI, teste manual, build",
     "description": "Verificar por inspecao que locale NAO aparece em buildCliArgs() de src/process.ts (SDK-side only). Criar .tmp/demo/test-locale.mjs com 18 casos de teste cobrindo todos os cenarios de normalizacao. Validar tsc --noEmit e tsup passam sem erro.",
-    "status": "pending",
+    "status": "passing",
     "priority": 6,
+    "completed_at": "2026-04-11T23:20:00Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
