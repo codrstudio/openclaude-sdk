@@ -1,0 +1,117 @@
+[
+  {
+    "id": "F-125",
+    "name": "SupportedLocale type + SUPPORTED_LOCALES",
+    "description": "Criar src/locale/types.ts com type SupportedLocale = 'pt-BR' | 'en-US' | 'es-ES' (union de string literals, NAO enum) e const SUPPORTED_LOCALES: readonly SupportedLocale[] = ['pt-BR', 'en-US', 'es-ES'] as const. Arquivo sem imports, zero dependencias.",
+    "status": "pending",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "src/locale/types.ts existe",
+      "type SupportedLocale exportado como union 'pt-BR' | 'en-US' | 'es-ES'",
+      "const SUPPORTED_LOCALES exportado como readonly array as const",
+      "Ordem: pt-BR primeiro, en-US segundo, es-ES terceiro",
+      "Arquivo nao importa nada (zero dependencias)"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-049-locale-module-core.md"
+  },
+  {
+    "id": "F-126",
+    "name": "normalizeLocale()",
+    "description": "Criar src/locale/normalize.ts com funcao normalizeLocale(input: string | undefined): SupportedLocale. Regras: undefined/falsy retorna 'pt-BR', trim whitespace, underscore→hyphen, case-insensitive, match exato canonico, lang primary match (pt→pt-BR, en→en-US, es→es-ES), fallback final en-US. Import type-only de SupportedLocale. Nunca lanca excecao.",
+    "status": "pending",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-125"],
+    "tests": [
+      "src/locale/normalize.ts existe",
+      "normalizeLocale(undefined) retorna 'pt-BR'",
+      "normalizeLocale('') retorna 'pt-BR'",
+      "normalizeLocale('pt-br') retorna 'pt-BR' (case-insensitive)",
+      "normalizeLocale('pt_BR') retorna 'pt-BR' (underscore→hyphen)",
+      "normalizeLocale('pt') retorna 'pt-BR' (lang primary match)",
+      "normalizeLocale('pt-PT') retorna 'pt-BR' (regional fallback)",
+      "normalizeLocale('en-GB') retorna 'en-US' (regional fallback)",
+      "normalizeLocale('es-MX') retorna 'es-ES' (regional fallback)",
+      "normalizeLocale('ja-JP') retorna 'en-US' (desconhecido→fallback)",
+      "normalizeLocale('  pt-br  ') retorna 'pt-BR' (trim)",
+      "Import de SupportedLocale e type-only"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-049-locale-module-core.md"
+  },
+  {
+    "id": "F-127",
+    "name": "Barrel src/locale/index.ts",
+    "description": "Criar src/locale/index.ts exportando: export type { SupportedLocale } from './types.js', export { SUPPORTED_LOCALES } from './types.js', export { normalizeLocale } from './normalize.js'. Extensao .js nos imports (ESM). Exatamente 3 exports.",
+    "status": "pending",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-125", "F-126"],
+    "tests": [
+      "src/locale/index.ts existe",
+      "SupportedLocale exportado como export type (tree-shaking)",
+      "SUPPORTED_LOCALES exportado de ./types.js",
+      "normalizeLocale exportado de ./normalize.js",
+      "Extensao .js em todos os imports"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+  },
+  {
+    "id": "F-128",
+    "name": "Options.locale em src/types/options.ts",
+    "description": "Adicionar locale?: string a interface Options em src/types/options.ts apos askUserTimeoutMs e antes de sandbox. Tipo e string (NAO SupportedLocale) — normalizacao e interna. JSDoc DEVE explicitar que locale NAO afeta o idioma do agente, apenas strings narrativas geradas pelo SDK. Aceito nos 4 entry points (query, prompt, createSession, resumeSession) sem alteracao adicional.",
+    "status": "pending",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "locale?: string existe na interface Options",
+      "Posicionado apos askUserTimeoutMs e antes de sandbox",
+      "JSDoc explicita que NAO afeta idioma do agente",
+      "Tipo e string, NAO SupportedLocale",
+      "tsc --noEmit passa com a nova propriedade"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+  },
+  {
+    "id": "F-129",
+    "name": "Exports publicos locale em src/index.ts",
+    "description": "Adicionar secao 'Locale' em src/index.ts entre 'Ask User' e 'V2 Session API': export { normalizeLocale, SUPPORTED_LOCALES } from './locale/index.js' e export type { SupportedLocale } from './locale/index.js'. Extensao .js nos imports.",
+    "status": "pending",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-127"],
+    "tests": [
+      "normalizeLocale exportado de src/index.ts",
+      "SUPPORTED_LOCALES exportado de src/index.ts",
+      "SupportedLocale exportado como export type de src/index.ts",
+      "Secao posicionada entre Ask User e V2 Session API",
+      "Extensao .js nos imports"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+  },
+  {
+    "id": "F-130",
+    "name": "Validacao locale: CLI, teste manual, build",
+    "description": "Verificar por inspecao que locale NAO aparece em buildCliArgs() de src/process.ts (SDK-side only). Criar .tmp/demo/test-locale.mjs com 18 casos de teste cobrindo todos os cenarios de normalizacao. Validar tsc --noEmit e tsup passam sem erro.",
+    "status": "pending",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": ["F-125", "F-126", "F-127", "F-128", "F-129"],
+    "tests": [
+      "locale NAO aparece em buildCliArgs() de src/process.ts",
+      ".tmp/demo/test-locale.mjs existe com 18 casos",
+      "node .tmp/demo/test-locale.mjs passa 18/18",
+      "tsc --noEmit passa sem erro",
+      "tsup build passa sem erro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+  }
+]
