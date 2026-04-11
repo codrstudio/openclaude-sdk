@@ -3,10 +3,11 @@
     "id": "F-115",
     "name": "DisplayReactSchema",
     "description": "Criar DisplayReactSchema em src/display/schemas.ts com todos os campos (version, title, description, code, language, entry, imports, initialProps, layout, theme) e tipo DisplayReact inferido",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-11T04:30:00Z",
     "dependencies": [],
     "tests": [
       "DisplayReactSchema existe em src/display/schemas.ts",
@@ -22,11 +23,13 @@
     "id": "F-116",
     "name": "Action react no visualSchema",
     "description": "Adicionar action 'react' ao visualSchema em src/display/tools.ts como 6a entry no discriminated union, importar DisplayReactSchema e atualizar descricao do display_visual",
-    "status": "pending",
+    "status": "blocked",
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-115"],
+    "dependencies": [
+      "F-115"
+    ],
     "tests": [
       "visualSchema.parse({ action: 'react', version: '1', code: '...', imports: [...] }) sucede",
       "visualSchema.parse({ action: 'react' }) falha (code e imports required)",
@@ -73,11 +76,14 @@
     "id": "F-119",
     "name": "Integracao reactOutput em query.ts",
     "description": "Dentro do bloco if(richOutput) em query.ts, importar REACT_OUTPUT_SYSTEM_PROMPT e fazer segundo mergeSystemPromptAppend condicional quando reactOutput=true. Gate silencioso: reactOutput sem richOutput nao tem efeito",
-    "status": "pending",
+    "status": "blocked",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-117", "F-118"],
+    "dependencies": [
+      "F-117",
+      "F-118"
+    ],
     "tests": [
       "Import destrutured inclui REACT_OUTPUT_SYSTEM_PROMPT",
       "let mergedPrompt em vez de const",
@@ -91,11 +97,14 @@
     "id": "F-120",
     "name": "Barrel exports display/index.ts",
     "description": "Reexportar DisplayReactSchema, DisplayReact e REACT_OUTPUT_SYSTEM_PROMPT de src/display/index.ts nos blocos existentes",
-    "status": "pending",
+    "status": "blocked",
     "priority": 6,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-115", "F-117"],
+    "dependencies": [
+      "F-115",
+      "F-117"
+    ],
     "tests": [
       "DisplayReactSchema exportado de src/display/index.ts",
       "tipo DisplayReact exportado de src/display/index.ts",
@@ -108,11 +117,13 @@
     "id": "F-121",
     "name": "Exports publicos src/index.ts",
     "description": "Reexportar DisplayReactSchema e tipo DisplayReact de src/index.ts na secao Display — Rich Output. NAO exportar REACT_OUTPUT_SYSTEM_PROMPT (interno)",
-    "status": "pending",
+    "status": "blocked",
     "priority": 7,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-120"],
+    "dependencies": [
+      "F-120"
+    ],
     "tests": [
       "import { DisplayReactSchema } from 'openclaude-sdk' funciona",
       "import type { DisplayReact } from 'openclaude-sdk' funciona",
@@ -124,11 +135,13 @@
     "id": "F-123",
     "name": "Demo endpoint react action",
     "description": "Atualizar endpoint GET /display em .tmp/demo/server.mjs para listar action 'react' no array de actions do display_visual",
-    "status": "pending",
+    "status": "blocked",
     "priority": 8,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-116"],
+    "dependencies": [
+      "F-116"
+    ],
     "tests": [
       "Array de actions do display_visual inclui 'react'",
       "Demo server inicia sem erros"
@@ -139,11 +152,13 @@
     "id": "F-122",
     "name": "README secao React Rich Output",
     "description": "Inserir secao 'React Rich Output' no README.md apos Rich Output e antes de Ask User: tabela de gate das duas flags, exemplo end-to-end, pipeline cliente obrigatorio (6 passos), nota de seguranca sobre sandbox",
-    "status": "pending",
+    "status": "blocked",
     "priority": 9,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-119"],
+    "dependencies": [
+      "F-119"
+    ],
     "tests": [
       "Secao '### React Rich Output' existe no README",
       "Tabela de gate com 3 cenarios (false/any, true/false, true/true)",
@@ -158,11 +173,21 @@
     "id": "F-124",
     "name": "Build validation",
     "description": "Validar que tsc --noEmit e tsup passam sem erro apos todos os deltas da wave 14. Corrigir qualquer falha de exhaustiveness check, import circular ou tipo incompativel",
-    "status": "pending",
+    "status": "blocked",
     "priority": 10,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-115", "F-116", "F-117", "F-118", "F-119", "F-120", "F-121", "F-122", "F-123"],
+    "dependencies": [
+      "F-115",
+      "F-116",
+      "F-117",
+      "F-118",
+      "F-119",
+      "F-120",
+      "F-121",
+      "F-122",
+      "F-123"
+    ],
     "tests": [
       "tsc --noEmit passa sem erro",
       "tsup build passa sem erro",
