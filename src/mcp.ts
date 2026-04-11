@@ -83,14 +83,36 @@ export async function startSdkServerTransport(
   })
 
   const server = http.createServer(async (req, res) => {
+    if (process.env.OPENCLAUDE_MCP_DEBUG) {
+      console.error(`[mcp-http] ${req.method} ${req.url}`)
+    }
     if (req.url === "/mcp") {
-      // Collect body for POST requests
-      const chunks: Buffer[] = []
-      for await (const chunk of req) {
-        chunks.push(chunk as Buffer)
+      try {
+        // Only POST requests carry a JSON body. GET (SSE upgrade) and DELETE
+        // (session terminate) must be passed straight through without reading
+        // the body — reading a body-less request hangs or trips JSON.parse.
+        if (req.method === "POST") {
+          const chunks: Buffer[] = []
+          for await (const chunk of req) {
+            chunks.push(chunk as Buffer)
+          }
+          const body = chunks.length > 0 ? JSON.parse(Buffer.concat(chunks).toString()) : undefined
+          if (process.env.OPENCLAUDE_MCP_DEBUG) {
+            console.error(`[mcp-http] POST body:`, JSON.stringify(body)?.slice(0, 200))
+          }
+          await transport.handleRequest(req, res, body)
+        } else {
+          await transport.handleRequest(req, res)
+        }
+      } catch (err) {
+        if (process.env.OPENCLAUDE_MCP_DEBUG) {
+          console.error(`[mcp-http] handleRequest threw:`, err)
+        }
+        if (!res.headersSent) {
+          res.writeHead(500)
+          res.end(String(err))
+        }
       }
-      const body = chunks.length > 0 ? JSON.parse(Buffer.concat(chunks).toString()) : undefined
-      await transport.handleRequest(req, res, body)
     } else {
       res.writeHead(404)
       res.end()
