@@ -235,6 +235,35 @@ export function query(params: {
         }
       }
 
+      // askUser injection — zero overhead when false/absent
+      if (optionsForCli.askUser) {
+        const { createAskUserMcpServer, ASK_USER_SYSTEM_PROMPT } = await import("./ask-user/index.js")
+        const { mergeSystemPromptAppend } = await import("./display/prompt.js")
+
+        const askUserServer = await createAskUserMcpServer({
+          onAskUser: (request) => {
+            if (askUserHandler) {
+              askUserHandler(request)
+            } else {
+              console.warn("[openclaude-sdk] ask_user invoked but no onAskUser handler registered")
+            }
+          },
+          pendingMap: pendingAskUserMap,
+          timeoutMs: optionsForCli.askUserTimeoutMs,
+        })
+
+        const existingServers = optionsForCli.mcpServers ?? {}
+        if ("ask_user" in existingServers) {
+          console.warn('[openclaude-sdk] askUser: overriding existing "ask_user" MCP server')
+        }
+
+        optionsForCli = {
+          ...optionsForCli,
+          mcpServers: { ...existingServers, ask_user: askUserServer },
+          systemPrompt: mergeSystemPromptAppend(optionsForCli.systemPrompt, ASK_USER_SYSTEM_PROMPT),
+        }
+      }
+
       if (optionsForCli.mcpServers) {
         const { running, portMap } = await startSdkServers(optionsForCli.mcpServers)
         runningServers = running

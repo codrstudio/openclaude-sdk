@@ -175,8 +175,9 @@
     "id": "F-112",
     "name": "Lifecycle askUser Hook",
     "description": "In src/query.ts lifecycleGenerator(), after the richOutput block, add askUser integration: when options.askUser is true, dynamic import ./ask-user/index.js, create server via createAskUserMcpServer with pendingAskUserMap, inject as mcpServers['ask_user'], merge ASK_USER_SYSTEM_PROMPT via mergeSystemPromptAppend (imported from ./display/prompt.js). Warn if existing ask_user key. Warn if no onAskUser handler when agent invokes tool. Orthogonal to richOutput. See PRP-044 Feature F-112.",
-    "status": "pending",
+    "status": "passing",
     "priority": 9,
+    "completed_at": "2026-04-10T00:00:00.000Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
