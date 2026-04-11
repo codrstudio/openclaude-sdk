@@ -223,6 +223,7 @@ export {
   DisplayAlertSchema,
   DisplayChoicesSchema,
   DisplayToolRegistry,
+  DisplayReactSchema,
 } from "./display/index.js"
 
 export type {
@@ -246,6 +247,7 @@ export type {
   DisplayAlert,
   DisplayChoices,
   DisplayToolName,
+  DisplayReact,
 } from "./display/index.js"
 
 // ---------------------------------------------------------------------------
