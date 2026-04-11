@@ -373,6 +373,28 @@ export interface SDKPromptSuggestionMessage {
 }
 
 // ---------------------------------------------------------------------------
+// SDKPresenceMessage
+// ---------------------------------------------------------------------------
+
+export interface SDKPresenceMessage {
+  type: "presence"
+
+  /** Unix timestamp em ms no momento do emit. */
+  ts: number
+
+  /**
+   * Sequencia do heartbeat dentro do turno atual (1-indexed). Comeca em 1
+   * no primeiro emit e incrementa. Zera a cada novo `query()`.
+   */
+  seq: number
+
+  /**
+   * Numero aproximado de ms desde o inicio do turno.
+   */
+  elapsedMs: number
+}
+
+// ---------------------------------------------------------------------------
 // Union de todas as mensagens
 // ---------------------------------------------------------------------------
 
@@ -398,3 +420,4 @@ export type SDKMessage =
   | SDKRateLimitEvent
   | SDKToolUseSummaryMessage
   | SDKPromptSuggestionMessage
+  | SDKPresenceMessage
