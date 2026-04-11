@@ -325,6 +325,23 @@ export interface Options {
    * Default: "pt-BR" quando ausente.
    */
   locale?: string
+  /**
+   * Intervalo entre heartbeats de presenca em ms.
+   *
+   * - `undefined` — usa o default de **15000 ms** (15s)
+   * - `0` ou valor negativo — **desabilita** o heartbeat completamente
+   * - valor positivo — intervalo customizado em ms
+   *
+   * Heartbeats sao emitidos como `SDKMessage` do tipo `"presence"` enquanto
+   * o `query()` esta ativo, servindo para manter conexoes SSE vivas em UIs
+   * de chat e evitar que watchdogs de cliente abortem turnos longos validos.
+   *
+   * Consumidores que usam apenas `collectMessages()` podem ignorar —
+   * mensagens `presence` sao filtradas automaticamente.
+   *
+   * **Nota**: este campo e puramente SDK-side e nao gera nenhuma flag CLI.
+   */
+  presenceIntervalMs?: number
   sandbox?: SandboxSettings
   sessionId?: string
   settingSources?: SettingSource[]
