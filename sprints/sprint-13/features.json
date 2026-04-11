@@ -1,0 +1,245 @@
+[
+  {
+    "id": "F-104",
+    "name": "Ask User Types",
+    "description": "Create src/ask-user/types.ts with AskUserRequest interface (callId, question, context?, inputType, choices?, placeholder?) and AskUserAnswer discriminated union (5 variants: text, number, boolean, choice, cancelled). See PRP-042 Feature F-104 for exact type definitions.",
+    "status": "passing",
+    "priority": 1,
+    "completed_at": "2026-04-11T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "File src/ask-user/types.ts exists",
+      "AskUserRequest interface has fields: callId (string), question (string), context? (string), inputType ('text'|'number'|'boolean'|'choice'), choices? ({id:string,label:string}[]), placeholder? (string)",
+      "AskUserAnswer is discriminated union by 'type' with 5 variants: text, number, boolean, choice, cancelled",
+      "npx tsc --noEmit passes"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+  },
+  {
+    "id": "F-105",
+    "name": "Ask User Schema",
+    "description": "Create src/ask-user/schema.ts with Zod schema askUserSchema (z.object with question, context?, inputType with default 'text', choices?, placeholder?) and inferred type AskUserInput. Each field must have .describe() for model consumption. See PRP-042 Feature F-105.",
+    "status": "passing",
+    "priority": 2,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "File src/ask-user/schema.ts exists",
+      "askUserSchema is a z.object with fields: question (required string), context (optional string), inputType (enum with default 'text'), choices (optional array), placeholder (optional string)",
+      "All schema fields have .describe() calls",
+      "AskUserInput type is exported as z.infer<typeof askUserSchema>",
+      "npx tsc --noEmit passes"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+  },
+  {
+    "id": "F-106",
+    "name": "Ask User Prompt",
+    "description": "Create src/ask-user/prompt.ts with exported constant ASK_USER_SYSTEM_PROMPT containing English-language instructions for the model on when and how to use the ask_user tool. See PRP-042 Feature F-106 for exact content.",
+    "status": "passing",
+    "priority": 3,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "File src/ask-user/prompt.ts exists",
+      "ASK_USER_SYSTEM_PROMPT is exported as a string constant",
+      "Prompt text mentions ask_user tool, clarification, missing info, confirmation",
+      "Prompt mentions inputType='choice' for discrete options"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+  },
+  {
+    "id": "F-110",
+    "name": "Options askUser Flags",
+    "description": "Add askUser?: boolean and askUserTimeoutMs?: number to the Options interface in src/types/options.ts, after the richOutput field. Zero overhead when false/absent. See PRP-044 Feature F-110.",
+    "status": "passing",
+    "priority": 4,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Options interface in src/types/options.ts has askUser?: boolean field",
+      "Options interface has askUserTimeoutMs?: number field",
+      "Fields are placed after richOutput in the interface",
+      "npx tsc --noEmit passes"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
+  },
+  {
+    "id": "F-108",
+    "name": "Ask User MCP Server",
+    "description": "Create src/ask-user/server.ts with createAskUserMcpServer() that registers ask_user tool as MCP server. Handler blocks via Promise until client responds. Concurrent guard rejects with isError:true if question already pending. Timeout via optional timeoutMs resolves with cancelled. Uses tool() and createSdkMcpServer() from ../mcp.js. See PRP-043 Feature F-108.",
+    "status": "passing",
+    "priority": 5,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-104",
+      "F-105"
+    ],
+    "tests": [
+      "File src/ask-user/server.ts exists",
+      "createAskUserMcpServer() exported as async function accepting {onAskUser, pendingMap, timeoutMs?}",
+      "Handler uses randomUUID() from node:crypto for callId generation",
+      "Concurrent guard: if pendingMap.size > 0, returns CallToolResult with isError:true",
+      "Handler blocks via new Promise and stores resolve in pendingMap",
+      "Timeout cleans up pendingMap entry and resolves with { type: 'cancelled' }",
+      "AskUserEmitter type is exported",
+      "Uses tool() and createSdkMcpServer() from ../mcp.js"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-043-ask-user-server.md"
+  },
+  {
+    "id": "F-109",
+    "name": "formatAnswer",
+    "description": "Implement and export formatAnswer(answer, timeoutMs?) in src/ask-user/server.ts. Converts AskUserAnswer to human-readable text for the model. Covers all 5 variants: text→'User answered: <value>', number→'User answered: <value>', boolean→'User answered: yes/no', choice→'User chose: <id>', cancelled→timeout message or 'User cancelled the question.' See PRP-043 Feature F-109.",
+    "status": "passing",
+    "priority": 6,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-108"
+    ],
+    "tests": [
+      "formatAnswer is exported from src/ask-user/server.ts",
+      "formatAnswer({ type: 'text', value: 'hello' }) returns 'User answered: hello'",
+      "formatAnswer({ type: 'number', value: 42 }) returns 'User answered: 42'",
+      "formatAnswer({ type: 'boolean', value: true }) returns 'User answered: yes'",
+      "formatAnswer({ type: 'boolean', value: false }) returns 'User answered: no'",
+      "formatAnswer({ type: 'choice', id: 'opt-1' }) returns 'User chose: opt-1'",
+      "formatAnswer({ type: 'cancelled' }, 30000) returns 'User did not respond within 30s.'",
+      "formatAnswer({ type: 'cancelled' }) returns 'User cancelled the question.'"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-043-ask-user-server.md"
+  },
+  {
+    "id": "F-107",
+    "name": "Ask User Barrel",
+    "description": "Create src/ask-user/index.ts as barrel module re-exporting: AskUserRequest/AskUserAnswer (type) from ./types.js, askUserSchema/AskUserInput from ./schema.js, createAskUserMcpServer/formatAnswer/AskUserEmitter from ./server.js, ASK_USER_SYSTEM_PROMPT from ./prompt.js. All paths with .js extension. See PRP-042 Feature F-107.",
+    "status": "passing",
+    "priority": 7,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-104",
+      "F-105",
+      "F-106",
+      "F-108",
+      "F-109"
+    ],
+    "tests": [
+      "File src/ask-user/index.ts exists",
+      "Re-exports AskUserRequest and AskUserAnswer as types from ./types.js",
+      "Re-exports askUserSchema and AskUserInput from ./schema.js",
+      "Re-exports createAskUserMcpServer, formatAnswer, AskUserEmitter from ./server.js",
+      "Re-exports ASK_USER_SYSTEM_PROMPT from ./prompt.js",
+      "All import paths use .js extension",
+      "npx tsc --noEmit passes"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+  },
+  {
+    "id": "F-111",
+    "name": "Query askUser Methods",
+    "description": "Add onAskUser(handler) and respondToAskUser(callId, answer) to Query interface and implementation in src/query.ts. Import AskUserRequest/AskUserAnswer from ./ask-user/types.js directly. Internal state: askUserHandler callback variable + pendingAskUserMap (Map). Last handler wins for onAskUser. respondToAskUser with unknown callId does console.warn + no-op (no throw). See PRP-044 Feature F-111.",
+    "status": "passing",
+    "priority": 8,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-104"
+    ],
+    "tests": [
+      "Query interface declares onAskUser(handler: (request: AskUserRequest) => void): void",
+      "Query interface declares respondToAskUser(callId: string, answer: AskUserAnswer): void",
+      "Internal state variables: askUserHandler and pendingAskUserMap exist in query() scope",
+      "q.onAskUser sets askUserHandler (last handler wins, no multi-subscriber)",
+      "q.respondToAskUser with valid callId calls resolve, deletes entry from map",
+      "q.respondToAskUser with unknown callId logs console.warn and returns without throwing",
+      "npx tsc --noEmit passes"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
+  },
+  {
+    "id": "F-112",
+    "name": "Lifecycle askUser Hook",
+    "description": "In src/query.ts lifecycleGenerator(), after the richOutput block, add askUser integration: when options.askUser is true, dynamic import ./ask-user/index.js, create server via createAskUserMcpServer with pendingAskUserMap, inject as mcpServers['ask_user'], merge ASK_USER_SYSTEM_PROMPT via mergeSystemPromptAppend (imported from ./display/prompt.js). Warn if existing ask_user key. Warn if no onAskUser handler when agent invokes tool. Orthogonal to richOutput. See PRP-044 Feature F-112.",
+    "status": "passing",
+    "priority": 9,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-107",
+      "F-110",
+      "F-111"
+    ],
+    "tests": [
+      "lifecycleGenerator() has askUser block after richOutput block",
+      "Block uses dynamic import('./ask-user/index.js') for zero overhead when disabled",
+      "createAskUserMcpServer called with {onAskUser callback, pendingMap: pendingAskUserMap, timeoutMs: optionsForCli.askUserTimeoutMs}",
+      "Server injected as mcpServers['ask_user'] in optionsForCli",
+      "ASK_USER_SYSTEM_PROMPT merged via mergeSystemPromptAppend from ./display/prompt.js",
+      "console.warn if existing 'ask_user' key in mcpServers (override warning)",
+      "console.warn if askUserHandler not registered when onAskUser callback fires",
+      "Both askUser and richOutput can be true simultaneously (orthogonal)",
+      "npx tsc --noEmit passes"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
+  },
+  {
+    "id": "F-113",
+    "name": "Public Exports",
+    "description": "Add 'export type { AskUserRequest, AskUserAnswer } from \"./ask-user/index.js\"' to src/index.ts after the display exports block. Only types — do NOT export askUserSchema, createAskUserMcpServer, formatAnswer, or ASK_USER_SYSTEM_PROMPT. See PRP-045 Feature F-113.",
+    "status": "passing",
+    "priority": 10,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-107"
+    ],
+    "tests": [
+      "src/index.ts contains: export type { AskUserRequest, AskUserAnswer } from './ask-user/index.js'",
+      "Export line is placed after the display exports block",
+      "Only AskUserRequest and AskUserAnswer are exported (no internal symbols)",
+      "Uses 'export type' (not 'export') for tree-shaking",
+      "npx tsc --noEmit passes"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-045-ask-user-exports-readme.md"
+  },
+  {
+    "id": "F-114",
+    "name": "README Ask User Section",
+    "description": "Add 'Ask User' section to README.md after the 'Rich Output' section. Include: description, end-to-end TypeScript example with query({askUser:true})+onAskUser+respondToAskUser, Options table (askUser boolean, askUserTimeoutMs number), inputTypes table (text/number/boolean/choice with answer types), cancellation example, note that askUser and richOutput are orthogonal. See PRP-045 Feature F-114.",
+    "status": "passing",
+    "priority": 11,
+    "completed_at": "2026-04-10T00:00:00.000Z",
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-113"
+    ],
+    "tests": [
+      "README.md contains '### Ask User' section header",
+      "Section is placed after 'Rich Output' section",
+      "Contains TypeScript code example with query() using askUser:true, onAskUser handler, respondToAskUser call",
+      "Contains Options table with askUser and askUserTimeoutMs rows",
+      "Contains inputTypes table with text, number, boolean, choice rows and answer types",
+      "Shows cancellation example with { type: 'cancelled' }",
+      "Mentions orthogonality with richOutput"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-045-ask-user-exports-readme.md"
+  }
+]

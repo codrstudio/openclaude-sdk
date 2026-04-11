@@ -15,6 +15,7 @@ import type {
   RewindFilesResult,
   McpSetServersResult,
 } from "./types/query.js"
+import type { AskUserRequest, AskUserAnswer } from "./ask-user/types.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
 import { startSdkServerTransport } from "./mcp.js"
 import type { McpSdkServerConfig } from "./types/options.js"
@@ -72,6 +73,10 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   setMcpServers(servers: Record<string, McpServerConfig>): Promise<McpSetServersResult>
   /** Envia um stream de texto chunk a chunk via stdin, bloqueante ate consumir iterable inteiro */
   streamInput(stream: AsyncIterable<string>): Promise<void>
+  /** Registra handler para quando o agente invocar ask_user. Ultimo handler ganha. */
+  onAskUser(handler: (request: AskUserRequest) => void): void
+  /** Responde a uma pergunta pendente do agente. callId desconhecido faz console.warn + no-op. */
+  respondToAskUser(callId: string, answer: AskUserAnswer): void
 }
 
 // ---------------------------------------------------------------------------
@@ -157,6 +162,10 @@ export function query(params: {
   let writeStdinRef: ((data: string) => void) | null = null
   let closeProcRef: (() => Promise<void>) | null = null
 
+  // askUser internal state
+  let askUserHandler: ((request: AskUserRequest) => void) | null = null
+  const pendingAskUserMap = new Map<string, (answer: AskUserAnswer) => void>()
+
   async function stopOnce(): Promise<void> {
     if (serversStopped) return
     serversStopped = true
@@ -223,6 +232,35 @@ export function query(params: {
           ...optionsForCli,
           mcpServers: { ...existingServers, display: displayServer },
           systemPrompt: mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT),
+        }
+      }
+
+      // askUser injection — zero overhead when false/absent
+      if (optionsForCli.askUser) {
+        const { createAskUserMcpServer, ASK_USER_SYSTEM_PROMPT } = await import("./ask-user/index.js")
+        const { mergeSystemPromptAppend } = await import("./display/prompt.js")
+
+        const askUserServer = await createAskUserMcpServer({
+          onAskUser: (request) => {
+            if (askUserHandler) {
+              askUserHandler(request)
+            } else {
+              console.warn("[openclaude-sdk] ask_user invoked but no onAskUser handler registered")
+            }
+          },
+          pendingMap: pendingAskUserMap,
+          timeoutMs: optionsForCli.askUserTimeoutMs,
+        })
+
+        const existingServers = optionsForCli.mcpServers ?? {}
+        if ("ask_user" in existingServers) {
+          console.warn('[openclaude-sdk] askUser: overriding existing "ask_user" MCP server')
+        }
+
+        optionsForCli = {
+          ...optionsForCli,
+          mcpServers: { ...existingServers, ask_user: askUserServer },
+          systemPrompt: mergeSystemPromptAppend(optionsForCli.systemPrompt, ASK_USER_SYSTEM_PROMPT),
         }
       }
 
@@ -388,6 +426,18 @@ export function query(params: {
         writeStdinRef?.(JSON.stringify({ type: "stream_input", content: chunk }) + "\n")
       }
       writeStdinRef?.(JSON.stringify({ type: "stream_input_end" }) + "\n")
+    },
+    onAskUser(handler: (request: AskUserRequest) => void): void {
+      askUserHandler = handler
+    },
+    respondToAskUser(callId: string, answer: AskUserAnswer): void {
+      const resolve = pendingAskUserMap.get(callId)
+      if (!resolve) {
+        console.warn(`[openclaude-sdk] respondToAskUser: unknown callId "${callId}"`)
+        return
+      }
+      pendingAskUserMap.delete(callId)
+      resolve(answer)
     },
   })
 

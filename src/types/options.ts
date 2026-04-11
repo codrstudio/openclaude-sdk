@@ -305,6 +305,8 @@ export interface Options {
   resume?: string
   resumeSessionAt?: string
   richOutput?: boolean
+  askUser?: boolean
+  askUserTimeoutMs?: number
   sandbox?: SandboxSettings
   sessionId?: string
   settingSources?: SettingSource[]
