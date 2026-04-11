@@ -3,8 +3,9 @@
     "id": "F-125",
     "name": "SupportedLocale type + SUPPORTED_LOCALES",
     "description": "Criar src/locale/types.ts com type SupportedLocale = 'pt-BR' | 'en-US' | 'es-ES' (union de string literals, NAO enum) e const SUPPORTED_LOCALES: readonly SupportedLocale[] = ['pt-BR', 'en-US', 'es-ES'] as const. Arquivo sem imports, zero dependencias.",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
+    "completed_at": "2026-04-11T21:40:00Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [],
@@ -25,7 +26,9 @@
     "priority": 2,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-125"],
+    "dependencies": [
+      "F-125"
+    ],
     "tests": [
       "src/locale/normalize.ts existe",
       "normalizeLocale(undefined) retorna 'pt-BR'",
@@ -46,11 +49,14 @@
     "id": "F-127",
     "name": "Barrel src/locale/index.ts",
     "description": "Criar src/locale/index.ts exportando: export type { SupportedLocale } from './types.js', export { SUPPORTED_LOCALES } from './types.js', export { normalizeLocale } from './normalize.js'. Extensao .js nos imports (ESM). Exatamente 3 exports.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 3,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-125", "F-126"],
+    "dependencies": [
+      "F-125",
+      "F-126"
+    ],
     "tests": [
       "src/locale/index.ts existe",
       "SupportedLocale exportado como export type (tree-shaking)",
@@ -82,11 +88,13 @@
     "id": "F-129",
     "name": "Exports publicos locale em src/index.ts",
     "description": "Adicionar secao 'Locale' em src/index.ts entre 'Ask User' e 'V2 Session API': export { normalizeLocale, SUPPORTED_LOCALES } from './locale/index.js' e export type { SupportedLocale } from './locale/index.js'. Extensao .js nos imports.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-127"],
+    "dependencies": [
+      "F-127"
+    ],
     "tests": [
       "normalizeLocale exportado de src/index.ts",
       "SUPPORTED_LOCALES exportado de src/index.ts",
@@ -100,11 +108,17 @@
     "id": "F-130",
     "name": "Validacao locale: CLI, teste manual, build",
     "description": "Verificar por inspecao que locale NAO aparece em buildCliArgs() de src/process.ts (SDK-side only). Criar .tmp/demo/test-locale.mjs com 18 casos de teste cobrindo todos os cenarios de normalizacao. Validar tsc --noEmit e tsup passam sem erro.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 6,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-125", "F-126", "F-127", "F-128", "F-129"],
+    "dependencies": [
+      "F-125",
+      "F-126",
+      "F-127",
+      "F-128",
+      "F-129"
+    ],
     "tests": [
       "locale NAO aparece em buildCliArgs() de src/process.ts",
       ".tmp/demo/test-locale.mjs existe com 18 casos",
