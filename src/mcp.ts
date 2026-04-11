@@ -2,6 +2,8 @@ import * as http from "node:http"
 import type { z } from "zod"
 import type { McpSdkServerConfig } from "./types/options.js"
 
+type AnyToolSchema = z.ZodRawShape | z.ZodTypeAny
+
 export interface ToolAnnotations {
   readOnly?: boolean
   destructive?: boolean
@@ -17,11 +19,14 @@ export interface CallToolResult {
   isError?: boolean
 }
 
-export interface SdkMcpToolDefinition<Schema extends z.ZodRawShape = z.ZodRawShape> {
+export interface SdkMcpToolDefinition<Schema extends AnyToolSchema = z.ZodRawShape> {
   name: string
   description: string
   inputSchema: Schema
-  handler: (args: z.infer<z.ZodObject<Schema>>, extra: unknown) => Promise<CallToolResult>
+  handler: (
+    args: Schema extends z.ZodTypeAny ? z.infer<Schema> : Schema extends z.ZodRawShape ? z.infer<z.ZodObject<Schema>> : never,
+    extra: unknown,
+  ) => Promise<CallToolResult>
   annotations?: ToolAnnotations
 }
 
@@ -42,10 +47,14 @@ export async function createSdkMcpServer(options: {
 
   if (options.tools) {
     for (const toolDef of options.tools) {
-      server.tool(
+      server.registerTool(
         toolDef.name,
-        toolDef.description,
-        toolDef.inputSchema,
+        {
+          description: toolDef.description,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          inputSchema: toolDef.inputSchema as any,
+          annotations: toolDef.annotations,
+        },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async (args: unknown, extra: unknown) => {
           return toolDef.handler(args as any, extra) as any
@@ -117,7 +126,30 @@ export function tool<Schema extends z.ZodRawShape>(
     extra: unknown,
   ) => Promise<CallToolResult>,
   extras?: { annotations?: ToolAnnotations },
-): SdkMcpToolDefinition<Schema> {
+): SdkMcpToolDefinition<Schema>
+
+export function tool<Schema extends z.ZodTypeAny>(
+  name: string,
+  description: string,
+  inputSchema: Schema,
+  handler: (
+    args: z.infer<Schema>,
+    extra: unknown,
+  ) => Promise<CallToolResult>,
+  extras?: { annotations?: ToolAnnotations },
+): SdkMcpToolDefinition<Schema>
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function tool(
+  name: string,
+  description: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  inputSchema: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (args: any, extra: unknown) => Promise<CallToolResult>,
+  extras?: { annotations?: ToolAnnotations },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): SdkMcpToolDefinition<any> {
   return {
     name,
     description,

@@ -199,6 +199,56 @@ export type {
 } from "./types/sessions.js"
 
 // ---------------------------------------------------------------------------
+// Display — Rich Output (richOutput: true)
+// ---------------------------------------------------------------------------
+
+export {
+  DisplayMetricSchema,
+  DisplayChartSchema,
+  DisplayTableSchema,
+  DisplayProgressSchema,
+  DisplayProductSchema,
+  DisplayComparisonSchema,
+  DisplayPriceSchema,
+  DisplayImageSchema,
+  DisplayGallerySchema,
+  DisplayCarouselSchema,
+  DisplaySourcesSchema,
+  DisplayLinkSchema,
+  DisplayMapSchema,
+  DisplayFileSchema,
+  DisplayCodeSchema,
+  DisplaySpreadsheetSchema,
+  DisplayStepsSchema,
+  DisplayAlertSchema,
+  DisplayChoicesSchema,
+  DisplayToolRegistry,
+} from "./display/index.js"
+
+export type {
+  DisplayMetric,
+  DisplayChart,
+  DisplayTable,
+  DisplayProgress,
+  DisplayProduct,
+  DisplayComparison,
+  DisplayPrice,
+  DisplayImage,
+  DisplayGallery,
+  DisplayCarousel,
+  DisplaySources,
+  DisplayLink,
+  DisplayMap,
+  DisplayFile,
+  DisplayCode,
+  DisplaySpreadsheet,
+  DisplaySteps,
+  DisplayAlert,
+  DisplayChoices,
+  DisplayToolName,
+} from "./display/index.js"
+
+// ---------------------------------------------------------------------------
 // V2 Session API
 // ---------------------------------------------------------------------------
 

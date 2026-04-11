@@ -208,13 +208,31 @@ export function query(params: {
     try {
       // Start SDK servers and build a local copy with _localPort injected (never mutate the original)
       let optionsForCli = resolvedOptions
-      if (resolvedOptions.mcpServers) {
-        const { running, portMap } = await startSdkServers(resolvedOptions.mcpServers)
+
+      // richOutput injection — zero overhead when false/absent
+      if (optionsForCli.richOutput) {
+        const { createDisplayMcpServer, DISPLAY_SYSTEM_PROMPT, mergeSystemPromptAppend } = await import("./display/index.js")
+        const displayServer = await createDisplayMcpServer()
+
+        const existingServers = optionsForCli.mcpServers ?? {}
+        if ("display" in existingServers) {
+          console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+        }
+
+        optionsForCli = {
+          ...optionsForCli,
+          mcpServers: { ...existingServers, display: displayServer },
+          systemPrompt: mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT),
+        }
+      }
+
+      if (optionsForCli.mcpServers) {
+        const { running, portMap } = await startSdkServers(optionsForCli.mcpServers)
         runningServers = running
 
         if (portMap.size > 0) {
           const patchedServers: Record<string, import("./types/options.js").McpServerConfig> = {}
-          for (const [name, config] of Object.entries(resolvedOptions.mcpServers)) {
+          for (const [name, config] of Object.entries(optionsForCli.mcpServers)) {
             const port = portMap.get(name)
             if (port != null && config.type === "sdk") {
               patchedServers[name] = { ...config, _localPort: port } as McpSdkServerConfig
@@ -222,7 +240,7 @@ export function query(params: {
               patchedServers[name] = config
             }
           }
-          optionsForCli = { ...resolvedOptions, mcpServers: patchedServers }
+          optionsForCli = { ...optionsForCli, mcpServers: patchedServers }
         }
       }
 

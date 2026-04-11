@@ -1,0 +1,252 @@
+[
+  {
+    "id": "F-092",
+    "name": "tool() aceita ZodTypeAny",
+    "description": "Adicionar tipo AnyToolSchema, alterar SdkMcpToolDefinition para aceitar ZodTypeAny via conditional type no handler, e adicionar overloads em tool() (ZodRawShape + ZodTypeAny + implementation signature). Apenas src/mcp.ts.",
+    "status": "passing",
+    "completed_at": "2026-04-11T00:25:38Z",
+    "priority": 1,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "tsc --noEmit passa sem erros",
+      "tool('x', 'd', { name: z.string() }, handler) continua compilando (backward compat)",
+      "tool('x', 'd', z.discriminatedUnion('action', [...]), handler) compila sem erro de tipo",
+      "SdkMcpToolDefinition<z.ZodDiscriminatedUnion<...>> compila sem erro de tipo"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-039-tool-zod-discriminated-union-compat.md"
+  },
+  {
+    "id": "F-093",
+    "name": "createSdkMcpServer() aceita ambos formatos",
+    "description": "Verificar que createSdkMcpServer() com SdkMcpToolDefinition<any> repassa inputSchema para server.tool() sem restricao de tipo. Nenhuma alteracao de codigo esperada — apenas verificacao e confirmacao.",
+    "status": "passing",
+    "completed_at": "2026-04-11T00:45:00Z",
+    "priority": 2,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-092"
+    ],
+    "tests": [
+      "tsc --noEmit passa sem erros",
+      "createSdkMcpServer({ name: 'test', tools: [toolComDiscriminatedUnion] }) compila sem erro",
+      "server.tool() do MCP SDK aceita ZodDiscriminatedUnion no terceiro parametro"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-039-tool-zod-discriminated-union-compat.md"
+  },
+  {
+    "id": "F-094",
+    "name": "Display schemas Zod",
+    "description": "Criar src/display/schemas.ts com 19 schemas Zod portados de agentic-sdk/src/display-schemas.ts, 4 primitivos internos (MoneySchema, SourceRefSchema, ImageItemSchema, BadgeSchema nao exportados), DisplayToolRegistry (Record<nome, schema>), DisplayToolName (keyof) e 19 tipos inferidos.",
+    "status": "passing",
+    "completed_at": "2026-04-11T01:10:00Z",
+    "priority": 3,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Arquivo src/display/schemas.ts existe com 19 schemas exportados",
+      "DisplayToolRegistry tem 19 entradas (display_metric ate display_choices)",
+      "DisplayToolName e keyof typeof DisplayToolRegistry",
+      "19 tipos inferidos exportados (DisplayMetric ate DisplayChoices)",
+      "tsc --noEmit passa sem erros",
+      "Primitivos MoneySchema, SourceRefSchema, ImageItemSchema, BadgeSchema NAO sao exportados"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+  },
+  {
+    "id": "F-095",
+    "name": "Display meta-tools",
+    "description": "Criar src/display/tools.ts com createDisplayTools() retornando array de 4 SdkMcpToolDefinition: display_highlight (metric/price/alert/choices), display_collection (table/spreadsheet/comparison/carousel/gallery/sources), display_card (product/link/file/image), display_visual (chart/map/code/progress/steps). Cada usa z.discriminatedUnion('action', [...]) e echo handler.",
+    "status": "passing",
+    "completed_at": "2026-04-10T00:00:00Z",
+    "priority": 4,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-092",
+      "F-094"
+    ],
+    "tests": [
+      "Arquivo src/display/tools.ts existe",
+      "createDisplayTools() retorna array com 4 elementos",
+      "Nomes: display_highlight, display_collection, display_card, display_visual",
+      "Handler retorna { content: [{ type: 'text', text: JSON.stringify(args) }] }",
+      "tsc --noEmit passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+  },
+  {
+    "id": "F-096",
+    "name": "Display system prompt",
+    "description": "Criar src/display/prompt.ts com constante DISPLAY_SYSTEM_PROMPT (string em ingles explicando as 4 display tools e o campo action).",
+    "status": "passing",
+    "completed_at": "2026-04-10T00:30:00Z",
+    "priority": 5,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Arquivo src/display/prompt.ts existe",
+      "DISPLAY_SYSTEM_PROMPT e uma string nao-vazia exportada",
+      "Menciona display_highlight, display_collection, display_card, display_visual",
+      "Menciona campo 'action'",
+      "tsc --noEmit passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+  },
+  {
+    "id": "F-097",
+    "name": "Display MCP server factory",
+    "description": "Criar src/display/server.ts com createDisplayMcpServer() async que chama createSdkMcpServer({ name: 'display', tools: createDisplayTools() }) e retorna McpSdkServerConfig.",
+    "status": "passing",
+    "completed_at": "2026-04-10T01:00:00Z",
+    "priority": 6,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-095"
+    ],
+    "tests": [
+      "Arquivo src/display/server.ts existe",
+      "createDisplayMcpServer() e async e exportada",
+      "Retorno tem type/name compativel com McpSdkServerConfig",
+      "tsc --noEmit passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+  },
+  {
+    "id": "F-098",
+    "name": "Display barrel index",
+    "description": "Criar src/display/index.ts como barrel: reexportar 19 schemas, DisplayToolRegistry, DisplayToolName, 19 tipos de schemas.js; createDisplayTools de tools.js; DISPLAY_SYSTEM_PROMPT de prompt.js; createDisplayMcpServer de server.js.",
+    "status": "passing",
+    "completed_at": "2026-04-10T02:00:00Z",
+    "priority": 7,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-094",
+      "F-095",
+      "F-096",
+      "F-097"
+    ],
+    "tests": [
+      "Arquivo src/display/index.ts existe",
+      "import { DisplayMetricSchema, createDisplayTools, DISPLAY_SYSTEM_PROMPT, createDisplayMcpServer } from './display/index.js' compila",
+      "import type { DisplayMetric, DisplayToolName } from './display/index.js' compila",
+      "tsc --noEmit passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+  },
+  {
+    "id": "F-099",
+    "name": "Options.richOutput flag",
+    "description": "Adicionar richOutput?: boolean a interface Options em src/types/options.ts. Sem logica — apenas declaracao do campo.",
+    "status": "passing",
+    "completed_at": "2026-04-10T03:00:00Z",
+    "priority": 8,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [],
+    "tests": [
+      "Campo richOutput?: boolean existe na interface Options",
+      "query({ prompt: '...', options: { richOutput: true } }) compila sem erro de tipo",
+      "query({ prompt: '...', options: {} }) continua compilando (backward compat)",
+      "tsc --noEmit passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+  },
+  {
+    "id": "F-100",
+    "name": "mergeSystemPromptAppend",
+    "description": "Adicionar funcao mergeSystemPromptAppend(existing, append) em src/display/prompt.ts cobrindo 3 formatos: undefined -> preset+append, string -> concat, { type: 'preset', append? } -> concat no append. Atualizar barrel para reexportar.",
+    "status": "passing",
+    "completed_at": "2026-04-10T04:00:00Z",
+    "priority": 9,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-096",
+      "F-099"
+    ],
+    "tests": [
+      "mergeSystemPromptAppend(undefined, 'X') retorna { type: 'preset', preset: 'claude_code', append: 'X' }",
+      "mergeSystemPromptAppend('Custom', 'X') retorna 'Custom\\n\\nX'",
+      "mergeSystemPromptAppend({ type: 'preset', preset: 'claude_code' }, 'X') retorna { type: 'preset', preset: 'claude_code', append: 'X' }",
+      "mergeSystemPromptAppend({ type: 'preset', preset: 'claude_code', append: 'Y' }, 'X') retorna { type: 'preset', preset: 'claude_code', append: 'Y\\n\\nX' }",
+      "tsc --noEmit passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+  },
+  {
+    "id": "F-101",
+    "name": "query.ts richOutput integration",
+    "description": "Em lifecycleGenerator() de src/query.ts, antes de startSdkServers(): se optionsForCli.richOutput, dynamic import de ./display/index.js, await createDisplayMcpServer(), merge em mcpServers['display'] (warn se ja existe), mergeSystemPromptAppend no systemPrompt. Trocar resolvedOptions por optionsForCli nas refs de mcpServers subsequentes.",
+    "status": "passing",
+    "completed_at": "2026-04-10T05:00:00Z",
+    "priority": 10,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-097",
+      "F-098",
+      "F-099",
+      "F-100"
+    ],
+    "tests": [
+      "richOutput: false (ou ausente) nao carrega modulo display (zero overhead)",
+      "richOutput: true injeta MCP server 'display' em mcpServers",
+      "richOutput: true injeta DISPLAY_SYSTEM_PROMPT via mergeSystemPromptAppend",
+      "mcpServers existentes do usuario sao preservados (merge, nao overwrite)",
+      "Se mcpServers ja tem chave 'display', emite console.warn e faz override",
+      "Display server entra no startup de startSdkServers()",
+      "tsc --noEmit passa sem erros",
+      "tsup build passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+  },
+  {
+    "id": "F-102",
+    "name": "Display public exports",
+    "description": "Em src/index.ts, adicionar bloco de re-exports de ./display/index.js: 19 schemas, DisplayToolRegistry (value), DisplayToolName e 19 tipos (type exports).",
+    "status": "passing",
+    "completed_at": "2026-04-10T06:00:00Z",
+    "priority": 11,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-098"
+    ],
+    "tests": [
+      "import { DisplayMetricSchema, DisplayToolRegistry } from 'openclaude-sdk' compila",
+      "import type { DisplayMetric, DisplayToolName } from 'openclaude-sdk' compila",
+      "Todos os 19 schemas estao exportados",
+      "Todos os 19 tipos estao exportados",
+      "tsc --noEmit passa sem erros"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+  },
+  {
+    "id": "F-103",
+    "name": "README secao Rich Output",
+    "description": "Adicionar secao 'Rich Output' no README.md apos MCP Servers e antes de Error Handling: descricao da flag richOutput, tabela das 4 meta-tools com actions, exemplo end-to-end com deteccao de block.name.startsWith('display_'), exemplo de validacao client-side com DisplayToolRegistry.",
+    "status": "passing",
+    "priority": 12,
+    "agent": "coder",
+    "task": "vibe-code",
+    "dependencies": [
+      "F-101"
+    ],
+    "tests": [
+      "README.md contem secao '## Rich Output'",
+      "Tabela lista 4 tools: display_highlight, display_collection, display_card, display_visual",
+      "Exemplo mostra richOutput: true em options",
+      "Exemplo mostra deteccao de display_ tools no stream",
+      "Exemplo mostra uso de DisplayToolRegistry para validacao client-side"
+    ],
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md",
+    "completed_at": "2026-04-10T07:00:00.000Z"
+  }
+]
