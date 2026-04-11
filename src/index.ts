@@ -89,6 +89,7 @@ export type {
   SDKRateLimitEvent,
   SDKToolUseSummaryMessage,
   SDKPromptSuggestionMessage,
+  SDKPresenceMessage,
   SDKMessage,
 } from "./types/messages.js"
 
