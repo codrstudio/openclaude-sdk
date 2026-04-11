@@ -19,6 +19,7 @@ export {
   DisplayAlertSchema,
   DisplayChoicesSchema,
   DisplayToolRegistry,
+  DisplayReactSchema,
 } from "./schemas.js"
 
 export type {
@@ -42,6 +43,7 @@ export type {
   DisplaySteps,
   DisplayAlert,
   DisplayChoices,
+  DisplayReact,
 } from "./schemas.js"
 
 export { createDisplayTools } from "./tools.js"
