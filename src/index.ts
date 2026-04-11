@@ -265,6 +265,13 @@ export { normalizeLocale, SUPPORTED_LOCALES } from "./locale/index.js"
 export type { SupportedLocale } from "./locale/index.js"
 
 // ---------------------------------------------------------------------------
+// Tool Intention Filter
+// ---------------------------------------------------------------------------
+
+export { pickIntention, applyToolIntentionFilter } from "./tool-intention/index.js"
+export type { ToolIntentionPayload } from "./tool-intention/index.js"
+
+// ---------------------------------------------------------------------------
 // V2 Session API
 // ---------------------------------------------------------------------------
 
