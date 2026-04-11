@@ -3,8 +3,9 @@
     "id": "F-104",
     "name": "Ask User Types",
     "description": "Create src/ask-user/types.ts with AskUserRequest interface (callId, question, context?, inputType, choices?, placeholder?) and AskUserAnswer discriminated union (5 variants: text, number, boolean, choice, cancelled). See PRP-042 Feature F-104 for exact type definitions.",
-    "status": "pending",
+    "status": "passing",
     "priority": 1,
+    "completed_at": "2026-04-11T00:00:00.000Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [],
@@ -72,11 +73,14 @@
     "id": "F-108",
     "name": "Ask User MCP Server",
     "description": "Create src/ask-user/server.ts with createAskUserMcpServer() that registers ask_user tool as MCP server. Handler blocks via Promise until client responds. Concurrent guard rejects with isError:true if question already pending. Timeout via optional timeoutMs resolves with cancelled. Uses tool() and createSdkMcpServer() from ../mcp.js. See PRP-043 Feature F-108.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-104", "F-105"],
+    "dependencies": [
+      "F-104",
+      "F-105"
+    ],
     "tests": [
       "File src/ask-user/server.ts exists",
       "createAskUserMcpServer() exported as async function accepting {onAskUser, pendingMap, timeoutMs?}",
@@ -93,11 +97,13 @@
     "id": "F-109",
     "name": "formatAnswer",
     "description": "Implement and export formatAnswer(answer, timeoutMs?) in src/ask-user/server.ts. Converts AskUserAnswer to human-readable text for the model. Covers all 5 variants: text→'User answered: <value>', number→'User answered: <value>', boolean→'User answered: yes/no', choice→'User chose: <id>', cancelled→timeout message or 'User cancelled the question.' See PRP-043 Feature F-109.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 6,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-108"],
+    "dependencies": [
+      "F-108"
+    ],
     "tests": [
       "formatAnswer is exported from src/ask-user/server.ts",
       "formatAnswer({ type: 'text', value: 'hello' }) returns 'User answered: hello'",
@@ -114,11 +120,17 @@
     "id": "F-107",
     "name": "Ask User Barrel",
     "description": "Create src/ask-user/index.ts as barrel module re-exporting: AskUserRequest/AskUserAnswer (type) from ./types.js, askUserSchema/AskUserInput from ./schema.js, createAskUserMcpServer/formatAnswer/AskUserEmitter from ./server.js, ASK_USER_SYSTEM_PROMPT from ./prompt.js. All paths with .js extension. See PRP-042 Feature F-107.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 7,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-104", "F-105", "F-106", "F-108", "F-109"],
+    "dependencies": [
+      "F-104",
+      "F-105",
+      "F-106",
+      "F-108",
+      "F-109"
+    ],
     "tests": [
       "File src/ask-user/index.ts exists",
       "Re-exports AskUserRequest and AskUserAnswer as types from ./types.js",
@@ -134,11 +146,13 @@
     "id": "F-111",
     "name": "Query askUser Methods",
     "description": "Add onAskUser(handler) and respondToAskUser(callId, answer) to Query interface and implementation in src/query.ts. Import AskUserRequest/AskUserAnswer from ./ask-user/types.js directly. Internal state: askUserHandler callback variable + pendingAskUserMap (Map). Last handler wins for onAskUser. respondToAskUser with unknown callId does console.warn + no-op (no throw). See PRP-044 Feature F-111.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 8,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-104"],
+    "dependencies": [
+      "F-104"
+    ],
     "tests": [
       "Query interface declares onAskUser(handler: (request: AskUserRequest) => void): void",
       "Query interface declares respondToAskUser(callId: string, answer: AskUserAnswer): void",
@@ -154,11 +168,15 @@
     "id": "F-112",
     "name": "Lifecycle askUser Hook",
     "description": "In src/query.ts lifecycleGenerator(), after the richOutput block, add askUser integration: when options.askUser is true, dynamic import ./ask-user/index.js, create server via createAskUserMcpServer with pendingAskUserMap, inject as mcpServers['ask_user'], merge ASK_USER_SYSTEM_PROMPT via mergeSystemPromptAppend (imported from ./display/prompt.js). Warn if existing ask_user key. Warn if no onAskUser handler when agent invokes tool. Orthogonal to richOutput. See PRP-044 Feature F-112.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 9,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-107", "F-110", "F-111"],
+    "dependencies": [
+      "F-107",
+      "F-110",
+      "F-111"
+    ],
     "tests": [
       "lifecycleGenerator() has askUser block after richOutput block",
       "Block uses dynamic import('./ask-user/index.js') for zero overhead when disabled",
@@ -176,11 +194,13 @@
     "id": "F-113",
     "name": "Public Exports",
     "description": "Add 'export type { AskUserRequest, AskUserAnswer } from \"./ask-user/index.js\"' to src/index.ts after the display exports block. Only types — do NOT export askUserSchema, createAskUserMcpServer, formatAnswer, or ASK_USER_SYSTEM_PROMPT. See PRP-045 Feature F-113.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 10,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-107"],
+    "dependencies": [
+      "F-107"
+    ],
     "tests": [
       "src/index.ts contains: export type { AskUserRequest, AskUserAnswer } from './ask-user/index.js'",
       "Export line is placed after the display exports block",
@@ -194,11 +214,13 @@
     "id": "F-114",
     "name": "README Ask User Section",
     "description": "Add 'Ask User' section to README.md after the 'Rich Output' section. Include: description, end-to-end TypeScript example with query({askUser:true})+onAskUser+respondToAskUser, Options table (askUser boolean, askUserTimeoutMs number), inputTypes table (text/number/boolean/choice with answer types), cancellation example, note that askUser and richOutput are orthogonal. See PRP-045 Feature F-114.",
-    "status": "pending",
+    "status": "blocked",
     "priority": 11,
     "agent": "coder",
     "task": "vibe-code",
-    "dependencies": ["F-113"],
+    "dependencies": [
+      "F-113"
+    ],
     "tests": [
       "README.md contains '### Ask User' section header",
       "Section is placed after 'Rich Output' section",
