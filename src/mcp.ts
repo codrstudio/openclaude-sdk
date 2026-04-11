@@ -47,10 +47,14 @@ export async function createSdkMcpServer(options: {
 
   if (options.tools) {
     for (const toolDef of options.tools) {
-      server.tool(
+      server.registerTool(
         toolDef.name,
-        toolDef.description,
-        toolDef.inputSchema,
+        {
+          description: toolDef.description,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          inputSchema: toolDef.inputSchema as any,
+          annotations: toolDef.annotations,
+        },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async (args: unknown, extra: unknown) => {
           return toolDef.handler(args as any, extra) as any
