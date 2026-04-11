@@ -50,8 +50,9 @@
     "id": "F-127",
     "name": "Barrel src/locale/index.ts",
     "description": "Criar src/locale/index.ts exportando: export type { SupportedLocale } from './types.js', export { SUPPORTED_LOCALES } from './types.js', export { normalizeLocale } from './normalize.js'. Extensao .js nos imports (ESM). Exatamente 3 exports.",
-    "status": "blocked",
+    "status": "passing",
     "priority": 3,
+    "completed_at": "2026-04-11T22:20:00Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
