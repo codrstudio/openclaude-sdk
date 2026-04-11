@@ -22,8 +22,9 @@
     "id": "F-126",
     "name": "normalizeLocale()",
     "description": "Criar src/locale/normalize.ts com funcao normalizeLocale(input: string | undefined): SupportedLocale. Regras: undefined/falsy retorna 'pt-BR', trim whitespace, underscore→hyphen, case-insensitive, match exato canonico, lang primary match (pt→pt-BR, en→en-US, es→es-ES), fallback final en-US. Import type-only de SupportedLocale. Nunca lanca excecao.",
-    "status": "pending",
+    "status": "passing",
     "priority": 2,
+    "completed_at": "2026-04-11T22:00:00Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
