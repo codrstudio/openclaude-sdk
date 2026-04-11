@@ -1071,3 +1071,108 @@ const q = query({
 ### Variáveis de ambiente em servidores stdio
 
 O campo `env` de um servidor stdio é mesclado ao ambiente do processo filho — as variáveis do processo pai (`process.env`) já estão disponíveis automaticamente. Use `env` para adicionar ou sobrescrever variáveis específicas do servidor, como chaves de API.
+
+## Rich Output
+
+A flag `richOutput` ativa um conjunto de 4 MCP tools built-in que permitem ao modelo emitir **conteúdo visual estruturado** (gráficos, tabelas, produtos, métricas, etc.) como `tool_use` blocks no stream. O cliente detecta esses blocks e os renderiza como widgets ricos.
+
+Quando `richOutput: false` (padrão), nenhum servidor MCP é registrado e o system prompt não é modificado — **zero overhead**.
+
+Quando `richOutput: true`, o SDK automaticamente:
+1. Registra um servidor MCP in-process com as 4 display tools
+2. Injeta uma instrução curta no system prompt explicando quando usar cada tool
+
+### As 4 meta-tools de display
+
+| Tool | Actions | Propósito |
+|------|---------|-----------|
+| `display_highlight` | `metric`, `price`, `alert`, `choices` | Destaque de informação pontual |
+| `display_collection` | `table`, `spreadsheet`, `comparison`, `carousel`, `gallery`, `sources` | Coleção de itens |
+| `display_card` | `product`, `link`, `file`, `image` | Item individual com detalhes |
+| `display_visual` | `chart`, `map`, `code`, `progress`, `steps` | Visualização especializada |
+
+Cada tool recebe um campo `action` que seleciona o tipo de conteúdo, mais os campos específicos daquela action.
+
+### Exemplo end-to-end
+
+```typescript
+import { query } from "openclaude-sdk"
+
+const q = query({
+  prompt: "Compare the top 3 laptops under $1500 with specs and prices",
+  options: {
+    richOutput: true,
+  },
+})
+
+for await (const msg of q) {
+  if (msg.type === "assistant") {
+    for (const block of msg.message.content) {
+      if (block.type === "tool_use" && block.name?.startsWith("display_")) {
+        // Bloco de display tool — renderizar como widget rico
+        console.log(`[rich] ${block.name}:`, block.input)
+      } else if (block.type === "text") {
+        console.log(block.text)
+      }
+    }
+  }
+}
+```
+
+### Validação client-side com `DisplayToolRegistry`
+
+`DisplayToolRegistry` é um `Record<nome, schema>` com os 19 schemas base. Use-o para validar o `input` de um `tool_use` block antes de renderizar:
+
+```typescript
+import { DisplayToolRegistry } from "openclaude-sdk"
+
+function handleDisplayBlock(name: string, input: unknown) {
+  const schema = DisplayToolRegistry[name as keyof typeof DisplayToolRegistry]
+  if (!schema) return // tool desconhecida
+
+  const result = schema.safeParse(input)
+  if (!result.success) {
+    console.warn(`Invalid display input for ${name}:`, result.error)
+    return
+  }
+
+  // input validado — despachar para renderer
+  render(name, result.data)
+}
+```
+
+### Schemas exportados
+
+Todos os 19 schemas e tipos estão disponíveis como exports públicos:
+
+```typescript
+import {
+  DisplayMetricSchema,
+  DisplayChartSchema,
+  DisplayTableSchema,
+  DisplayProgressSchema,
+  DisplayProductSchema,
+  DisplayComparisonSchema,
+  DisplayPriceSchema,
+  DisplayImageSchema,
+  DisplayGallerySchema,
+  DisplayCarouselSchema,
+  DisplaySourcesSchema,
+  DisplayLinkSchema,
+  DisplayMapSchema,
+  DisplayFileSchema,
+  DisplayCodeSchema,
+  DisplaySpreadsheetSchema,
+  DisplayStepsSchema,
+  DisplayAlertSchema,
+  DisplayChoicesSchema,
+  DisplayToolRegistry,
+} from "openclaude-sdk"
+
+import type {
+  DisplayMetric,
+  DisplayChart,
+  DisplayTable,
+  DisplayToolName,
+} from "openclaude-sdk"
+```

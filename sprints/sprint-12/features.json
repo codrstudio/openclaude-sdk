@@ -232,7 +232,7 @@
     "id": "F-103",
     "name": "README secao Rich Output",
     "description": "Adicionar secao 'Rich Output' no README.md apos MCP Servers e antes de Error Handling: descricao da flag richOutput, tabela das 4 meta-tools com actions, exemplo end-to-end com deteccao de block.name.startsWith('display_'), exemplo de validacao client-side com DisplayToolRegistry.",
-    "status": "pending",
+    "status": "passing",
     "priority": 12,
     "agent": "coder",
     "task": "vibe-code",
@@ -246,6 +246,7 @@
       "Exemplo mostra deteccao de display_ tools no stream",
       "Exemplo mostra uso de DisplayToolRegistry para validacao client-side"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md",
+    "completed_at": "2026-04-10T07:00:00.000Z"
   }
 ]
