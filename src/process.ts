@@ -4,6 +4,9 @@
 
 import { spawn, type ChildProcess } from "node:child_process"
 import { createInterface } from "node:readline"
+import { writeFileSync, mkdtempSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import type { SDKMessage } from "./types/index.js"
 import type { Options, McpStdioServerConfig, McpSSEServerConfig, McpHttpServerConfig } from "./types/options.js"
 
@@ -95,17 +98,28 @@ export function buildCliArgs(options: Options = {}): string[] {
     args.push("--session-id", options.sessionId)
   }
 
-  // System prompt
+  // System prompt — passed via *-file variants to survive cmd.exe /c on Windows.
+  // Rationale: on Windows the SDK spawns the CLI through `cmd.exe /c openclaude ...`.
+  // When an arg contains literal `\n` (e.g. richOutput's multi-line DISPLAY_SYSTEM_PROMPT)
+  // cmd.exe interprets the newline as a command separator and DROPS every flag after
+  // it — including the `--mcp-config` that richOutput also depends on. Writing the
+  // prompt text to a temp file and passing `--system-prompt-file` / `--append-system-prompt-file`
+  // bypasses the shell entirely. The openclaude CLI supports both *-file variants
+  // (see `--bare` help: "--system-prompt[-file], --append-system-prompt[-file]").
+  // Note: `--system-prompt-preset` is NOT passed — the installed openclaude CLI
+  // does not know that flag. When `type: "preset"`, the CLI defaults to
+  // `claude_code` automatically.
   if (options.systemPrompt) {
     if (typeof options.systemPrompt === "string") {
-      args.push("--system-prompt", options.systemPrompt)
-    } else {
-      if ("type" in options.systemPrompt && options.systemPrompt.type === "preset") {
-        args.push("--system-prompt-preset", options.systemPrompt.preset)
-      }
-      if (options.systemPrompt.append) {
-        args.push("--append-system-prompt", options.systemPrompt.append)
-      }
+      const tmpDir = mkdtempSync(join(tmpdir(), "openclaude-sysprompt-"))
+      const promptPath = join(tmpDir, "system-prompt.txt")
+      writeFileSync(promptPath, options.systemPrompt)
+      args.push("--system-prompt-file", promptPath)
+    } else if (options.systemPrompt.append) {
+      const tmpDir = mkdtempSync(join(tmpdir(), "openclaude-sysprompt-"))
+      const promptPath = join(tmpDir, "append-system-prompt.txt")
+      writeFileSync(promptPath, options.systemPrompt.append)
+      args.push("--append-system-prompt-file", promptPath)
     }
   }
 
@@ -230,7 +244,15 @@ export function buildCliArgs(options: Options = {}): string[] {
   }
 
   // MCP Servers
-  if (options.mcpServers) {
+  // The installed `openclaude` CLI does not support `--mcp-server` /
+  // `--mcp-server-sse` / `--mcp-server-header` flags. Instead it takes
+  // `--mcp-config <json-string-or-file>` (same schema as .mcp.json /
+  // Claude Desktop). We serialize all SDK-side MCP configs into a single
+  // JSON string argument.
+  if (options.mcpServers && Object.keys(options.mcpServers).length > 0) {
+    const mcpConfigJson: { mcpServers: Record<string, Record<string, unknown>> } = {
+      mcpServers: {},
+    }
     for (const [name, config] of Object.entries(options.mcpServers)) {
       if (config.type === "sdk") {
         if (config._localPort == null) {
@@ -238,21 +260,39 @@ export function buildCliArgs(options: Options = {}): string[] {
             `SDK MCP server "${config.name}" has no local transport. Call startSdkServerTransport() before spawning the CLI.`,
           )
         }
-        args.push("--mcp-server-sse", `${config.name}:http://localhost:${config._localPort}/mcp`)
-        continue
+        // SDK servers are exposed via StreamableHTTPServerTransport at /mcp.
+        // We advertise them as `sse` so the CLI's MCP client connects via the
+        // SSE path of the Streamable HTTP spec (which the transport implements).
+        mcpConfigJson.mcpServers[config.name] = {
+          type: "sse",
+          url: `http://localhost:${config._localPort}/mcp`,
+        }
       } else if (!config.type || config.type === "stdio") {
         const stdio = config as McpStdioServerConfig
-        const parts = [stdio.command, ...(stdio.args ?? [])]
-        args.push("--mcp-server", `${name}:${parts.join(" ")}`)
+        mcpConfigJson.mcpServers[name] = {
+          type: "stdio",
+          command: stdio.command,
+          args: stdio.args ?? [],
+          ...(stdio.env ? { env: stdio.env } : {}),
+        }
       } else if (config.type === "sse" || config.type === "http") {
         const remote = config as McpSSEServerConfig | McpHttpServerConfig
-        args.push("--mcp-server-sse", `${name}:${remote.url}`)
-        if (remote.headers) {
-          for (const [headerName, headerValue] of Object.entries(remote.headers)) {
-            args.push("--mcp-server-header", `${name}:${headerName}:${headerValue}`)
-          }
+        mcpConfigJson.mcpServers[name] = {
+          type: config.type,
+          url: remote.url,
+          ...(remote.headers ? { headers: remote.headers } : {}),
         }
       }
+    }
+    if (Object.keys(mcpConfigJson.mcpServers).length > 0) {
+      // Write to temp file instead of inline JSON: on Windows we spawn via
+      // `cmd.exe /c openclaude ...` which re-parses the command line and
+      // mangles embedded quotes/braces in JSON strings. Passing a file path
+      // avoids all shell-escaping issues across platforms.
+      const tmpDir = mkdtempSync(join(tmpdir(), "openclaude-mcp-"))
+      const cfgPath = join(tmpDir, "mcp.json")
+      writeFileSync(cfgPath, JSON.stringify(mcpConfigJson))
+      args.push("--mcp-config", cfgPath)
     }
   }
 
@@ -348,6 +388,9 @@ export function spawnAndStream(
     ...(options.env ? filterEnv(options.env) : {}),
   }
 
+  if (process.env.OPENCLAUDE_DEBUG_SPAWN) {
+    console.error("[openclaude spawn]", JSON.stringify({ command, args }))
+  }
   const proc: ChildProcess = spawn(command, args, {
     cwd: options.cwd || process.cwd(),
     stdio: ["pipe", "pipe", "pipe"],
