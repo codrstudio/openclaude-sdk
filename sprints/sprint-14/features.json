@@ -79,10 +79,11 @@
     "id": "F-119",
     "name": "Integracao reactOutput em query.ts",
     "description": "Dentro do bloco if(richOutput) em query.ts, importar REACT_OUTPUT_SYSTEM_PROMPT e fazer segundo mergeSystemPromptAppend condicional quando reactOutput=true. Gate silencioso: reactOutput sem richOutput nao tem efeito",
-    "status": "pending",
+    "status": "passing",
     "priority": 5,
     "agent": "coder",
     "task": "vibe-code",
+    "completed_at": "2026-04-11T08:00:00Z",
     "dependencies": [
       "F-117",
       "F-118"

@@ -220,7 +220,7 @@ export function query(params: {
 
       // richOutput injection — zero overhead when false/absent
       if (optionsForCli.richOutput) {
-        const { createDisplayMcpServer, DISPLAY_SYSTEM_PROMPT, mergeSystemPromptAppend } = await import("./display/index.js")
+        const { createDisplayMcpServer, DISPLAY_SYSTEM_PROMPT, REACT_OUTPUT_SYSTEM_PROMPT, mergeSystemPromptAppend } = await import("./display/index.js")
         const displayServer = await createDisplayMcpServer()
 
         const existingServers = optionsForCli.mcpServers ?? {}
@@ -228,10 +228,18 @@ export function query(params: {
           console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
         }
 
+        let mergedPrompt = mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT)
+
+        // React output — nested gate: only has effect when richOutput is also enabled.
+        // Silent ignore when reactOutput comes without richOutput.
+        if (optionsForCli.reactOutput) {
+          mergedPrompt = mergeSystemPromptAppend(mergedPrompt, REACT_OUTPUT_SYSTEM_PROMPT)
+        }
+
         optionsForCli = {
           ...optionsForCli,
           mcpServers: { ...existingServers, display: displayServer },
-          systemPrompt: mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT),
+          systemPrompt: mergedPrompt,
         }
       }
 
