@@ -125,8 +125,9 @@
     "id": "F-107",
     "name": "Ask User Barrel",
     "description": "Create src/ask-user/index.ts as barrel module re-exporting: AskUserRequest/AskUserAnswer (type) from ./types.js, askUserSchema/AskUserInput from ./schema.js, createAskUserMcpServer/formatAnswer/AskUserEmitter from ./server.js, ASK_USER_SYSTEM_PROMPT from ./prompt.js. All paths with .js extension. See PRP-042 Feature F-107.",
-    "status": "blocked",
+    "status": "passing",
     "priority": 7,
+    "completed_at": "2026-04-10T00:00:00.000Z",
     "agent": "coder",
     "task": "vibe-code",
     "dependencies": [
