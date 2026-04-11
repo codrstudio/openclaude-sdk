@@ -594,6 +594,7 @@ export async function collectMessages(
   let durationMs = 0
 
   for await (const msg of q) {
+    if (msg.type === "presence") continue
     messages.push(msg)
 
     if (msg.type === "system" && "subtype" in msg && msg.subtype === "init") {
