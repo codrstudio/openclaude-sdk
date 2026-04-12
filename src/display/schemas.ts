@@ -256,7 +256,7 @@ export const DisplayReactSchema = z.object({
   // Dependencias explicitas — cliente valida contra whitelist
   imports: z.array(
     z.object({
-      module: z.enum(["react", "framer-motion"]),
+      module: z.enum(["react", "react-dom", "framer-motion", "recharts", "lucide-react"]),
       symbols: z.array(z.string()).min(1),
     })
   ).describe(

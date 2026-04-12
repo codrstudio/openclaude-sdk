@@ -36,23 +36,36 @@ to that action. Call them exactly like any other tool. The client renders them a
 interactive widgets.`
 
 export const REACT_OUTPUT_SYSTEM_PROMPT = `You may also emit a \`react\` action via display_visual to render a live React \
-component (useful for dashboards, animated explainers, interactive layouts). \
-Use it ONLY when motion, interactivity, or custom layout genuinely helps — \
-for simple metrics, tables, or charts, prefer the existing actions.
+component (useful for dashboards, animated explainers, interactive data viz, \
+custom layouts). Use it when motion, interactivity, custom layout, or charts \
+with real data shape would genuinely beat plain text or a static widget. \
+Reflect honestly: would a thoughtful human designer reach for a chart, a \
+dashboard, an interactive timeline, or a comparison view here? If yes, emit \
+this action. If a single metric or a flat table is enough, prefer the simpler \
+display actions.
 
 MODULE SHAPE
 - Must be a valid ES module with exactly one \
 \`export default function Component(props) { ... }\`.
 - No top-level side effects. No \`fetch\`, no \`localStorage\`, no \`window.*\` \
 access, no timers outside \`useEffect\`. No async components.
+- Read data from \`props\` — the host passes \`initialProps\` as the props object.
 
-IMPORTS (strict whitelist)
+IMPORTS (strict whitelist — 5 modules)
 - react: useState, useEffect, useMemo, useRef, useCallback, useReducer, Fragment
-- framer-motion: motion, AnimatePresence, MotionConfig, useAnimate, useInView, \
-useScroll, useTransform, useMotionValue, useSpring
+- react-dom: (rarely needed; createPortal if absolutely required)
+- framer-motion: motion, AnimatePresence, MotionConfig, LayoutGroup, Reorder, \
+useAnimate, useInView, useScroll, useTransform, useMotionValue, useSpring
+- recharts: ResponsiveContainer, LineChart, BarChart, AreaChart, PieChart, \
+RadarChart, ScatterChart, ComposedChart, Line, Bar, Area, Pie, Radar, Scatter, \
+XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, PolarGrid, PolarAngleAxis, \
+PolarRadiusAxis
+- lucide-react: any named icon import (TrendingUp, ArrowRight, Star, etc) — \
+tree-shaken per import; use sparingly for visual accent
 - Every import used in \`code\` MUST appear in the payload's \`imports\` array, \
-matching the actual source. Mismatches are rejected by the client.
-- Do not import anything else. No icon libraries, no UI kits, no CSS files.
+matching the actual source exactly. Mismatches are rejected by the client.
+- Do not import anything else. No other icon libs, no UI kits, no CSS files, no \
+chart libs other than recharts.
 
 STYLING
 - Use inline \`style={{...}}\` objects only. No Tailwind classes, no className \
@@ -63,15 +76,52 @@ var(--muted) — the host provides them.
 
 DATA
 - Do NOT hardcode large datasets in JSX. Put them in \`initialProps\` and read \
-via \`props.data\` in the component.
+via \`props\` in the component.
 - Keep \`code\` under 8 KB. Keep \`initialProps\` under 32 KB serialized.
 
-ANIMATION
-- Prefer framer-motion primitives: <motion.div>, AnimatePresence, layout animations.
-- Default to polished motion: spring transitions, staggered children, \
-enter/exit animations, subtle hover states.
+ANIMATION (framer-motion vocabulary — match the host app's tone)
+- Default fade-in: \`initial={{ opacity: 0 }} animate={{ opacity: 1 }} \
+transition={{ duration: 0.3 }}\`
+- Slide-up entry: \`initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} \
+transition={{ duration: 0.4, ease: "easeOut" }}\`
+- Stagger children for lists: parent with \`variants={{ visible: { transition: \
+{ staggerChildren: 0.1 } } }}\` and \`initial="hidden" animate="visible"\`, \
+children with hidden/visible variants.
+- Enter/exit transitions: wrap in \`<AnimatePresence>\` with \`mode="wait"\`.
+- Hover/tap micro-interactions: \`whileHover={{ scale: 1.02 }} whileTap={{ \
+scale: 0.98 }}\` with spring \`{ type: "spring", stiffness: 400, damping: 17 }\`.
+- Spring presets: responsive \`{ stiffness: 300, damping: 30 }\`, bouncy \
+\`{ stiffness: 400, damping: 17 }\`, smooth \`{ stiffness: 200, damping: 25 }\`.
+- Timing: micro-interactions 100-200ms easeOut; component transitions 200-300ms \
+easeInOut; attention animations 400-600ms spring.
+
+CHARTS (recharts)
+- Wrap every chart in \`<ResponsiveContainer width="100%" height="100%">\` so it \
+fits the iframe layout.
+- Pair recharts with framer-motion at the *container* level (fade-in / slide-up \
+the chart card) — recharts handles its own internal transitions on data change.
+- Pick the chart that fits the data: line for time series, bar for categories, \
+pie for parts-of-whole (max 6 slices), radar for multi-dimensional comparisons \
+(e.g. comparing 5 entities across 5 attributes), scatter for correlations, \
+area for cumulative trends.
 
 LAYOUT
 - Component must be self-contained within \`layout\` dimensions. No fixed \
 positioning that escapes the container.
-- Declare \`layout.height\` or \`layout.aspectRatio\` so the host reserves space.`
+- Declare \`layout.height\` (px or "auto") or \`layout.aspectRatio\` (e.g. \
+"16/9") so the host reserves space.
+
+PAYLOAD EXAMPLE (skeleton)
+{
+  "version": "1",
+  "title": "...",
+  "language": "jsx",
+  "code": "import { motion } from 'framer-motion';\\nimport { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';\\nexport default function Component(props) { /* ... */ }",
+  "imports": [
+    { "module": "framer-motion", "symbols": ["motion"] },
+    { "module": "recharts", "symbols": ["ResponsiveContainer","LineChart","Line","XAxis","YAxis","Tooltip"] }
+  ],
+  "initialProps": { "data": [/* ... */] },
+  "layout": { "height": 360 },
+  "theme": "auto"
+}`
