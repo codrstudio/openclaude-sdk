@@ -19,7 +19,7 @@ Resolver D-072 (score 9) e D-074 (score 7): implementar `src/display/tools.ts` c
 
 ## Estado Atual
 
-- **Source tools**: `D:\aw\context\workspaces\agentic-sdk\repo\src\tools\display.ts`
+- **Source tools**: `D:\aw\context\workspaces\openclaude-sdk\repo\src\tools\display.ts`
 - **Source prompt**: definido no TASK.md do sprint
 - **Target tools**: `src/display/tools.ts` — nao existe
 - **Target prompt**: `src/display/prompt.ts` — nao existe
@@ -31,11 +31,11 @@ Resolver D-072 (score 9) e D-074 (score 7): implementar `src/display/tools.ts` c
 
 ### 1. Criar `src/display/tools.ts`
 
-Adaptar `createDisplayTools()` do agentic-sdk para usar `tool()` de `src/mcp.ts`.
+Adaptar `createDisplayTools()` do openclaude-sdk para usar `tool()` de `src/mcp.ts`.
 
 **Diferencas do original**:
 
-| Antes (agentic-sdk) | Depois (openclaude-sdk) |
+| Antes (openclaude-sdk) | Depois (openclaude-sdk) |
 |---------------------|------------------------|
 | `import { tool } from "ai"` | `import { tool } from "../mcp.js"` |
 | `execute: async (args) => ({ ...args, _display: true })` | `handler: async (args) => ({ content: [{ type: "text", text: JSON.stringify(args) }] })` |
@@ -102,7 +102,7 @@ export function createDisplayTools(): SdkMcpToolDefinition<any>[] {
 }
 ```
 
-**Descricoes das tools** (em ingles, conforme agentic-sdk):
+**Descricoes das tools** (em ingles, conforme openclaude-sdk):
 
 | Tool | Descricao |
 |------|-----------|

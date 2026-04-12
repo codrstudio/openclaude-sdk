@@ -2,9 +2,9 @@
 
 ## Contexto
 
-O TASK.md do sprint-12 define como meta a **Rich Output (Display Tools built-in)**: um módulo opcional ativável via `options.richOutput: true` que registra 4 MCP tools "display" in-process. Essas tools permitem que o modelo emita conteúdo visual estruturado (charts, tables, produtos, métricas etc.) como `tool_use` blocks, que clientes como `agentic-chat` renderizam como widgets ricos.
+O TASK.md do sprint-12 define como meta a **Rich Output (Display Tools built-in)**: um módulo opcional ativável via `options.richOutput: true` que registra 4 MCP tools "display" in-process. Essas tools permitem que o modelo emita conteúdo visual estruturado (charts, tables, produtos, métricas etc.) como `tool_use` blocks, que clientes como `openclaude-chat` renderizam como widgets ricos.
 
-O objetivo principal é **trazer a saída rica do `@codrstudio/agentic-sdk`** para dentro do `openclaude-sdk` como feature built-in, eliminando a necessidade de manter o `agentic-sdk` como package paralelo.
+O objetivo principal é **trazer a saída rica do `@codrstudio/openclaude-sdk`** para dentro do `openclaude-sdk` como feature built-in, eliminando a necessidade de manter o `openclaude-sdk` como package paralelo.
 
 Sprints 1–11 cobriram:
 - Core API (`query`, `collectMessages`, `continueSession`)
@@ -41,7 +41,7 @@ Ponto de integração identificado no TASK.md: antes de construir o `McpServerCo
 
 A função `lifecycleGenerator()` já monta `optionsForCli` com servers patchados — o hook de richOutput deve ocorrer antes desse ponto.
 
-### Source das schemas — `agentic-sdk/src/display-schemas.ts`
+### Source das schemas — `openclaude-sdk/src/display-schemas.ts`
 
 Arquivo lido e analisado. Contém:
 - **4 primitivos internos**: `MoneySchema`, `SourceRefSchema`, `ImageItemSchema`, `BadgeSchema`
@@ -50,7 +50,7 @@ Arquivo lido e analisado. Contém:
 - **Tipos inferidos**: 19 tipos TypeScript
 - **`DisplayToolName`**: keyof do registry
 
-### Source das 4 meta-tools — `agentic-sdk/src/tools/display.ts`
+### Source das 4 meta-tools — `openclaude-sdk/src/tools/display.ts`
 
 Arquivo lido e analisado. As 4 meta-tools usam `discriminatedUnion("action", [...])`:
 - **`display_highlight`**: metric, price, alert, choices
@@ -64,15 +64,15 @@ O arquivo original usa `import { tool } from "ai"` (Vercel AI SDK). No openclaud
 
 ## Lacunas e oportunidades
 
-### D-071 — Criar `src/display/schemas.ts` com 19 schemas Zod portados do agentic-sdk
+### D-071 — Criar `src/display/schemas.ts` com 19 schemas Zod portados do openclaude-sdk
 
-Porta literal de `agentic-sdk/src/display-schemas.ts`, sem o import `from "ai"`. Mantém zod como já é peer dep. Inclui os 4 primitivos internos e exporta as 19 schemas + `DisplayToolRegistry` + `DisplayToolName` + tipos inferidos.
+Porta literal de `openclaude-sdk/src/display-schemas.ts`, sem o import `from "ai"`. Mantém zod como já é peer dep. Inclui os 4 primitivos internos e exporta as 19 schemas + `DisplayToolRegistry` + `DisplayToolName` + tipos inferidos.
 
 **Impacto**: Crítico — base de tudo no módulo display.
 
 ### D-072 — Criar `src/display/tools.ts` com as 4 meta-tools usando `tool()` nativo
 
-Adapta o `createDisplayTools()` do agentic-sdk para usar o `tool()` de `src/mcp.ts` (em vez de `tool` do Vercel AI SDK). O schema de cada meta-tool é um `z.discriminatedUnion("action", [...])` com `z.object({ action: z.literal("..."), ...schema.shape })`.
+Adapta o `createDisplayTools()` do openclaude-sdk para usar o `tool()` de `src/mcp.ts` (em vez de `tool` do Vercel AI SDK). O schema de cada meta-tool é um `z.discriminatedUnion("action", [...])` com `z.object({ action: z.literal("..."), ...schema.shape })`.
 
 Ponto de atenção: o `inputSchema` da factory `tool()` em `src/mcp.ts` espera `ZodRawShape` (object de shapes), mas as meta-tools usam `discriminatedUnion`. É necessário verificar se `createSdkMcpServer()` aceita `ZodTypeAny` ou apenas `ZodRawShape`. Pode ser necessário ajustar a assinatura de `SdkMcpToolDefinition` para aceitar `z.ZodTypeAny` como `inputSchema`.
 

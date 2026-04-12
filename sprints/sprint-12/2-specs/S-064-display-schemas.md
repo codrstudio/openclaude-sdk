@@ -1,12 +1,12 @@
 # openclaude-sdk - Modulo Display: Schemas Zod
 
-Portar os 19 schemas Zod de display do `agentic-sdk` para `src/display/schemas.ts`, incluindo primitivos internos, registry, tipos e type alias.
+Portar os 19 schemas Zod de display do `openclaude-sdk` para `src/display/schemas.ts`, incluindo primitivos internos, registry, tipos e type alias.
 
 ---
 
 ## Objetivo
 
-Resolver D-071 (score 9): criar `src/display/schemas.ts` com os 19 schemas portados de `agentic-sdk/src/display-schemas.ts`. Este arquivo e a base de todo o modulo display — pre-requisito de tools (S-065), server (S-066) e exports (S-068).
+Resolver D-071 (score 9): criar `src/display/schemas.ts` com os 19 schemas portados de `openclaude-sdk/src/display-schemas.ts`. Este arquivo e a base de todo o modulo display — pre-requisito de tools (S-065), server (S-066) e exports (S-068).
 
 | # | Acao | Detalhe |
 |---|------|---------|
@@ -19,7 +19,7 @@ Resolver D-071 (score 9): criar `src/display/schemas.ts` com os 19 schemas porta
 
 ## Estado Atual
 
-- **Source**: `D:\aw\context\workspaces\agentic-sdk\repo\src\display-schemas.ts` (277 linhas)
+- **Source**: `D:\aw\context\workspaces\openclaude-sdk\repo\src\display-schemas.ts` (277 linhas)
 - **Target**: `src/display/schemas.ts` — arquivo nao existe ainda
 - `zod` ja e peer dep do openclaude-sdk
 
@@ -31,7 +31,7 @@ Resolver D-071 (score 9): criar `src/display/schemas.ts` com os 19 schemas porta
 
 **Porta literal** do arquivo source, com as seguintes diferencas:
 
-| Antes (agentic-sdk) | Depois (openclaude-sdk) |
+| Antes (openclaude-sdk) | Depois (openclaude-sdk) |
 |---------------------|------------------------|
 | `import { z } from "zod"` | `import { z } from "zod"` (igual — zod ja e peer dep) |
 | Nenhum import de `"ai"` neste arquivo | N/A |

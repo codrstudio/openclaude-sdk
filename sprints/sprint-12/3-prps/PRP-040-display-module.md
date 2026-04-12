@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Criar o modulo `src/display/` com 19 schemas Zod portados do `agentic-sdk`, 4 meta-tools com discriminated union, system prompt, MCP server factory e barrel de exports.
+Criar o modulo `src/display/` com 19 schemas Zod portados do `openclaude-sdk`, 4 meta-tools com discriminated union, system prompt, MCP server factory e barrel de exports.
 
 Referencia: specs S-064 (D-071), S-065 (D-072, D-074), S-066 (D-073, D-075).
 
@@ -12,7 +12,7 @@ Referencia: specs S-064 (D-071), S-065 (D-072, D-074), S-066 (D-073, D-075).
 
 ## Contexto
 
-O `@codrstudio/agentic-sdk` em `D:\aw\context\workspaces\agentic-sdk\repo` contem:
+O `@codrstudio/openclaude-sdk` em `D:\aw\context\workspaces\openclaude-sdk\repo` contem:
 - `src/display-schemas.ts` (277 linhas) — 19 schemas Zod + 4 primitivos internos + registry + tipos inferidos
 - `src/tools/display.ts` (105 linhas) — 4 meta-tools usando `tool()` do Vercel AI SDK com `z.discriminatedUnion("action", [...])`
 
@@ -28,7 +28,7 @@ O modulo `src/display/` ainda nao existe. Sera criado com 5 arquivos.
 
 ### Feature F-094 — src/display/schemas.ts
 
-Criar `src/display/schemas.ts` com porta literal de `agentic-sdk/src/display-schemas.ts`.
+Criar `src/display/schemas.ts` com porta literal de `openclaude-sdk/src/display-schemas.ts`.
 
 **Conteudo completo do arquivo:**
 
@@ -299,7 +299,7 @@ export type DisplayAlert = z.infer<typeof DisplayAlertSchema>
 export type DisplayChoices = z.infer<typeof DisplayChoicesSchema>
 ```
 
-Mudancas em relacao ao original `agentic-sdk/src/display-schemas.ts`:
+Mudancas em relacao ao original `openclaude-sdk/src/display-schemas.ts`:
 - Removido `import { z } from "zod";` com ponto-e-virgula — usar sem trailing semicolons (consistencia com codebase)
 - Nenhuma outra mudanca — porta literal
 
@@ -401,7 +401,7 @@ export function createDisplayTools(): SdkMcpToolDefinition<any>[] {
 }
 ```
 
-Mudancas em relacao ao original `agentic-sdk/src/tools/display.ts`:
+Mudancas em relacao ao original `openclaude-sdk/src/tools/display.ts`:
 - `import { tool } from "ai"` substituido por `import { tool } from "../mcp.js"`
 - Handlers mudam de `async (args) => ({ ...args, _display: true })` para echo puro `async (args) => ({ content: [{ type: "text", text: JSON.stringify(args) }] })` — compativel com `CallToolResult` do MCP SDK
 - Descricoes em ingles (TASK.md especifica ingles para o system prompt e descricoes)
@@ -531,7 +531,7 @@ export { createDisplayMcpServer } from "./server.js"
 - NAO alterar `src/mcp.ts` — alteracoes de tipagem sao escopo de PRP-039
 - NAO alterar `src/index.ts` — exports publicos sao escopo de PRP-041
 - NAO adicionar testes (nao ha framework de teste configurado)
-- NAO criar componentes React de renderizacao — responsabilidade do agentic-chat
+- NAO criar componentes React de renderizacao — responsabilidade do openclaude-chat
 
 ## Dependencias
 

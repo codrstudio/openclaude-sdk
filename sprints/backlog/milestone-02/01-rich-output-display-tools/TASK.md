@@ -1,14 +1,14 @@
 # Rich Output — Display Tools built-in
 
-Built-in opcional que registra 4 MCP tools "display" in-process quando `options.richOutput: true`. Essas tools servem como canal para o modelo emitir **conteudo visual estruturado** (charts, tables, produtos, metricas, etc) que o cliente (ex: `agentic-chat`) renderiza como widgets ricos.
+Built-in opcional que registra 4 MCP tools "display" in-process quando `options.richOutput: true`. Essas tools servem como canal para o modelo emitir **conteudo visual estruturado** (charts, tables, produtos, metricas, etc) que o cliente (ex: `openclaude-chat`) renderiza como widgets ricos.
 
 ---
 
 ## Contexto
 
-O package externo `@codrstudio/agentic-sdk` (em `D:\aw\context\workspaces\agentic-sdk\repo`) foi criado quando o openclaude-sdk ainda nao existia, com base no Vercel AI SDK. Depois que migramos para openclaude-sdk o unico diferencial real que sobrou dele e a **saida rica**: um conjunto de schemas Zod que descrevem widgets visuais + 4 "display tools" agregadoras que o modelo invoca como tool calls.
+O package externo `@codrstudio/openclaude-sdk` (em `D:\aw\context\workspaces\openclaude-sdk\repo`) foi criado quando o openclaude-sdk ainda nao existia, com base no Vercel AI SDK. Depois que migramos para openclaude-sdk o unico diferencial real que sobrou dele e a **saida rica**: um conjunto de schemas Zod que descrevem widgets visuais + 4 "display tools" agregadoras que o modelo invoca como tool calls.
 
-Em vez de manter `agentic-sdk` como package paralelo, queremos **trazer a saida rica para o openclaude-sdk como feature built-in opcional**, ativavel via flag. Assim o `agentic-sdk` pode ser deprecado e o `agentic-chat` passa a depender apenas do openclaude-sdk.
+Em vez de manter `openclaude-sdk` como package paralelo, queremos **trazer a saida rica para o openclaude-sdk como feature built-in opcional**, ativavel via flag. Assim o `openclaude-sdk` pode ser deprecado e o `openclaude-chat` passa a depender apenas do openclaude-sdk.
 
 O feature e **zero-overhead quando desligado** — flag off significa que nada e registrado, nem o system prompt e modificado.
 
@@ -53,7 +53,7 @@ handler: async (args) => ({
 })
 ```
 
-O cliente (agentic-chat) detecta `block.type === "tool_use" && block.name.startsWith("display_")` e despacha para o renderer correspondente lendo `block.input`.
+O cliente (openclaude-chat) detecta `block.type === "tool_use" && block.name.startsWith("display_")` e despacha para o renderer correspondente lendo `block.input`.
 
 ### System prompt injetado
 
@@ -76,7 +76,7 @@ interactive widgets.
 
 ## Schemas a portar
 
-As 19 schemas base vem de `D:\aw\context\workspaces\agentic-sdk\repo\src\display-schemas.ts`. Copia literal, exceto:
+As 19 schemas base vem de `D:\aw\context\workspaces\openclaude-sdk\repo\src\display-schemas.ts`. Copia literal, exceto:
 
 - Remover import de `"ai"` (Vercel AI SDK) — nao e usado na parte pura de schemas.
 - Manter uso de `zod` (ja e peer dep do openclaude-sdk por causa do task 06 de milestone-01).
@@ -219,7 +219,7 @@ for await (const msg of q) {
 ## Criterios de aceite
 
 - [ ] `options.richOutput: boolean` aceita na interface `Options`
-- [ ] `src/display/schemas.ts` com as 19 schemas Zod portadas de `agentic-sdk/src/display-schemas.ts`
+- [ ] `src/display/schemas.ts` com as 19 schemas Zod portadas de `openclaude-sdk/src/display-schemas.ts`
 - [ ] `src/display/tools.ts` com as 4 meta-tools (`display_highlight`, `display_collection`, `display_card`, `display_visual`) usando `tool()` do milestone-01/06
 - [ ] `src/display/server.ts` expondo `createDisplayMcpServer()` que retorna `McpSdkServerConfigWithInstance`
 - [ ] Flag `richOutput: false` (ou ausente) = zero overhead: nenhum MCP server e nada no system prompt
@@ -230,7 +230,7 @@ for await (const msg of q) {
 - [ ] Typecheck passa (`tsc --noEmit`)
 - [ ] Build passa (`tsup`)
 - [ ] README ganha secao nova "Rich Output" com exemplo e tabela das 4 tools
-- [ ] Teste manual via demo em `D:\aw\context\workspaces\agentic-sdk\repo\.tmp\demo` com flag ativa — modelo invoca display tool, cliente ve o `tool_use` no stream
+- [ ] Teste manual via demo em `D:\aw\context\workspaces\openclaude-sdk\repo\.tmp\demo` com flag ativa — modelo invoca display tool, cliente ve o `tool_use` no stream
 
 ---
 
@@ -248,16 +248,16 @@ Nenhuma dep nova.
 
 ## Nao-objetivos
 
-- **Renderizacao** — e responsabilidade do cliente (agentic-chat), nao do SDK.
+- **Renderizacao** — e responsabilidade do cliente (openclaude-chat), nao do SDK.
 - **Validacao de output no servidor** — handler echo, sem validacao alem do schema Zod nativo do MCP (que ja valida na entrada do tool call).
-- **Componentes React** — nao vao para este repo. Ficam no `agentic-chat`.
-- **Migracao de consumidores** — deprecation do `agentic-sdk` e task separada, fora do escopo do openclaude-sdk.
+- **Componentes React** — nao vao para este repo. Ficam no `openclaude-chat`.
+- **Migracao de consumidores** — deprecation do `openclaude-sdk` e task separada, fora do escopo do openclaude-sdk.
 
 ---
 
 ## Prioridade
 
-**Alta** — desbloqueia a deprecation do `@codrstudio/agentic-sdk` e simplifica o ecossistema para um unico package base.
+**Alta** — desbloqueia a deprecation do `@codrstudio/openclaude-sdk` e simplifica o ecossistema para um unico package base.
 
 ---
 
@@ -265,9 +265,9 @@ Nenhuma dep nova.
 
 | Origem | Referencia |
 |--------|-----------|
-| Gap analysis agentic-sdk vs openclaude-sdk | Conversa de design 2026-04-10 |
-| Source das schemas | `D:\aw\context\workspaces\agentic-sdk\repo\src\display-schemas.ts` |
-| Source do agrupamento em 4 tools | `D:\aw\context\workspaces\agentic-sdk\repo\src\tools\display.ts` |
+| Gap analysis openclaude-sdk vs openclaude-sdk | Conversa de design 2026-04-10 |
+| Source das schemas | `D:\aw\context\workspaces\openclaude-sdk\repo\src\display-schemas.ts` |
+| Source do agrupamento em 4 tools | `D:\aw\context\workspaces\openclaude-sdk\repo\src\tools\display.ts` |
 | Dep de `tool()` e `createSdkMcpServer()` | `sprints/backlog/milestone-01/06-mcp-tool-factories/TASK.md` |
-| Consumidor final | `D:\aw\context\workspaces\agentic-chat\repo` (redesign pos-merge) |
-| Demo de validacao | `D:\aw\context\workspaces\agentic-sdk\repo\.tmp\demo` |
+| Consumidor final | `D:\aw\context\workspaces\openclaude-chat\repo` (redesign pos-merge) |
+| Demo de validacao | `D:\aw\context\workspaces\openclaude-sdk\repo\.tmp\demo` |

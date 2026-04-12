@@ -388,7 +388,7 @@ for await (const msg of q) {
 | `tool()` / `createSdkMcpServer()` | Ja implementado (milestone-01/06) |
 | `zod` peer dep | Ja peer dep |
 
-Nenhuma dep nova no SDK. O **host** (agentic-chat ou equivalente) precisa de Babel standalone ou sucrase + iframe sandbox, mas isso fica fora deste repo.
+Nenhuma dep nova no SDK. O **host** (openclaude-chat ou equivalente) precisa de Babel standalone ou sucrase + iframe sandbox, mas isso fica fora deste repo.
 
 ---
 

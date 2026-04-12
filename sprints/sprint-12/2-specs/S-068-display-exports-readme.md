@@ -135,7 +135,7 @@ for await (const msg of q) {
 ‍```
 
 Each display tool takes an `action` field that selects the content type.
-The client (e.g., agentic-chat) detects `block.name.startsWith("display_")`
+The client (e.g., openclaude-chat) detects `block.name.startsWith("display_")`
 and dispatches to the appropriate renderer using `block.input`.
 
 Schemas are exported for client-side validation:

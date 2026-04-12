@@ -17,7 +17,7 @@ O TASK.md desta wave descreve o **Locale Options**: adição de um campo `locale
 
 ### Motivação
 
-O SDK já gera conteúdo por conta própria na task 03 (tool intention filter vai substituir `tool_use.input` por uma frase humana em linguagem natural). Hardcodar pt-BR seria errado — o `agentic-chat` roda em pt-BR, en-US e es-ES. Heurísticas (detectar do prompt) são frágeis. A solução correta é receber o locale como parâmetro explícito do aplicativo hospedeiro.
+O SDK já gera conteúdo por conta própria na task 03 (tool intention filter vai substituir `tool_use.input` por uma frase humana em linguagem natural). Hardcodar pt-BR seria errado — o `openclaude-chat` roda em pt-BR, en-US e es-ES. Heurísticas (detectar do prompt) são frágeis. A solução correta é receber o locale como parâmetro explícito do aplicativo hospedeiro.
 
 ---
 

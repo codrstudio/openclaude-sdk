@@ -17,7 +17,7 @@ O `ask_user` segue exatamente esse padrão, mas adiciona **comunicação bidirec
 ## Funcionalidades mapeadas (já implementadas)
 
 ### Wave-13 / Sprint-12 (D-071 a D-081)
-- `src/display/schemas.ts` — 19 schemas Zod portados do agentic-sdk
+- `src/display/schemas.ts` — 19 schemas Zod portados do openclaude-sdk
 - `src/display/tools.ts` — 4 meta-tools (display_highlight, display_collection, display_card, display_visual)
 - `src/display/server.ts` — `createDisplayMcpServer()`
 - `src/display/prompt.ts` — `DISPLAY_SYSTEM_PROMPT` + `mergeSystemPromptAppend()`

@@ -311,8 +311,8 @@ if (schema) {
 - NAO alterar `src/display/schemas.ts`, `src/display/tools.ts`, `src/display/server.ts` — sao escopo de PRP-040
 - NAO alterar `src/mcp.ts` — escopo de PRP-039
 - NAO adicionar testes (nao ha framework de teste configurado)
-- NAO implementar renderizacao de widgets — responsabilidade do agentic-chat
-- NAO deprecar `@codrstudio/agentic-sdk` — task separada fora do escopo
+- NAO implementar renderizacao de widgets — responsabilidade do openclaude-chat
+- NAO deprecar `@codrstudio/openclaude-sdk` — task separada fora do escopo
 - NAO alterar `src/process.ts` (`buildCliArgs`) — system prompt ja e mapeado la
 
 ## Dependencias

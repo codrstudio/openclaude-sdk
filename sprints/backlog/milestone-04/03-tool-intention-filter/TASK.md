@@ -524,7 +524,7 @@ Elimina o leak de info sensivel e da polish profissional ao chat.
 | Origem | Referencia |
 |--------|-----------|
 | Conversa de design abril 2026 | Discussao sobre intention vs full tool output |
-| Consumidor final | `D:\aw\context\workspaces\agentic-chat\repo` |
+| Consumidor final | `D:\aw\context\workspaces\openclaude-chat\repo` |
 | Task dependente | `milestone-04/01-locale-options` |
 | Padrao de referencia | Cursor, Cline, Claude.ai — todos mostram narrativa de intencao, nao comando bruto |
 | Bug observado | `openclaude` CLI hoje emite `tool_use.input` cru com paths absolutos e comandos literais |

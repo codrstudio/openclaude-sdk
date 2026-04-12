@@ -15,7 +15,7 @@ O `openclaude` suporta 10 providers de web search (`firecrawl`, `tavily`,
 env vars**: `WEB_SEARCH_PROVIDER` pra escolher o modo e `*_API_KEY` pra
 cada provider. O SDK (`src/entrypoints/sdk/`) **nao expoe nada disso**.
 
-Isso e ruim pra consumidores da SDK (ex: `agentic-chat`) que precisam:
+Isso e ruim pra consumidores da SDK (ex: `openclaude-chat`) que precisam:
 
 1. Configurar providers programaticamente a partir de config do app
    (nao querem poluir env vars do processo)
@@ -475,7 +475,7 @@ Task independente. Nao depende de outros milestones.
 ## Prioridade
 
 **Media-alta** — desbloqueia consumidores que nao querem gerenciar env
-vars (`agentic-chat` e outros apps que hospedam a SDK). Nao bloqueia
+vars (`openclaude-chat` e outros apps que hospedam a SDK). Nao bloqueia
 nenhum outro milestone conhecido.
 
 ---
@@ -488,4 +488,4 @@ nenhum outro milestone conhecido.
 | Codigo fonte providers | `src/tools/WebSearchTool/providers/` |
 | Index atual | `src/tools/WebSearchTool/providers/index.ts` |
 | SDK entrypoint | `src/entrypoints/sdk/` |
-| Consumidor alvo | `agentic-chat` |
+| Consumidor alvo | `openclaude-chat` |

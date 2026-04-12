@@ -21,13 +21,13 @@ O `openclaude` CLI tem dois tipos de gap previsíveis em que nenhum byte flui:
 - **Gap inicial** (spawn → primeiro chunk assistant): 30-120s em providers baratos
 - **Gap de tool execution** (tool_use → tool_result): Bash longo, WebFetch lento — pode durar minutos
 
-Clientes SSE (ex: `agentic-chat`) implementam watchdogs que abortam se nada chegar por N segundos. Hoje esses watchdogs não distinguem "servidor crashou" de "modelo pensando". A solução SSE padrão é emitir comment lines a cada 15s, mas como o SDK não é SSE-aware, a solução equivalente é um novo `SDKMessage` que o consumer trata como quiser.
+Clientes SSE (ex: `openclaude-chat`) implementam watchdogs que abortam se nada chegar por N segundos. Hoje esses watchdogs não distinguem "servidor crashou" de "modelo pensando". A solução SSE padrão é emitir comment lines a cada 15s, mas como o SDK não é SSE-aware, a solução equivalente é um novo `SDKMessage` que o consumer trata como quiser.
 
 ### Contexto do hot-patch existente
 
 Um bug de produção forçou um hot-patch antes desta task:
 - **server.mjs**: tem `HEARTBEAT_INTERVAL_MS = 15_000`, `HEARTBEAT_POLL_MS = 1_000`, lógica local de setInterval com `lastEmitAt`
-- **agentic-chat**: `STALL_MS` subiu de 45s → 90s; `HARD_LIMIT_MS` removido; handler aceita `event: ping|keepalive|heartbeat`
+- **openclaude-chat**: `STALL_MS` subiu de 45s → 90s; `HARD_LIMIT_MS` removido; handler aceita `event: ping|keepalive|heartbeat`
 - **Wire format atual**: `event: ping\ndata: {"ts":..., "seq":..., "elapsedMs":...}`
 
 Este wire format **deve ser preservado** — o cliente não muda.
@@ -87,7 +87,7 @@ Consumidores que fazem type narrowing no discriminated union (`msg.type === "pre
 O server.mjs hoje tem lógica complexa (`lastEmitAt`, `heartbeatSeq` local, `HEARTBEAT_POLL_MS`). Com SDK emitindo `SDKPresenceMessage`, o relay fica trivial: `if (msg.type === "presence") → emit SSE event: ping`. Remove complexidade do lado do servidor.
 
 ### Oportunidade: wire format preservado sem mudança de cliente
-O `agentic-chat` não precisa de nenhuma mudança se o server fizer relay com o mesmo shape `{ts, seq, elapsedMs}` via `event: ping`. Zero breaking change.
+O `openclaude-chat` não precisa de nenhuma mudança se o server fizer relay com o mesmo shape `{ts, seq, elapsedMs}` via `event: ping`. Zero breaking change.
 
 ### Oportunidade: `requestTimeout=0` / `headersTimeout=0` são ortogonais
 Esses fixes no Node http.Server protegem contra timeouts da infra Node — independente do heartbeat. Devem ser mantidos mesmo após a refatoração.

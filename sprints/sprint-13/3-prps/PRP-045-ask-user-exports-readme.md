@@ -125,7 +125,7 @@ q.respondToAskUser(req.callId, { type: "cancelled" })
 - NAO alterar `src/ask-user/*` — ja completo por PRP-042 e PRP-043
 - NAO alterar `src/query.ts` — ja completo por PRP-044
 - NAO adicionar testes (nao ha framework de teste configurado)
-- NAO implementar renderizacao de UI para perguntas — responsabilidade do cliente (ex: agentic-chat)
+- NAO implementar renderizacao de UI para perguntas — responsabilidade do cliente (ex: openclaude-chat)
 
 ## Dependencias
 

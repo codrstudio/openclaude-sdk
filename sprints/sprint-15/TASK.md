@@ -15,7 +15,7 @@ gera conteudo por conta propria**: a task 03 (tool intention filter) vai
 substituir `tool_use.input` por uma frase humana que o SDK escreve, nao o
 modelo. Essa frase precisa sair no idioma certo.
 
-Hard-codar portugues seria errado — o `agentic-chat` roda em pt-BR, en-US e
+Hard-codar portugues seria errado — o `openclaude-chat` roda em pt-BR, en-US e
 es-ES (e possivelmente outros no futuro). Depender de heuristica (tentar
 adivinhar do prompt) e fragil. A solucao e receber o locale como **parametro
 explicito** vindo do aplicativo hospedeiro, que ja sabe seu contexto.
@@ -41,7 +41,7 @@ interface Options {
    * Locales nao suportados caem em "en-US" via fallback chain.
    *
    * Default: "pt-BR" quando ausente (motivo historico: o consumidor
-   * primeiro e `agentic-chat` em pt-BR). Consumidores devem sempre passar
+   * primeiro e `openclaude-chat` em pt-BR). Consumidores devem sempre passar
    * explicitamente em producao.
    */
   locale?: string
@@ -243,7 +243,7 @@ narrativas localizadas.
 | Origem | Referencia |
 |--------|-----------|
 | Conversa de design abril 2026 | Discussao sobre multi-lang em tool intentions |
-| Consumidor final | `D:\aw\context\workspaces\agentic-chat\repo` |
+| Consumidor final | `D:\aw\context\workspaces\openclaude-chat\repo` |
 | Task dependente | `milestone-04/03-tool-intention-filter` |
 
 ---
