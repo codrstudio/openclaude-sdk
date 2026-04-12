@@ -18,6 +18,7 @@ import {
   tool,
   DEFAULT_MODEL,
   DisplayToolRegistry,
+  REACT_OUTPUT_SYSTEM_PROMPT,
 } from "../../dist/index.js"
 
 // ---------------------------------------------------------------------------
@@ -102,7 +103,7 @@ api.get("/display", (c) => {
       display_highlight: ["metric", "price", "alert", "choices"],
       display_collection: ["table", "spreadsheet", "comparison", "carousel", "gallery", "sources"],
       display_card: ["product", "link", "file", "image"],
-      display_visual: ["chart", "map", "code", "progress", "steps"],
+      display_visual: ["chart", "map", "code", "progress", "steps", "react"],
     },
     registryKeys: toolNames,
   })
@@ -145,7 +146,9 @@ const DISPLAY_SYSTEM_PROMPT = `You have access to display tools for rich visual 
 - display_card: products, links, files, images
 - display_visual: charts, maps, code blocks, progress, step timelines
 
-Each tool takes an 'action' field that selects the content type, plus fields specific to that action. Call them exactly like any other tool. The client renders them as interactive widgets.`
+Each tool takes an 'action' field that selects the content type, plus fields specific to that action. Call them exactly like any other tool. The client renders them as interactive widgets.
+
+${REACT_OUTPUT_SYSTEM_PROMPT}`
 
 function baseOptions(bodyOptions = {}) {
   return {
