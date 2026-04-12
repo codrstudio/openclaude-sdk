@@ -7,6 +7,64 @@ import { createInterface } from "node:readline"
 import type { SDKMessage } from "./types/index.js"
 import type { Options, McpStdioServerConfig, McpSSEServerConfig, McpHttpServerConfig } from "./types/options.js"
 
+export interface ControlResponseEnvelope {
+  type: "control_response"
+  response: {
+    subtype: string
+    request_id: string
+    response?: unknown
+    [key: string]: unknown
+  }
+}
+
+function createAsyncQueue<T>(): {
+  push: (value: T) => void
+  close: () => void
+  stream: AsyncGenerator<T>
+} {
+  const values: T[] = []
+  const waiters: Array<(result: IteratorResult<T>) => void> = []
+  let closed = false
+
+  return {
+    push(value: T) {
+      if (closed) return
+      const waiter = waiters.shift()
+      if (waiter) {
+        waiter({ value, done: false })
+        return
+      }
+      values.push(value)
+    },
+    close() {
+      if (closed) return
+      closed = true
+      while (waiters.length > 0) {
+        const waiter = waiters.shift()
+        waiter?.({ value: undefined, done: true })
+      }
+    },
+    async *stream(): AsyncGenerator<T> {
+      while (true) {
+        if (values.length > 0) {
+          yield values.shift() as T
+          continue
+        }
+        if (closed) {
+          return
+        }
+        const result = await new Promise<IteratorResult<T>>((resolve) => {
+          waiters.push(resolve)
+        })
+        if (result.done) {
+          return
+        }
+        yield result.value
+      }
+    },
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Resolver executavel do CLI considerando a plataforma
 // ---------------------------------------------------------------------------
@@ -185,6 +243,7 @@ export function spawnAndStream(
   } = {},
 ): {
   stream: AsyncGenerator<SDKMessage>
+  controlResponses: AsyncGenerator<ControlResponseEnvelope>
   writeStdin: (data: string) => void
   close: () => void
 } {
@@ -247,6 +306,8 @@ export function spawnAndStream(
     proc.kill("SIGTERM")
   }
 
+  const controlQueue = createAsyncQueue<ControlResponseEnvelope>()
+
   async function* streamGen(): AsyncGenerator<SDKMessage> {
     // Coletar stderr (nao bloqueia)
     let stderr = ""
@@ -279,8 +340,12 @@ export function spawnAndStream(
           }
 
           try {
-            const parsed = JSON.parse(jsonBuffer) as SDKMessage
+            const parsed = JSON.parse(jsonBuffer) as SDKMessage | ControlResponseEnvelope
             jsonBuffer = ""
+            if (parsed.type === "control_response") {
+              controlQueue.push(parsed)
+              continue
+            }
             yield parsed
           } catch {
             // Partial JSON — continue accumulating
@@ -303,11 +368,12 @@ export function spawnAndStream(
     if (timer) clearTimeout(timer)
     if (sigintFallbackTimer) clearTimeout(sigintFallbackTimer)
     options.signal?.removeEventListener("abort", onAbort)
+    controlQueue.close()
 
     if (stderr && !options.signal?.aborted) {
       process.stderr.write(`[openclaude stderr] ${stderr.substring(0, 500)}\n`)
     }
   }
 
-  return { stream: streamGen(), writeStdin, close }
+  return { stream: streamGen(), controlResponses: controlQueue.stream(), writeStdin, close }
 }
