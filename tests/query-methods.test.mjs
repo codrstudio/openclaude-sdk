@@ -67,7 +67,7 @@ test('initialization-derived methods read from one cached init result', async ()
     assert.equal(init.models[0]?.id, 'model-a')
     assert.equal(init.agents[0]?.name, 'worker')
     assert.equal(init.account.email, 'dev@example.com')
-    assert.equal(typeof q.mcpServerStatus, 'undefined')
+    assert.equal(typeof q.mcpServerStatus, 'function')
   } finally {
     q.close()
   }
@@ -150,5 +150,97 @@ test('spawnAndStream routes control responses away from the SDK message stream',
     assert.deepEqual(seen, ['system', 'result'])
   } finally {
     close()
+  }
+})
+
+test('mcpServerStatus resolves from a matching control response without polluting the stream', async () => {
+  const { scriptPath } = await makeFixture(`
+    import readline from 'node:readline'
+
+    console.log(JSON.stringify({
+      type: 'system',
+      subtype: 'init',
+      session_id: 's1',
+      commands: [],
+      agents: [],
+      output_style: 'default',
+      available_output_styles: ['default'],
+      models: [],
+      account: {}
+    }))
+
+    const rl = readline.createInterface({ input: process.stdin })
+    rl.on('line', line => {
+      let msg
+      try {
+        msg = JSON.parse(line)
+      } catch {
+        return
+      }
+
+      if (msg.type === 'control_request' && msg.subtype === 'mcp_status') {
+        console.log(JSON.stringify({
+          type: 'control_response',
+          response: {
+            subtype: 'mcp_status',
+            request_id: msg.request_id,
+            response: {
+              mcpServers: [{ name: 'demo', status: 'connected', tools: [{ name: 'read' }] }]
+            }
+          }
+        }))
+        console.log(JSON.stringify({ type: 'result', subtype: 'success', session_id: 's1', result: 'done' }))
+        rl.close()
+        setTimeout(() => process.exit(0), 0)
+      }
+    })
+  `)
+
+  const { query } = await import('../dist/index.js')
+  const q = query({
+    prompt: 'hello',
+    options: { pathToClaudeCodeExecutable: scriptPath },
+  })
+
+  try {
+    const status = await q.mcpServerStatus()
+    const seen = []
+    for await (const msg of q) {
+      seen.push(msg.type)
+    }
+
+    assert.equal(status[0]?.name, 'demo')
+    assert.deepEqual(seen, ['system', 'result'])
+  } finally {
+    q.close()
+  }
+})
+
+test('mcpServerStatus rejects if the process exits before a response arrives', async () => {
+  const { scriptPath } = await makeFixture(`
+    console.log(JSON.stringify({
+      type: 'system',
+      subtype: 'init',
+      session_id: 's1',
+      commands: [],
+      agents: [],
+      output_style: 'default',
+      available_output_styles: ['default'],
+      models: [],
+      account: {}
+    }))
+    process.exit(0)
+  `)
+
+  const { query } = await import('../dist/index.js')
+  const q = query({
+    prompt: 'hello',
+    options: { pathToClaudeCodeExecutable: scriptPath },
+  })
+
+  try {
+    await assert.rejects(() => q.mcpServerStatus())
+  } finally {
+    q.close()
   }
 })
