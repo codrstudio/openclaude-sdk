@@ -20,7 +20,7 @@ export interface ControlResponseEnvelope {
 function createAsyncQueue<T>(): {
   push: (value: T) => void
   close: () => void
-  stream: AsyncGenerator<T>
+  stream: () => AsyncGenerator<T>
 } {
   const values: T[] = []
   const waiters: Array<(result: IteratorResult<T>) => void> = []

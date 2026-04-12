@@ -5,6 +5,13 @@
 import type { SDKMessage, SDKSystemMessage } from "./types/messages.js"
 import type { Options, PermissionResponse } from "./types/options.js"
 import type { ProviderRegistry } from "./types/provider.js"
+import type {
+  AccountInfo,
+  AgentInfo,
+  ModelInfo,
+  SDKControlInitializeResponse,
+  SlashCommand,
+} from "./types/control.js"
 import { buildCliArgs, resolveExecutable, spawnAndStream } from "./process.js"
 import { resolveModelEnv } from "./registry.js"
 import {
@@ -28,8 +35,129 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   interrupt(): Promise<void>
   /** Fecha a query e mata o processo */
   close(): void
+  /** Retorna o payload de inicializacao em cache */
+  initializationResult(): Promise<SDKControlInitializeResponse>
+  /** Lista slash commands suportados */
+  supportedCommands(): Promise<SlashCommand[]>
+  /** Lista modelos suportados */
+  supportedModels(): Promise<ModelInfo[]>
+  /** Lista agentes suportados */
+  supportedAgents(): Promise<AgentInfo[]>
+  /** Retorna informacoes da conta */
+  accountInfo(): Promise<AccountInfo>
   /** Responde a uma solicitacao de permissao de ferramenta */
   respondToPermission(response: PermissionResponse): void
+}
+
+function createAsyncQueue<T>(): {
+  push: (value: T) => void
+  close: () => void
+  fail: (error: unknown) => void
+  stream: () => AsyncGenerator<T>
+} {
+  const values: T[] = []
+  const waiters: Array<{
+    resolve: (result: IteratorResult<T>) => void
+    reject: (reason: unknown) => void
+  }> = []
+  let closed = false
+  let failed: unknown = null
+
+  return {
+    push(value: T) {
+      if (closed || failed !== null) return
+      const waiter = waiters.shift()
+      if (waiter) {
+        waiter.resolve({ value, done: false })
+        return
+      }
+      values.push(value)
+    },
+    close() {
+      if (closed || failed !== null) return
+      closed = true
+      while (waiters.length > 0) {
+        const waiter = waiters.shift()
+        waiter?.resolve({ value: undefined, done: true })
+      }
+    },
+    fail(error: unknown) {
+      if (closed || failed !== null) return
+      failed = error
+      while (waiters.length > 0) {
+        const waiter = waiters.shift()
+        waiter?.reject(error)
+      }
+    },
+    async *stream(): AsyncGenerator<T> {
+      while (true) {
+        if (values.length > 0) {
+          yield values.shift() as T
+          continue
+        }
+        if (failed !== null) {
+          throw failed
+        }
+        if (closed) {
+          return
+        }
+        const result = await new Promise<IteratorResult<T>>((resolve, reject) => {
+          waiters.push({ resolve, reject })
+        })
+        if (result.done) {
+          if (failed !== null) {
+            throw failed
+          }
+          return
+        }
+        yield result.value
+      }
+    },
+  }
+}
+
+function normalizeInitializationMessage(msg: SDKMessage): SDKControlInitializeResponse | null {
+  if (msg.type !== "system" || !("subtype" in msg) || msg.subtype !== "init") {
+    return null
+  }
+
+  const init = msg as SDKSystemMessage & {
+    commands?: SlashCommand[]
+    models?: ModelInfo[]
+    agents?: AgentInfo[] | string[]
+    account?: AccountInfo
+    available_output_styles?: string[]
+  }
+
+  const commands = Array.isArray(init.commands)
+    ? init.commands
+    : Array.isArray(init.slash_commands)
+      ? init.slash_commands.map((name) => ({ name }))
+      : null
+  const models = Array.isArray(init.models) ? init.models : null
+  const agents = Array.isArray(init.agents)
+    ? init.agents.map((agent) =>
+        typeof agent === "string" ? { name: agent, description: "" } : agent,
+      )
+    : null
+  const account =
+    init.account && typeof init.account === "object" ? init.account : null
+  const availableOutputStyles = Array.isArray(init.available_output_styles)
+    ? init.available_output_styles
+    : [init.output_style]
+
+  if (!commands || !models || !agents || !account) {
+    return null
+  }
+
+  return {
+    commands,
+    agents,
+    output_style: init.output_style,
+    available_output_styles: availableOutputStyles,
+    models,
+    account,
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -71,7 +199,7 @@ export function query(params: {
   const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
   const abortController = resolvedOptions.abortController ?? new AbortController()
 
-  const { stream, writeStdin } = spawnAndStream(command, args, prompt, {
+  const { stream, writeStdin, close: closeProcess } = spawnAndStream(command, args, prompt, {
     cwd: resolvedOptions.cwd,
     env: resolvedOptions.env,
     signal: abortController.signal,
@@ -79,14 +207,73 @@ export function query(params: {
     timeoutMs: resolvedOptions.timeoutMs,
   })
 
+  const messageQueue = createAsyncQueue<SDKMessage>()
+  let initCache: SDKControlInitializeResponse | null = null
+  let initSettled = false
+  let resolveInit: ((value: SDKControlInitializeResponse) => void) | null = null
+  let rejectInit: ((error: unknown) => void) | null = null
+
+  const initPromise = new Promise<SDKControlInitializeResponse>((resolve, reject) => {
+    resolveInit = resolve
+    rejectInit = reject
+  })
+
+  const settleInit = (value: SDKControlInitializeResponse): void => {
+    if (initSettled) return
+    initSettled = true
+    initCache = value
+    resolveInit?.(value)
+  }
+
+  const failInit = (error: unknown): void => {
+    if (initSettled) return
+    initSettled = true
+    rejectInit?.(error)
+  }
+
+  void (async () => {
+    try {
+      for await (const msg of stream) {
+        const init = normalizeInitializationMessage(msg)
+        if (init) {
+          settleInit(init)
+        }
+        messageQueue.push(msg)
+      }
+      failInit(new Error("initializationResult: init message was not received"))
+      messageQueue.close()
+    } catch (error) {
+      failInit(error)
+      messageQueue.fail(error)
+    }
+  })()
+
   // Decorar o stream com metodos extras da interface Query
-  const query: Query = Object.assign(stream, {
+  const query: Query = Object.assign(messageQueue.stream(), {
     _writeStdin: writeStdin,
     async interrupt(): Promise<void> {
       abortController.abort()
     },
     close(): void {
-      abortController.abort()
+      closeProcess()
+    },
+    async initializationResult(): Promise<SDKControlInitializeResponse> {
+      if (initCache) {
+        return initCache
+      }
+      return initPromise
+    },
+    async supportedCommands(): Promise<SlashCommand[]> {
+      return (await this.initializationResult()).commands
+    },
+    async supportedModels(): Promise<ModelInfo[]> {
+      return (await this.initializationResult()).models
+    },
+    async supportedAgents(): Promise<AgentInfo[]> {
+      return (await this.initializationResult()).agents
+    },
+    async accountInfo(): Promise<AccountInfo> {
+      return (await this.initializationResult()).account
     },
     respondToPermission(response: PermissionResponse): void {
       if (!response.toolUseId) {
