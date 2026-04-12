@@ -48,6 +48,21 @@ export type {
 } from "./types/provider.js"
 
 // ---------------------------------------------------------------------------
+// Tipos — Control
+// ---------------------------------------------------------------------------
+
+export type {
+  SlashCommand,
+  ModelInfo,
+  AgentInfo,
+  AccountInfo,
+  McpServerToolInfo,
+  McpServerStatus,
+  SDKControlInitializeResponse,
+  SDKControlMcpStatusResponse,
+} from "./types/control.js"
+
+// ---------------------------------------------------------------------------
 // Tipos — Messages
 // ---------------------------------------------------------------------------
 
