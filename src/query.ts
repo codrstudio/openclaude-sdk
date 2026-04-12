@@ -8,6 +8,7 @@ import type { ProviderRegistry } from "./types/provider.js"
 import type {
   AccountInfo,
   AgentInfo,
+  McpServerStatus,
   ModelInfo,
   SDKControlInitializeResponse,
   SlashCommand,
@@ -45,6 +46,8 @@ export interface Query extends AsyncGenerator<SDKMessage, void> {
   supportedAgents(): Promise<AgentInfo[]>
   /** Retorna informacoes da conta */
   accountInfo(): Promise<AccountInfo>
+  /** Retorna o status atual dos servidores MCP */
+  mcpServerStatus(): Promise<McpServerStatus[]>
   /** Responde a uma solicitacao de permissao de ferramenta */
   respondToPermission(response: PermissionResponse): void
 }
@@ -199,19 +202,31 @@ export function query(params: {
   const args = [...prependArgs, ...buildCliArgs(resolvedOptions)]
   const abortController = resolvedOptions.abortController ?? new AbortController()
 
-  const { stream, writeStdin, close: closeProcess } = spawnAndStream(command, args, prompt, {
-    cwd: resolvedOptions.cwd,
-    env: resolvedOptions.env,
-    signal: abortController.signal,
-    permissionMode: resolvedOptions.permissionMode,
-    timeoutMs: resolvedOptions.timeoutMs,
-  })
+  const { stream, controlResponses, writeStdin, close: closeProcess } = spawnAndStream(
+    command,
+    args,
+    prompt,
+    {
+      cwd: resolvedOptions.cwd,
+      env: resolvedOptions.env,
+      signal: abortController.signal,
+      permissionMode: resolvedOptions.permissionMode,
+      timeoutMs: resolvedOptions.timeoutMs,
+    },
+  )
 
   const messageQueue = createAsyncQueue<SDKMessage>()
   let initCache: SDKControlInitializeResponse | null = null
   let initSettled = false
   let resolveInit: ((value: SDKControlInitializeResponse) => void) | null = null
   let rejectInit: ((error: unknown) => void) | null = null
+  let controlRequestCounter = 0
+  type PendingControlRequest = {
+    subtype: string
+    resolve: (value: unknown) => void
+    reject: (error: unknown) => void
+  }
+  const pendingControlRequests = new Map<string, PendingControlRequest>()
 
   const initPromise = new Promise<SDKControlInitializeResponse>((resolve, reject) => {
     resolveInit = resolve
@@ -231,6 +246,58 @@ export function query(params: {
     rejectInit?.(error)
   }
 
+  const rejectPendingControlRequests = (error: unknown): void => {
+    if (pendingControlRequests.size === 0) return
+    for (const pending of pendingControlRequests.values()) {
+      pending.reject(error)
+    }
+    pendingControlRequests.clear()
+  }
+
+  const nextControlRequestId = (): string => {
+    controlRequestCounter += 1
+    return `sdk-${controlRequestCounter}`
+  }
+
+  void (async () => {
+    try {
+      for await (const message of controlResponses) {
+        const response = message.response
+        if (!response || typeof response !== "object") {
+          continue
+        }
+
+        const requestId = typeof response.request_id === "string" ? response.request_id : null
+        if (!requestId) {
+          continue
+        }
+
+        const pending = pendingControlRequests.get(requestId)
+        if (!pending) {
+          continue
+        }
+
+        pendingControlRequests.delete(requestId)
+
+        if (pending.subtype === "mcp_status") {
+          const payload = response.response
+          const mcpServers =
+            payload &&
+            typeof payload === "object" &&
+            Array.isArray((payload as { mcpServers?: unknown }).mcpServers)
+              ? (payload as { mcpServers: McpServerStatus[] }).mcpServers
+              : []
+          pending.resolve(mcpServers)
+          continue
+        }
+
+        pending.resolve(response.response)
+      }
+    } catch (error) {
+      rejectPendingControlRequests(error)
+    }
+  })()
+
   void (async () => {
     try {
       for await (const msg of stream) {
@@ -241,9 +308,11 @@ export function query(params: {
         messageQueue.push(msg)
       }
       failInit(new Error("initializationResult: init message was not received"))
+      rejectPendingControlRequests(new Error("Query process exited before control response was received"))
       messageQueue.close()
     } catch (error) {
       failInit(error)
+      rejectPendingControlRequests(error)
       messageQueue.fail(error)
     }
   })()
@@ -274,6 +343,30 @@ export function query(params: {
     },
     async accountInfo(): Promise<AccountInfo> {
       return (await this.initializationResult()).account
+    },
+    async mcpServerStatus(): Promise<McpServerStatus[]> {
+      const requestId = nextControlRequestId()
+
+      return new Promise<McpServerStatus[]>((resolve, reject) => {
+        pendingControlRequests.set(requestId, {
+          subtype: "mcp_status",
+          resolve: (value) => resolve(value as McpServerStatus[]),
+          reject,
+        })
+
+        try {
+          writeStdin(
+            JSON.stringify({
+              type: "control_request",
+              subtype: "mcp_status",
+              request_id: requestId,
+            }) + "\n",
+          )
+        } catch (error) {
+          pendingControlRequests.delete(requestId)
+          reject(error)
+        }
+      })
     },
     respondToPermission(response: PermissionResponse): void {
       if (!response.toolUseId) {
