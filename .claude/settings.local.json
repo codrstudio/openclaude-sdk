@@ -2,7 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(printf '\\\\n')",
-      "Read(//d/aw/context/workspaces/agentic-chat/repo/.claude/skills/npm-publish/**)"
+      "Read(//d/aw/context/workspaces/openclaude-chat/repo/.claude/skills/npm-publish/**)"
     ]
   }
 }
