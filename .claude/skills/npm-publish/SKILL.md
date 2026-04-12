@@ -54,10 +54,27 @@ Se algum desses faltar, **abortar com mensagem clara** instruindo o humano a con
 
 ## Argumentos aceitos
 
-- `patch` | `minor` | `major` — nível do bump (obrigatório, exceto com `--dry-run`)
+- `patch` | `minor` | `major` — **opcional**. Override manual do nível do bump. Se omitido, a skill **infere automaticamente** pelos commits (ver abaixo). Nunca perguntar ao humano.
 - `--dry-run` — roda preflight + build sanity + `npm pack --dry-run`, **não** bumpa, **não** dá push, **não** publica. Usado pra validar que tudo está ok sem efeito colateral.
 - `--branch <nome>` — override do default `main`
 - `--no-release-notes` — pula a criação automática de release notes no GitHub (passo 8)
+
+## Inferência do nível de bump (semver)
+
+Quando o humano não passa `patch|minor|major` explícito, a skill determina o nível sozinha seguindo semver estrito. **Nunca perguntar ao humano qual nível usar** — ele não precisa saber, a skill infere.
+
+Regras (nesta ordem, primeira que casar vence):
+
+1. **major** → quebra de compatibilidade da API pública do pacote. Sinais: remoção/renomeação de export, mudança de assinatura de função exportada, mudança de shape de tipo exportado, remoção de prop de componente público, mudança de comportamento observável que força o consumidor a alterar código. Também dispara se algum commit tiver `BREAKING CHANGE:` no corpo ou `!` após o tipo (ex: `feat!:`).
+2. **minor** → adição de funcionalidade retrocompatível. Sinais: novo export, nova prop opcional, novo componente, novo parâmetro opcional, `feat:` nos commits.
+3. **patch** → correção retrocompatível, refactor interno, docs, build, deps sem breaking. Sinais: `fix:`, `refactor:`, `chore:`, `docs:`, `build:`, `perf:` (sem mudança de API).
+
+**Como inferir na prática**:
+- Listar commits desde a última tag `v*`: `git log <last-tag>..HEAD --format=%s%n%b`
+- Classificar cada commit pelo tipo convencional + corpo
+- Pegar o **maior** nível entre todos os commits (major > minor > patch)
+- Se não houver commits desde a última tag, abortar com mensagem "nada para publicar"
+- Antes do passo 3 (confirmação), **mostrar** ao humano o nível inferido + os commits que justificam a decisão. O humano pode corrigir respondendo `major`/`minor`/`patch` em vez de `yes`.
 
 ## Fluxo (passo a passo, determinístico)
 
@@ -70,9 +87,9 @@ Cada item abaixo aborta a skill com mensagem clara em caso de falha:
 - Sincronizado com remote: `git fetch origin` e depois `git rev-parse HEAD == git rev-parse origin/<branch>`
 - Workflow existe: `.github/workflows/publish.yml` está presente
 - `gh auth status` ok
-- Argumento de bump informado (ou `--dry-run`)
+- Determina o nível de bump: usa o argumento `patch|minor|major` se informado; senão **infere pelos commits** (ver seção "Inferência do nível de bump"). Nunca perguntar ao humano.
 - Calcula a próxima versão a partir do `package.json.version` atual + nível de bump (sem aplicar ainda)
-- Próxima tag não existe: `git tag -l v<nova-versao>` retorna vazio
+- Próxima tag não existe: `git tag -l v<nova-versao>` retorna vazio. Se existir, ABORTAR com instrução para investigar (pode ser tag órfã de tentativa anterior).
 
 ### 2. Build sanity local
 
@@ -89,11 +106,13 @@ Mostrar pro humano em formato compacto:
 
 - Pacote: `<package.json.name>`
 - Versão atual → nova: `X.Y.Z` → `X.Y.(Z+1)` (ou minor/major)
+- Nível: `patch|minor|major` + como foi decidido (inferido pelos commits / override manual)
+- Commits que justificam o nível inferido (lista curta)
 - Branch: `main`
 - Lista de arquivos do tarball (output do `npm pack --dry-run`)
 - Tamanho do tarball
 
-Pedir confirmação explícita: aguardar `yes` (ou equivalente). Qualquer outra resposta aborta.
+Pedir confirmação explícita: aguardar `yes` (ou equivalente). Qualquer outra resposta aborta. Se o humano responder `patch`/`minor`/`major`, usar como override e seguir o fluxo.
 
 Se rodando com `--dry-run`, o fluxo **para aqui** sem fazer mais nada. Reportar sucesso do dry-run.
 
