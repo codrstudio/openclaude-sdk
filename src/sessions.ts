@@ -14,6 +14,19 @@ import type {
   SessionMessage,
 } from "./types/sessions.js"
 
+type TranscriptEntry = {
+  type?: string
+  uuid?: string
+  parentUuid?: string
+  sessionId?: string
+  session_id?: string
+  message?: unknown
+  isSidechain?: boolean
+  isMeta?: boolean
+  isCompactSummary?: boolean
+  teamName?: string
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -94,6 +107,17 @@ async function findSessionFile(
   return null
 }
 
+async function resolveSessionFilePath(
+  sessionId: string,
+  dir?: string,
+): Promise<string | null> {
+  const projectsDir = getProjectsDir()
+  if (dir) {
+    return join(projectsDir, sanitizePath(resolve(dir)), `${sessionId}.jsonl`)
+  }
+  return findSessionFile(projectsDir, sessionId)
+}
+
 async function readSessionFile(
   filePath: string,
 ): Promise<{
@@ -106,8 +130,8 @@ async function readSessionFile(
   const content = await readFile(filePath, "utf-8")
   const lines = content
     .split("\n")
-    .filter((l) => l.trim())
-    .map((l) => {
+    .filter((l: string) => l.trim())
+    .map((l: string) => {
       try {
         return JSON.parse(l)
       } catch {
@@ -143,6 +167,100 @@ async function readSessionFile(
   return { messages: lines, sessionId, firstPrompt, customTitle, tag }
 }
 
+function parseTranscriptEntries(messages: unknown[]): TranscriptEntry[] {
+  const transcriptTypes = new Set(["user", "assistant", "progress", "system", "attachment"])
+
+  return messages.filter((message): message is TranscriptEntry => {
+    const entry = message as TranscriptEntry
+    return typeof entry.uuid === "string" && transcriptTypes.has(entry.type ?? "")
+  })
+}
+
+function buildConversationChain(entries: TranscriptEntry[]): TranscriptEntry[] {
+  if (entries.length === 0) return []
+
+  const byUuid = new Map<string, TranscriptEntry>()
+  const entryIndex = new Map<string, number>()
+  const parentUuids = new Set<string>()
+
+  for (const [index, entry] of entries.entries()) {
+    if (!entry.uuid) continue
+    byUuid.set(entry.uuid, entry)
+    entryIndex.set(entry.uuid, index)
+    if (entry.parentUuid) {
+      parentUuids.add(entry.parentUuid)
+    }
+  }
+
+  const terminals = entries.filter((entry) => entry.uuid && !parentUuids.has(entry.uuid))
+  const leaves: TranscriptEntry[] = []
+
+  for (const terminal of terminals) {
+    let current: TranscriptEntry | undefined = terminal
+    const seen = new Set<string>()
+
+    while (current?.uuid && !seen.has(current.uuid)) {
+      seen.add(current.uuid)
+      if (current.type === "user" || current.type === "assistant") {
+        leaves.push(current)
+        break
+      }
+      current = current.parentUuid ? byUuid.get(current.parentUuid) : undefined
+    }
+  }
+
+  if (leaves.length === 0) return []
+
+  const mainLeaves = leaves.filter(
+    (leaf) => !leaf.isSidechain && !leaf.teamName && !leaf.isMeta,
+  )
+  const candidates = mainLeaves.length > 0 ? mainLeaves : leaves
+  const [firstLeaf, ...restLeaves] = candidates
+  if (!firstLeaf) return []
+
+  let leaf = firstLeaf
+  let bestIndex = entryIndex.get(leaf.uuid ?? "") ?? -1
+  for (const candidate of restLeaves) {
+    const candidateIndex = entryIndex.get(candidate.uuid ?? "") ?? -1
+    if (candidateIndex > bestIndex) {
+      leaf = candidate
+      bestIndex = candidateIndex
+    }
+  }
+
+  const chain: TranscriptEntry[] = []
+  const seen = new Set<string>()
+  let current: TranscriptEntry | undefined = leaf
+
+  while (current?.uuid && !seen.has(current.uuid)) {
+    seen.add(current.uuid)
+    chain.push(current)
+    current = current.parentUuid ? byUuid.get(current.parentUuid) : undefined
+  }
+
+  return chain.reverse()
+}
+
+function isVisibleMessage(entry: TranscriptEntry): boolean {
+  if (entry.type !== "user" && entry.type !== "assistant") {
+    return false
+  }
+  if (entry.isMeta || entry.isSidechain || entry.teamName) {
+    return false
+  }
+  return true
+}
+
+function toSessionMessage(entry: TranscriptEntry, fallbackSessionId: string): SessionMessage {
+  return {
+    type: entry.type === "user" ? "user" : "assistant",
+    uuid: entry.uuid ?? "",
+    session_id: entry.sessionId ?? entry.session_id ?? fallbackSessionId,
+    message: entry.message,
+    parent_tool_use_id: null,
+  }
+}
+
 // ---------------------------------------------------------------------------
 // listSessions()
 // ---------------------------------------------------------------------------
@@ -154,7 +272,7 @@ async function listSessionsInDir(
   let files: string[]
   try {
     const entries = await readdir(baseDir)
-    files = entries.filter((f) => f.endsWith(".jsonl"))
+    files = entries.filter((f: string) => f.endsWith(".jsonl"))
   } catch {
     return []
   }
@@ -247,16 +365,8 @@ export async function getSessionMessages(
   sessionId: string,
   options: GetSessionMessagesOptions = {},
 ): Promise<SessionMessage[]> {
-  const projectsDir = getProjectsDir()
-  let filePath: string
-
-  if (options.dir) {
-    filePath = join(projectsDir, sanitizePath(resolve(options.dir)), `${sessionId}.jsonl`)
-  } else {
-    const found = await findSessionFile(projectsDir, sessionId)
-    if (!found) return []
-    filePath = found
-  }
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) return []
 
   let data: { messages: unknown[] }
   try {
@@ -265,21 +375,10 @@ export async function getSessionMessages(
     return []
   }
 
-  const sessionMessages: SessionMessage[] = data.messages
-    .filter((m) => {
-      const obj = m as { type?: string }
-      return obj.type === "user" || obj.type === "assistant"
-    })
-    .map((m) => {
-      const obj = m as Record<string, unknown>
-      return {
-        type: obj.type as "user" | "assistant",
-        uuid: (obj.uuid as string) || "",
-        session_id: (obj.session_id as string) || sessionId,
-        message: obj.message,
-        parent_tool_use_id: null,
-      }
-    })
+  const transcriptEntries = parseTranscriptEntries(data.messages)
+  const chain = buildConversationChain(transcriptEntries)
+  const visibleEntries = (chain.length > 0 ? chain : transcriptEntries).filter(isVisibleMessage)
+  const sessionMessages = visibleEntries.map((entry) => toSessionMessage(entry, sessionId))
 
   const offset = options.offset ?? 0
   const sliced = sessionMessages.slice(offset)
@@ -312,11 +411,10 @@ export async function renameSession(
   title: string,
   options: SessionMutationOptions = {},
 ): Promise<void> {
-  const baseDir = options.dir
-    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
-    : getProjectsDir()
-
-  const filePath = join(baseDir, `${sessionId}.jsonl`)
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) {
+    throw new Error(`Session file not found for renameSession: ${sessionId}`)
+  }
   const entry = JSON.stringify({ type: "custom_title", title: title.trim() })
   await appendFile(filePath, "\n" + entry)
 }
@@ -330,11 +428,10 @@ export async function tagSession(
   tag: string | null,
   options: SessionMutationOptions = {},
 ): Promise<void> {
-  const baseDir = options.dir
-    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
-    : getProjectsDir()
-
-  const filePath = join(baseDir, `${sessionId}.jsonl`)
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) {
+    throw new Error(`Session file not found for tagSession: ${sessionId}`)
+  }
   const entry = JSON.stringify({ type: "tag", tag })
   await appendFile(filePath, "\n" + entry)
 }
@@ -347,16 +444,8 @@ export async function deleteSession(
   sessionId: string,
   options: SessionMutationOptions = {},
 ): Promise<boolean> {
-  const projectsDir = getProjectsDir()
-  let filePath: string
-
-  if (options.dir) {
-    filePath = join(projectsDir, sanitizePath(resolve(options.dir)), `${sessionId}.jsonl`)
-  } else {
-    const found = await findSessionFile(projectsDir, sessionId)
-    if (!found) return false
-    filePath = found
-  }
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) return false
 
   try {
     await unlink(filePath)
