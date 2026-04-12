@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises'
+import { chmod, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import ts from 'typescript'
@@ -8,7 +8,8 @@ import ts from 'typescript'
 async function makeFixture(scriptSource) {
   const dir = await mkdtemp(join(tmpdir(), 'openclaude-sdk-query-'))
   const scriptPath = join(dir, 'fake-openclaude.mjs')
-  await writeFile(scriptPath, scriptSource)
+  await writeFile(scriptPath, `#!/usr/bin/env node\n${scriptSource}`)
+  await chmod(scriptPath, 0o755)
   return { dir, scriptPath }
 }
 
@@ -47,19 +48,26 @@ test('initialization-derived methods read from one cached init result', async ()
   const { query } = await import('../dist/index.js')
   const q = query({
     prompt: 'hello',
-    options: { pathToClaudeCodeExecutable: process.execPath, extraArgs: { import: scriptPath } },
+    options: { pathToClaudeCodeExecutable: scriptPath },
   })
 
   try {
+    assert.equal(typeof q.initializationResult, 'function')
     const commands = await q.supportedCommands()
     const models = await q.supportedModels()
     const agents = await q.supportedAgents()
     const account = await q.accountInfo()
+    const init = await q.initializationResult()
 
     assert.equal(commands[0]?.name, '/help')
     assert.equal(models[0]?.id, 'model-a')
     assert.equal(agents[0]?.name, 'worker')
     assert.equal(account.email, 'dev@example.com')
+    assert.equal(init.commands[0]?.name, '/help')
+    assert.equal(init.models[0]?.id, 'model-a')
+    assert.equal(init.agents[0]?.name, 'worker')
+    assert.equal(init.account.email, 'dev@example.com')
+    assert.equal(typeof q.mcpServerStatus, 'undefined')
   } finally {
     q.close()
   }
