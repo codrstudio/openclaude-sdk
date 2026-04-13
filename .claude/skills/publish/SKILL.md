@@ -5,7 +5,7 @@ description: Publica o pacote nos registries npm e GitHub Packages via tag-drive
 
 # Skill: publish
 
-Skill deterministica que publica o pacote nos registries **npm** e **GitHub Packages** simultaneamente. **Zero publish local.** Toda publicacao acontece via tag -> GitHub Actions. Uma unica tag `v*` dispara ambos os workflows em paralelo. Garante que `package.json.version`, a tag git e as versoes publicadas nos dois registries estao sempre sincronizadas, porque tudo nasce de um unico `npm version <level>`.
+Skill deterministica que publica o pacote nos registries **npm** e **GitHub Packages** simultaneamente, e gera o tarball como asset na release. **Zero publish local.** Toda publicacao acontece via tag -> GitHub Actions. Uma unica tag `v*` dispara os tres workflows em paralelo. Garante que `package.json.version`, a tag git e as versoes publicadas nos dois registries estao sempre sincronizadas, porque tudo nasce de um unico `npm version <level>`.
 
 ## Quando usar
 
@@ -25,9 +25,10 @@ Skill deterministica que publica o pacote nos registries **npm** e **GitHub Pack
 
 Antes da primeira execucao, garantir que existem:
 
-1. `.github/workflows/publish.yml` — workflow tag-driven que publica no **npm** com `--provenance --access public`.
+1. `.github/workflows/publish-npm.yml` — workflow tag-driven que publica no **npm** com `--provenance --access public`.
 2. `.github/workflows/publish-github.yml` — workflow tag-driven que publica no **GitHub Packages** com `GITHUB_TOKEN`.
-3. **npm Trusted Publisher** configurado para o pacote em npmjs.com -> Package Settings -> Trusted Publishers -> Add, apontando para o repo + workflow filename (`publish.yml`).
+3. `.github/workflows/publish-tgz.yml` — workflow tag-driven que gera o `.tgz` via `npm pack` e sobe como asset na GitHub Release.
+4. **npm Trusted Publisher** configurado para o pacote em npmjs.com -> Package Settings -> Trusted Publishers -> Add, apontando para o repo + workflow filename (`publish-npm.yml`).
 4. `gh` CLI autenticado localmente (`gh auth status` ok).
 
 Se algum desses faltar, **abortar com mensagem clara** instruindo o humano a configurar antes de rodar a skill de novo.
@@ -65,7 +66,7 @@ Cada item abaixo aborta a skill com mensagem clara em caso de falha:
 - Working tree limpo: `git status --porcelain` retorna vazio
 - Branch correta: `git rev-parse --abbrev-ref HEAD` == `main` (ou o valor de `--branch`)
 - Sincronizado com remote: `git fetch origin` e depois `git rev-parse HEAD == git rev-parse origin/<branch>`
-- Ambos workflows existem: `.github/workflows/publish.yml` e `.github/workflows/publish-github.yml`
+- Todos os workflows existem: `.github/workflows/publish-npm.yml`, `.github/workflows/publish-github.yml` e `.github/workflows/publish-tgz.yml`
 - `gh auth status` ok
 - Determina o nivel de bump: usa o argumento `patch|minor|major` se informado; senao **infere pelos commits** (ver secao "Inferencia do nivel de bump"). Nunca perguntar ao humano.
 - Calcula a proxima versao a partir do `package.json.version` atual + nivel de bump (sem aplicar ainda)
@@ -111,20 +112,23 @@ Se rodando com `--dry-run`, o fluxo **para aqui**.
 
 ### 6. Monitor das GitHub Actions
 
-- A tag push ativa **ambos** os workflows (`publish.yml` e `publish-github.yml`)
-- Monitorar as duas runs em paralelo:
-  - `gh run watch` na run do `publish.yml` (npm)
+- A tag push ativa **tres** workflows (`publish-npm.yml`, `publish-github.yml` e `publish-tgz.yml`)
+- Monitorar as tres runs em paralelo:
+  - `gh run watch` na run do `publish-npm.yml` (npm)
   - `gh run watch` na run do `publish-github.yml` (GitHub Packages)
+  - `gh run watch` na run do `publish-tgz.yml` (tarball asset na release)
 - Se **qualquer** action falhar: reportar qual falhou com erro claro. **Nao tentar republicar.**
 
 ### 7. Verificacao nos registries
 
-Confirmar nos **dois** registries:
+Confirmar nos **dois** registries e no release asset:
 
 - **npm**: `npm view <pkg>@<version>` — confirma no registry npm
   - Link: `https://www.npmjs.com/package/<pkg>`
 - **GitHub Packages**: `npm view <pkg>@<version> --registry=https://npm.pkg.github.com`
   - Link: `https://github.com/<owner>/<repo>/packages`
+- **Release tarball**: `gh release view v<version> --json assets` — confirma que o `.tgz` esta listado como asset
+  - Link: `https://github.com/<owner>/<repo>/releases/tag/v<version>`
 
 Se race condition (action passou mas view nao encontra), esperar 10s e retry uma vez.
 
