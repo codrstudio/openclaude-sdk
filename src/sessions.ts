@@ -14,6 +14,19 @@ import type {
   SessionMessage,
 } from "./types/sessions.js"
 
+type TranscriptEntry = {
+  type?: string
+  uuid?: string
+  parentUuid?: string
+  sessionId?: string
+  session_id?: string
+  message?: unknown
+  isSidechain?: boolean
+  isMeta?: boolean
+  isCompactSummary?: boolean
+  teamName?: string
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -94,6 +107,17 @@ async function findSessionFile(
   return null
 }
 
+async function resolveSessionFilePath(
+  sessionId: string,
+  dir?: string,
+): Promise<string | null> {
+  const projectsDir = getProjectsDir()
+  if (dir) {
+    return join(projectsDir, sanitizePath(resolve(dir)), `${sessionId}.jsonl`)
+  }
+  return findSessionFile(projectsDir, sessionId)
+}
+
 async function readSessionFile(
   filePath: string,
 ): Promise<{
@@ -106,8 +130,8 @@ async function readSessionFile(
   const content = await readFile(filePath, "utf-8")
   const lines = content
     .split("\n")
-    .filter((l) => l.trim())
-    .map((l) => {
+    .filter((l: string) => l.trim())
+    .map((l: string) => {
       try {
         return JSON.parse(l)
       } catch {
@@ -143,6 +167,100 @@ async function readSessionFile(
   return { messages: lines, sessionId, firstPrompt, customTitle, tag }
 }
 
+function parseTranscriptEntries(messages: unknown[]): TranscriptEntry[] {
+  const transcriptTypes = new Set(["user", "assistant", "progress", "system", "attachment"])
+
+  return messages.filter((message): message is TranscriptEntry => {
+    const entry = message as TranscriptEntry
+    return typeof entry.uuid === "string" && transcriptTypes.has(entry.type ?? "")
+  })
+}
+
+function buildConversationChain(entries: TranscriptEntry[]): TranscriptEntry[] {
+  if (entries.length === 0) return []
+
+  const byUuid = new Map<string, TranscriptEntry>()
+  const entryIndex = new Map<string, number>()
+  const parentUuids = new Set<string>()
+
+  for (const [index, entry] of entries.entries()) {
+    if (!entry.uuid) continue
+    byUuid.set(entry.uuid, entry)
+    entryIndex.set(entry.uuid, index)
+    if (entry.parentUuid) {
+      parentUuids.add(entry.parentUuid)
+    }
+  }
+
+  const terminals = entries.filter((entry) => entry.uuid && !parentUuids.has(entry.uuid))
+  const leaves: TranscriptEntry[] = []
+
+  for (const terminal of terminals) {
+    let current: TranscriptEntry | undefined = terminal
+    const seen = new Set<string>()
+
+    while (current?.uuid && !seen.has(current.uuid)) {
+      seen.add(current.uuid)
+      if (current.type === "user" || current.type === "assistant") {
+        leaves.push(current)
+        break
+      }
+      current = current.parentUuid ? byUuid.get(current.parentUuid) : undefined
+    }
+  }
+
+  if (leaves.length === 0) return []
+
+  const mainLeaves = leaves.filter(
+    (leaf) => !leaf.isSidechain && !leaf.teamName && !leaf.isMeta,
+  )
+  const candidates = mainLeaves.length > 0 ? mainLeaves : leaves
+  const [firstLeaf, ...restLeaves] = candidates
+  if (!firstLeaf) return []
+
+  let leaf = firstLeaf
+  let bestIndex = entryIndex.get(leaf.uuid ?? "") ?? -1
+  for (const candidate of restLeaves) {
+    const candidateIndex = entryIndex.get(candidate.uuid ?? "") ?? -1
+    if (candidateIndex > bestIndex) {
+      leaf = candidate
+      bestIndex = candidateIndex
+    }
+  }
+
+  const chain: TranscriptEntry[] = []
+  const seen = new Set<string>()
+  let current: TranscriptEntry | undefined = leaf
+
+  while (current?.uuid && !seen.has(current.uuid)) {
+    seen.add(current.uuid)
+    chain.push(current)
+    current = current.parentUuid ? byUuid.get(current.parentUuid) : undefined
+  }
+
+  return chain.reverse()
+}
+
+function isVisibleMessage(entry: TranscriptEntry): boolean {
+  if (entry.type !== "user" && entry.type !== "assistant") {
+    return false
+  }
+  if (entry.isMeta || entry.isSidechain || entry.teamName) {
+    return false
+  }
+  return true
+}
+
+function toSessionMessage(entry: TranscriptEntry, fallbackSessionId: string): SessionMessage {
+  return {
+    type: entry.type === "user" ? "user" : "assistant",
+    uuid: entry.uuid ?? "",
+    session_id: entry.sessionId ?? entry.session_id ?? fallbackSessionId,
+    message: entry.message,
+    parent_tool_use_id: null,
+  }
+}
+
 // ---------------------------------------------------------------------------
 // listSessions()
 // ---------------------------------------------------------------------------
@@ -154,7 +272,7 @@ async function listSessionsInDir(
   let files: string[]
   try {
     const entries = await readdir(baseDir)
-    files = entries.filter((f) => f.endsWith(".jsonl"))
+    files = entries.filter((f: string) => f.endsWith(".jsonl"))
   } catch {
     return []
   }
@@ -240,136 +358,6 @@ export async function listSessions(
 }
 
 // ---------------------------------------------------------------------------
-// Transcript parsing — internal helpers
-// ---------------------------------------------------------------------------
-
-const TRANSCRIPT_TYPES = new Set(["user", "assistant", "progress", "system", "attachment"])
-
-interface TranscriptEntry {
-  type: string
-  uuid: string
-  parentUuid?: string
-  sessionId?: string
-  message?: unknown
-  isSidechain?: boolean
-  isMeta?: boolean
-  isCompactSummary?: boolean
-  teamName?: string
-}
-
-function parseTranscriptEntries(messages: unknown[]): TranscriptEntry[] {
-  const entries: TranscriptEntry[] = []
-  for (const msg of messages) {
-    const obj = msg as Record<string, unknown>
-    const entryType = obj.type as string | undefined
-    const uuid = obj.uuid as string | undefined
-    if (entryType && TRANSCRIPT_TYPES.has(entryType) && typeof uuid === "string") {
-      entries.push({
-        type: entryType,
-        uuid,
-        parentUuid: typeof obj.parentUuid === "string" ? obj.parentUuid : undefined,
-        sessionId: typeof obj.session_id === "string" ? obj.session_id : undefined,
-        message: obj.message,
-        isSidechain: obj.isSidechain === true,
-        isMeta: obj.isMeta === true,
-        isCompactSummary: obj.isCompactSummary === true,
-        teamName: typeof obj.teamName === "string" ? obj.teamName : undefined,
-      })
-    }
-  }
-  return entries
-}
-
-function isVisibleMessage(entry: TranscriptEntry): boolean {
-  if (entry.type !== "user" && entry.type !== "assistant") return false
-  if (entry.isMeta) return false
-  if (entry.isSidechain) return false
-  if (entry.teamName) return false
-  // isCompactSummary e mantido intencionalmente — contem resumo pos-compactacao
-  return true
-}
-
-function buildConversationChain(entries: TranscriptEntry[]): TranscriptEntry[] {
-  if (entries.length === 0) return []
-
-  // Indexar por uuid para O(1) lookup
-  const byUuid = new Map<string, TranscriptEntry>()
-  for (const entry of entries) {
-    byUuid.set(entry.uuid, entry)
-  }
-
-  // Indexar posicao no arquivo para tie-breaking
-  const entryIndex = new Map<string, number>()
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i]
-    if (e) entryIndex.set(e.uuid, i)
-  }
-
-  // Encontrar terminais: entries cujo uuid nao aparece como parentUuid de nenhuma outra
-  const parentUuids = new Set<string>()
-  for (const entry of entries) {
-    if (entry.parentUuid) parentUuids.add(entry.parentUuid)
-  }
-  const terminals = entries.filter((e) => !parentUuids.has(e.uuid))
-
-  // De cada terminal, caminhar backward para encontrar leaf user/assistant
-  const leaves: TranscriptEntry[] = []
-  for (const terminal of terminals) {
-    let cur: TranscriptEntry | undefined = terminal
-    const seen = new Set<string>()
-    while (cur) {
-      if (seen.has(cur.uuid)) break
-      seen.add(cur.uuid)
-      if (cur.type === "user" || cur.type === "assistant") {
-        leaves.push(cur)
-        break
-      }
-      cur = cur.parentUuid ? byUuid.get(cur.parentUuid) : undefined
-    }
-  }
-
-  if (leaves.length === 0) return []
-
-  // Filtrar leaves da main chain (nao sidechain, nao team, nao meta)
-  const mainLeaves = leaves.filter(
-    (leaf) => !leaf.isSidechain && !leaf.teamName && !leaf.isMeta,
-  )
-
-  // Escolher o melhor leaf (maior posicao no arquivo)
-  function pickBest(candidates: TranscriptEntry[]): TranscriptEntry {
-    let best: TranscriptEntry = candidates[0]!
-    let bestIdx = entryIndex.get(best.uuid) ?? -1
-    for (let i = 1; i < candidates.length; i++) {
-      const candidate = candidates[i]!
-      const curIdx = entryIndex.get(candidate.uuid) ?? -1
-      if (curIdx > bestIdx) {
-        best = candidate
-        bestIdx = curIdx
-      }
-    }
-    return best
-  }
-
-  if (mainLeaves.length === 0) return []
-  const leaf = pickBest(mainLeaves)
-
-  // Caminhar de leaf ate root via parentUuid
-  const chain: TranscriptEntry[] = []
-  const chainSeen = new Set<string>()
-  let cur: TranscriptEntry | undefined = leaf
-  while (cur) {
-    if (chainSeen.has(cur.uuid)) break
-    chainSeen.add(cur.uuid)
-    chain.push(cur)
-    cur = cur.parentUuid ? byUuid.get(cur.parentUuid) : undefined
-  }
-
-  // Reverter para ordem cronologica (root -> leaf)
-  chain.reverse()
-  return chain
-}
-
-// ---------------------------------------------------------------------------
 // getSessionMessages()
 // ---------------------------------------------------------------------------
 
@@ -377,16 +365,8 @@ export async function getSessionMessages(
   sessionId: string,
   options: GetSessionMessagesOptions = {},
 ): Promise<SessionMessage[]> {
-  const projectsDir = getProjectsDir()
-  let filePath: string
-
-  if (options.dir) {
-    filePath = join(projectsDir, sanitizePath(resolve(options.dir)), `${sessionId}.jsonl`)
-  } else {
-    const found = await findSessionFile(projectsDir, sessionId)
-    if (!found) return []
-    filePath = found
-  }
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) return []
 
   let data: { messages: unknown[] }
   try {
@@ -395,17 +375,10 @@ export async function getSessionMessages(
     return []
   }
 
-  const entries = parseTranscriptEntries(data.messages)
-  const chain = buildConversationChain(entries)
-  const sessionMessages: SessionMessage[] = chain
-    .filter(isVisibleMessage)
-    .map((entry) => ({
-      type: entry.type as "user" | "assistant",
-      uuid: entry.uuid,
-      session_id: entry.sessionId ?? sessionId,
-      message: entry.message,
-      parent_tool_use_id: null,
-    }))
+  const transcriptEntries = parseTranscriptEntries(data.messages)
+  const chain = buildConversationChain(transcriptEntries)
+  const visibleEntries = (chain.length > 0 ? chain : transcriptEntries).filter(isVisibleMessage)
+  const sessionMessages = visibleEntries.map((entry) => toSessionMessage(entry, sessionId))
 
   const offset = options.offset ?? 0
   const sliced = sessionMessages.slice(offset)
@@ -438,11 +411,10 @@ export async function renameSession(
   title: string,
   options: SessionMutationOptions = {},
 ): Promise<void> {
-  const baseDir = options.dir
-    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
-    : getProjectsDir()
-
-  const filePath = join(baseDir, `${sessionId}.jsonl`)
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) {
+    throw new Error(`Session file not found for renameSession: ${sessionId}`)
+  }
   const entry = JSON.stringify({ type: "custom_title", title: title.trim() })
   await appendFile(filePath, "\n" + entry)
 }
@@ -456,11 +428,10 @@ export async function tagSession(
   tag: string | null,
   options: SessionMutationOptions = {},
 ): Promise<void> {
-  const baseDir = options.dir
-    ? join(getProjectsDir(), sanitizePath(resolve(options.dir)))
-    : getProjectsDir()
-
-  const filePath = join(baseDir, `${sessionId}.jsonl`)
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) {
+    throw new Error(`Session file not found for tagSession: ${sessionId}`)
+  }
   const entry = JSON.stringify({ type: "tag", tag })
   await appendFile(filePath, "\n" + entry)
 }
@@ -473,16 +444,8 @@ export async function deleteSession(
   sessionId: string,
   options: SessionMutationOptions = {},
 ): Promise<boolean> {
-  const projectsDir = getProjectsDir()
-  let filePath: string
-
-  if (options.dir) {
-    filePath = join(projectsDir, sanitizePath(resolve(options.dir)), `${sessionId}.jsonl`)
-  } else {
-    const found = await findSessionFile(projectsDir, sessionId)
-    if (!found) return false
-    filePath = found
-  }
+  const filePath = await resolveSessionFilePath(sessionId, options.dir)
+  if (!filePath) return false
 
   try {
     await unlink(filePath)
