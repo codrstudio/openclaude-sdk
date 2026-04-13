@@ -1,6 +1,6 @@
 {
   "name": "@codrstudio/openclaude-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript SDK wrapper for the OpenClaude CLI",
   "license": "MIT",
   "repository": {
