@@ -4,9 +4,30 @@ TypeScript SDK wrapper for the OpenClaude CLI.
 
 ## Installation
 
+### npm (public registry)
+
 ```bash
-npm install openclaude-sdk
+npm install @codrstudio/openclaude-sdk
 ```
+
+### GitHub Packages
+
+Requires authentication with a GitHub token that has `read:packages` scope.
+
+```bash
+echo "@codrstudio:registry=https://npm.pkg.github.com" >> .npmrc
+npm install @codrstudio/openclaude-sdk
+```
+
+### Direct download (.tgz)
+
+```bash
+npm install https://github.com/codrstudio/openclaude-sdk/releases/download/v0.4.0/codrstudio-openclaude-sdk-0.4.0.tgz
+```
+
+Browse all versions at [Releases](https://github.com/codrstudio/openclaude-sdk/releases).
+
+---
 
 Requires Node.js >= 20 and the [OpenClaude CLI](https://github.com/Gitlawb/openclaude) installed and available in your `PATH`.
 
