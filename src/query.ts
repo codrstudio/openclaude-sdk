@@ -129,10 +129,17 @@ export function query(params: {
   const { prompt, model, registry, options = {} } = params
 
   // Quando registry + model sao fornecidos, gerar env vars automaticamente
+  // e propagar model para --model flag
   let resolvedOptions = options
   if (registry && model) {
     const envFromRegistry = resolveModelEnv(registry, model)
-    resolvedOptions = { ...options, env: { ...options.env, ...envFromRegistry } }
+    resolvedOptions = {
+      ...options,
+      model: options.model ?? model,
+      env: { ...options.env, ...envFromRegistry },
+    }
+  } else if (model && !options.model) {
+    resolvedOptions = { ...options, model }
   }
 
   // Propagar env de MCP stdio servers
