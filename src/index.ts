@@ -32,6 +32,21 @@ export {
   resolveModelEnv,
 } from "./registry.js"
 
+// Catalog
+export {
+  BUILTIN_CATALOG,
+  createRegistryFromCatalog,
+  validateCatalog,
+  CatalogSchema,
+  CatalogProviderSchema,
+  CatalogModelSchema,
+  ProviderTypeSchema,
+} from "./catalog/index.js"
+export type {
+  CatalogInput,
+  CreateRegistryOptions,
+} from "./catalog/index.js"
+
 // Session management
 export {
   listSessions,
@@ -47,9 +62,13 @@ export {
 // ---------------------------------------------------------------------------
 
 export type {
+  ProviderType,
   Provider,
   Model,
   ProviderRegistry,
+  Catalog,
+  CatalogProvider,
+  CatalogModel,
 } from "./types/provider.js"
 
 // ---------------------------------------------------------------------------
