@@ -17,6 +17,7 @@ import {
   createSdkMcpServer,
   tool,
   DEFAULT_MODEL,
+  BUILTIN_CATALOG,
   DisplayToolRegistry,
   REACT_OUTPUT_SYSTEM_PROMPT,
 } from "../../dist/index.js"
@@ -109,12 +110,22 @@ api.get("/display", (c) => {
   })
 })
 
-api.get("/models", (c) =>
-  c.json({
-    default: DEFAULT_MODEL,
-    note: "Provider padrao do SDK. Sem registry custom configurado.",
-  }),
-)
+api.get("/models", (c) => {
+  const catalog = BUILTIN_CATALOG
+  return c.json({
+    object: "list",
+    data: catalog.models.map((m) => ({
+      id: m.id,
+      object: "model",
+      created: 0,
+      owned_by: m.provider,
+      label: m.label,
+      context_window: m.contextWindow ?? null,
+      supports_vision: m.supportsVision ?? null,
+    })),
+    default_model: catalog.defaultModel,
+  })
+})
 
 // ---- stateless chat -------------------------------------------------------
 
