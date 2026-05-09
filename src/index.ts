@@ -274,12 +274,6 @@ export type {
 } from "./display/index.js"
 
 // ---------------------------------------------------------------------------
-// Ask User — Human-in-the-loop (askUser: true)
-// ---------------------------------------------------------------------------
-
-export type { AskUserRequest, AskUserAnswer } from "./ask-user/index.js"
-
-// ---------------------------------------------------------------------------
 // Locale
 // ---------------------------------------------------------------------------
 
@@ -316,6 +310,11 @@ export type {
   CreatePersistentSessionOptions,
   TurnStream,
   ComfortConfig,
+  AskUserQuestionRequest,
+  AskUserQuestionResponse,
+  AskUserQuestionItem,
+  AskUserQuestionOption,
+  AskUserQuestionAnnotation,
 } from "./session-persistent.js"
 
 // ---------------------------------------------------------------------------
