@@ -1309,3 +1309,335 @@ q.respondToAskUser(req.callId, { type: "cancelled" })
 ```
 
 `askUser` and `richOutput` are orthogonal — both can be enabled simultaneously.
+
+---
+
+## Bridge para `@codrstudio/openclaude-chat`
+
+`<Chat>` (do pacote `openclaude-chat`) fala um contrato HTTP+SSE
+específico via `createDefaultTransport(endpoint)`. Este SDK não embute
+servidor — quem importa monta a ponte. Abaixo, um Hono completo de
+referência cobrindo todas as features (pool, persistent, comfort,
+auto-load, history, resume, idle timeout).
+
+### Contrato
+
+| Método | Caminho | Propósito |
+|---|---|---|
+| `POST` | `/conversations` | Cria sessão. Body: `{ agentId?, model?, options?, noPool? }`. Retorna `{ sessionId }`. |
+| `POST` | `/conversations/:id/messages` | Envia turno. Body: `{ message }`. Stream SSE: `event: message` (cada SDKMessage), `event: ping` heartbeat, `event: done` final, `event: error` em falha. |
+| `GET`  | `/conversations` | Lista. Aceita `?agentId=...` pra filtrar. |
+| `GET`  | `/conversations/:id` | Detalhe. |
+| `PATCH`| `/conversations/:id` | Body: `{ title?, starred? }`. |
+| `DELETE`| `/conversations/:id` | Encerra sessão. |
+| `GET`  | `/conversations/:id/messages` | Replay. `<Chat>` chama isto via `auto-load` quando `sessionId` muda. |
+| `GET`  | `/models` | (Opcional, só se `enableModelSelect`.) |
+
+### Implementação completa (Hono + Node)
+
+```ts
+import { serve } from "@hono/node-server"
+import { Hono } from "hono"
+import { cors } from "hono/cors"
+import { streamSSE } from "hono/streaming"
+import { randomUUID } from "node:crypto"
+import {
+  createMultiSessionPool,
+  createPersistentSession,
+  type MultiSessionPool,
+  type PersistentSession,
+} from "@codrstudio/openclaude-sdk"
+
+const PORT = Number(process.env.PORT ?? 9500)
+const POOL_SIZE_PER_CWD = Number(process.env.POOL_SIZE_PER_CWD ?? 2)
+const IDLE_TIMEOUT_MS = Number(process.env.IDLE_TIMEOUT_MS ?? 5 * 60_000)
+
+// agentId → cwd. O cwd determina o que `openclaude` carrega
+// (CLAUDE.md, skills, MCPs). Cada cwd vira um sub-pool independente.
+const AGENTS: Record<string, { cwd: string }> = {
+  nic:    { cwd: "d:/nic" },
+  aurora: { cwd: "d:/aurora" },
+}
+const resolveCwd = (agentId?: string) =>
+  AGENTS[agentId ?? ""]?.cwd ?? "d:/nic"
+
+interface ConvState {
+  id: string
+  session: PersistentSession | null
+  pendingNoPool?: boolean
+  agentId?: string
+  cwd: string
+  title: string
+  starred: boolean
+  messages: unknown[]
+  createdAt: number
+  lastMessageAt: number
+  idleTimer?: NodeJS.Timeout
+}
+const conversations = new Map<string, ConvState>()
+
+const pool: MultiSessionPool = createMultiSessionPool({
+  sizePerCwd: POOL_SIZE_PER_CWD,
+  baseOptions: { permissionMode: "bypassPermissions" },
+})
+for (const a of Object.values(AGENTS)) pool.warm(a.cwd)
+
+function bindIdleTimer(conv: ConvState) {
+  if (conv.idleTimer) clearTimeout(conv.idleTimer)
+  conv.idleTimer = setTimeout(
+    () => void conv.session?.close().catch(() => undefined),
+    IDLE_TIMEOUT_MS,
+  )
+  conv.idleTimer.unref?.()
+}
+
+const app = new Hono().basePath("/api/v1/ai")
+app.use("*", cors())
+
+app.post("/conversations", async (c) => {
+  const body = await c.req.json().catch(() => ({})) as {
+    agentId?: string; model?: string; noPool?: boolean
+  }
+  const cwd = resolveCwd(body.agentId)
+  let conv: ConvState
+  if (body.noPool) {
+    // Lazy: spawn diferido pro 1° send (paga cold start integral).
+    const id = randomUUID()
+    conv = {
+      id, session: null, pendingNoPool: true,
+      agentId: body.agentId, cwd, title: "Nova conversa", starred: false,
+      messages: [], createdAt: Date.now(), lastMessageAt: Date.now(),
+    }
+  } else {
+    const session = pool.acquire({ cwd })
+    conv = {
+      id: session.sessionId, session,
+      agentId: body.agentId, cwd, title: "Nova conversa", starred: false,
+      messages: [], createdAt: Date.now(), lastMessageAt: Date.now(),
+    }
+  }
+  bindIdleTimer(conv)
+  conversations.set(conv.id, conv)
+  return c.json({ sessionId: conv.id })
+})
+
+app.get("/conversations", (c) => {
+  const filter = c.req.query("agentId")
+  return c.json(
+    Array.from(conversations.values())
+      .filter((v) => !filter || v.agentId === filter)
+      .sort((a, b) => b.lastMessageAt - a.lastMessageAt)
+      .map((v) => ({
+        id: v.id, title: v.title, starred: v.starred,
+        messageCount: v.messages.filter(
+          (m) => (m as { type?: string }).type === "user" ||
+                 (m as { type?: string }).type === "assistant"
+        ).length,
+        createdAt: new Date(v.createdAt).toISOString(),
+        updatedAt: new Date(v.lastMessageAt).toISOString(),
+      }))
+  )
+})
+
+app.get("/conversations/:id", (c) => {
+  const v = conversations.get(c.req.param("id"))
+  if (!v) return c.json({ error: "not_found" }, 404)
+  return c.json({ id: v.id, title: v.title, starred: v.starred })
+})
+
+app.patch("/conversations/:id", async (c) => {
+  const v = conversations.get(c.req.param("id"))
+  if (!v) return c.json({ error: "not_found" }, 404)
+  const body = await c.req.json().catch(() => ({})) as
+    { title?: string; starred?: boolean }
+  if (typeof body.title === "string") v.title = body.title
+  if (typeof body.starred === "boolean") v.starred = body.starred
+  return c.body(null, 204)
+})
+
+app.delete("/conversations/:id", async (c) => {
+  const v = conversations.get(c.req.param("id"))
+  if (!v) return c.json({ error: "not_found" }, 404)
+  if (v.idleTimer) clearTimeout(v.idleTimer)
+  conversations.delete(v.id)
+  await v.session?.close().catch(() => undefined)
+  return c.body(null, 204)
+})
+
+// Replay — auto-load do <Chat> chama isto.
+app.get("/conversations/:id/messages", (c) => {
+  const v = conversations.get(c.req.param("id"))
+  if (!v) return c.json({ error: "not_found" }, 404)
+  return c.json({ messages: v.messages, hasMore: false, cursor: null })
+})
+
+// Turno (SSE).
+app.post("/conversations/:id/messages", async (c) => {
+  let conv = conversations.get(c.req.param("id"))
+  const id = c.req.param("id")
+
+  // Lazy spawn (noPool) — 1° send.
+  if (conv && conv.pendingNoPool && !conv.session) {
+    conv.session = createPersistentSession({
+      sessionId: id, cwd: conv.cwd, permissionMode: "bypassPermissions",
+    })
+    conv.pendingNoPool = false
+  }
+
+  // Sessão morta (idle timeout) — reanima via --resume.
+  if (conv && conv.session && conv.session.state === "dead") {
+    conv.session = pool.acquireResume({ cwd: conv.cwd, sessionId: id })
+  }
+
+  // Cliente mandou mensagem com id desconhecido — tenta resume cego.
+  if (!conv) {
+    const cwd = resolveCwd()
+    const session = pool.acquireResume({ cwd, sessionId: id })
+    conv = {
+      id, session, cwd, title: "Conversa retomada", starred: false,
+      messages: [], createdAt: Date.now(), lastMessageAt: Date.now(),
+    }
+    conversations.set(id, conv)
+  }
+  bindIdleTimer(conv)
+
+  const body = await c.req.json().catch(() => ({})) as { message?: string }
+  const text = (body.message ?? "").trim()
+  if (!text) return c.json({ error: "empty_message" }, 400)
+
+  // Persiste user message — vai pro replay.
+  conv.messages.push({
+    type: "user",
+    message: { role: "user", content: text },
+    session_id: conv.id,
+    timestamp: new Date().toISOString(),
+  })
+  if (conv.title === "Nova conversa" || conv.title === "Conversa retomada") {
+    conv.title = text.slice(0, 60)
+  }
+
+  const session = conv.session!
+  const convRef = conv
+
+  return streamSSE(c, async (stream) => {
+    const ping = setInterval(
+      () => stream.writeSSE({ event: "ping", data: "" }).catch(() => undefined),
+      15_000,
+    )
+    ping.unref?.()
+    try {
+      const turn = session.send(text)
+      convRef.lastMessageAt = Date.now()
+      for await (const msg of turn) {
+        const t = (msg as { type?: string }).type
+        if (t === "user" || t === "assistant" || t === "system" || t === "result") {
+          convRef.messages.push(msg)
+        }
+        await stream.writeSSE({ event: "message", data: JSON.stringify(msg) })
+      }
+      await stream.writeSSE({ event: "done", data: "" })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      await stream.writeSSE({ event: "error", data: JSON.stringify({ message }) })
+        .catch(() => undefined)
+    } finally {
+      clearInterval(ping)
+    }
+  })
+})
+
+// Models — opcional, só se enableModelSelect no <Chat>.
+app.get("/models", (c) => c.json({
+  defaultModel: "sonnet",
+  models: [
+    { id: "sonnet", label: "Claude Sonnet" },
+    { id: "opus",   label: "Claude Opus" },
+    { id: "haiku",  label: "Claude Haiku" },
+  ],
+}))
+
+const server = serve({ fetch: app.fetch, port: PORT })
+
+const shutdown = async () => {
+  for (const v of conversations.values()) {
+    if (v.idleTimer) clearTimeout(v.idleTimer)
+    await v.session?.close().catch(() => undefined)
+  }
+  await pool.shutdown()
+  server.close(() => process.exit(0))
+}
+process.on("SIGINT", shutdown)
+process.on("SIGTERM", shutdown)
+```
+
+### Cliente correspondente (`<Chat>`)
+
+```tsx
+import { useEffect, useState, useMemo } from "react"
+import {
+  Chat, HistoryProvider, HistorySidebar, HistoryTrigger,
+  createDefaultTransport, type ChatTransport,
+} from "@codrstudio/openclaude-chat"
+
+const ENDPOINT = "/api/v1/ai"
+
+function App() {
+  const transport: ChatTransport = useMemo(
+    () => createDefaultTransport(ENDPOINT),
+    [],
+  )
+  const [sessionId, setSessionId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (sessionId) return
+    fetch(`${ENDPOINT}/conversations`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ agentId: "nic" }),
+    })
+      .then((r) => r.json())
+      .then((d) => setSessionId(d.sessionId))
+  }, [sessionId])
+
+  return (
+    <HistoryProvider
+      transport={transport}
+      agentId="nic"
+      activeConversationId={sessionId}
+      onActiveChange={setSessionId}
+    >
+      <HistoryTrigger />
+      <HistorySidebar />
+      <Chat
+        endpoint={ENDPOINT}
+        transport={transport}
+        sessionId={sessionId ?? undefined}
+        agentId="nic"
+        sessionOptions={{ permissionMode: "bypassPermissions" }}
+        enableStreamingIndicator={false}
+      />
+    </HistoryProvider>
+  )
+}
+```
+
+### Pontos-chave da ponte
+
+- **SSE bridge:** o `for await` em `session.send()` itera o `TurnStream`
+  até `result`. Cada item é serializado como `event: message`.
+  Heartbeat `event: ping` evita drops em proxies.
+- **Replay:** `<Chat>` chama `transport.getMessages(sessionId)` ao
+  receber/trocar `sessionId`, popula `initialMessages` automaticamente.
+  O servidor deve persistir tudo que foi streamado (user + assistant +
+  system + result) e devolver no formato cru — o `<Chat>` aceita tanto
+  `SDKMessage` quanto `Message` já convertido.
+- **Resume:** sessão fechada por idle vira ad-hoc com `--resume`
+  (`pool.acquireResume`). Cold start integral, mas histórico intacto
+  porque o JSONL persistiu em disco pelo CLI.
+- **Pool por cwd:** múltiplos agentes (cada um com seu CLAUDE.md /
+  skills / MCPs) compartilham o mesmo pool, segmentado por cwd via
+  `createMultiSessionPool`. Custo: ~150 MB RAM por proc idle.
+- **Comfort messages:** enviadas automaticamente pela SDK durante
+  bootstrap. O `<Chat>` consolida num único pill que vira ✓ quando a
+  resposta real chega — desligue o `enableStreamingIndicator` legado
+  do chat se for usar.
