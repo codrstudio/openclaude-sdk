@@ -21,6 +21,7 @@ import { randomUUID } from "node:crypto"
 import { resolveExecutable, buildCliArgs } from "./process.js"
 import type { SDKMessage } from "./types/messages.js"
 import type { Options } from "./types/options.js"
+import type { AskUserQuestionInput } from "./types/tools.js"
 
 // ---------------------------------------------------------------------------
 // TurnStream — stream de mensagens de UM turno na sessao persistente
@@ -74,6 +75,36 @@ function pickPhrase(arr: string[]): string {
 // PersistentSession
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// AskUserQuestion — tool nativa do CLI openclaude
+//
+// Quando habilitada via `askUserQuestion: true`, a sessao spawna o CLI com
+// `--permission-prompt-tool stdio` e intercepta o protocolo can_use_tool pra
+// mediar respostas do consumer ao agente. Ver TASK.md no demo pra detalhes
+// do schema.
+// ---------------------------------------------------------------------------
+
+/** Re-exports da tool nativa pra conveniencia do consumer. */
+export type AskUserQuestionItem = AskUserQuestionInput["questions"][number]
+export type AskUserQuestionOption = AskUserQuestionItem["options"][number]
+
+export interface AskUserQuestionRequest {
+  callId: string         // tool_use_id da chamada da tool
+  requestId: string      // request_id do control_request (interno)
+  input: AskUserQuestionInput
+}
+
+export interface AskUserQuestionAnnotation {
+  preview?: string
+  notes?: string
+}
+
+export interface AskUserQuestionResponse {
+  /** Map<questionText, answerLabel>. Multi-select: comma-separated labels. */
+  answers: Record<string, string>
+  annotations?: Record<string, AskUserQuestionAnnotation>
+}
+
 export interface PersistentSession {
   readonly sessionId: string
   /** ms desde o spawn (pra detectar cold/warm). */
@@ -82,6 +113,12 @@ export interface PersistentSession {
   readonly state: "warming" | "ready" | "in-use" | "dead"
   /** Envia um turno e devolve um stream das mensagens deste turno. */
   send(prompt: string, options?: { comfort?: ComfortConfig | false }): TurnStream
+  /** Registra handler invocado quando o agente emite AskUserQuestion. */
+  onAskUserQuestion(handler: (req: AskUserQuestionRequest) => void): void
+  /** Responde a uma pergunta pendente (allow + answers). */
+  respondToAskUserQuestion(callId: string, response: AskUserQuestionResponse): void
+  /** Cancela uma pergunta pendente (deny). */
+  cancelAskUserQuestion(callId: string, message?: string): void
   /** Encerra o subprocess. */
   close(): Promise<void>
   /** Suporte a `await using`. */
@@ -93,6 +130,18 @@ export interface CreatePersistentSessionOptions extends Partial<Options> {
   comfort?: ComfortConfig | false
   /** Tempo (ms) ate considerar a sessao "pronta" apos spawn. Default: 8000. */
   warmupMs?: number
+  /**
+   * Habilita a tool nativa AskUserQuestion. Quando true, o spawn forca
+   * `--permission-prompt-tool stdio` + permissionMode "default" (a CLI
+   * rejeita AskUserQuestion em bypassPermissions/dontAsk) e a sessao expoe
+   * `onAskUserQuestion` / `respondToAskUserQuestion` / `cancelAskUserQuestion`.
+   *
+   * Nota: outras tools que normalmente seriam auto-aprovadas em bypass
+   * tambem entram no fluxo de permissao stdio quando essa flag esta ligada
+   * — sao auto-aprovadas internamente pelo SDK (so AskUserQuestion eh
+   * roteada pro consumer).
+   */
+  askUserQuestion?: boolean
 }
 
 export function createPersistentSession(
@@ -102,6 +151,7 @@ export function createPersistentSession(
     sessionId: providedSessionId,
     comfort: defaultComfort,
     warmupMs = 8_000,
+    askUserQuestion = false,
     cwd,
     model,
     permissionMode,
@@ -116,11 +166,13 @@ export function createPersistentSession(
   const isResume = typeof resume === "string" && resume.length > 0
   const sessionId = isResume ? resume : (providedSessionId ?? randomUUID())
 
-  // Persistent mode requer permissionMode que mantenha stdin aberto pra
-  // controles, mas tambem requer que o CLI nao bloqueie esperando resposta
-  // de permissao. bypassPermissions e dontAsk satisfazem ambos.
-  const effectivePerm =
-    permissionMode === "bypassPermissions" || permissionMode === "dontAsk"
+  // AskUserQuestion exige permissionMode "default" + --permission-prompt-tool
+  // stdio. Em bypassPermissions/dontAsk a CLI auto-rejeita a tool. Quando
+  // askUserQuestion estiver ligado, forcamos default e auto-aprovamos
+  // internamente todas as outras tools que entrarem no fluxo de permission.
+  const effectivePerm = askUserQuestion
+    ? "default"
+    : permissionMode === "bypassPermissions" || permissionMode === "dontAsk"
       ? permissionMode
       : "bypassPermissions"
 
@@ -139,6 +191,9 @@ export function createPersistentSession(
 
   const args = buildCliArgs(baseOptions)
   args.push("--input-format", "stream-json")
+  if (askUserQuestion) {
+    args.push("--permission-prompt-tool", "stdio")
+  }
 
   const { command, prependArgs } = resolveExecutable(baseOptions)
 
@@ -188,6 +243,15 @@ export function createPersistentSession(
   }
   let currentTurn: TurnState | null = null
 
+  // ─── AskUserQuestion state ───────────────────────────────────────────
+  // Map<callId (tool_use_id), {requestId}>: rastreia perguntas pendentes.
+  // requestId eh o ID do control_request (necessario pra control_response).
+  let askUserHandler: ((req: AskUserQuestionRequest) => void) | null = null
+  const pendingAskUserQuestion = new Map<
+    string,
+    { requestId: string; input: AskUserQuestionInput }
+  >()
+
   const stdoutChunks: string[] = []
   let stdoutBuf = ""
   proc.stdout?.setEncoding("utf8")
@@ -198,15 +262,68 @@ export function createPersistentSession(
       const line = stdoutBuf.slice(0, idx).trim()
       stdoutBuf = stdoutBuf.slice(idx + 1)
       if (!line) continue
-      let msg: SDKMessage
+      let raw: unknown
       try {
-        msg = JSON.parse(line) as SDKMessage
+        raw = JSON.parse(line)
       } catch {
         continue
       }
-      onMessage(msg)
+      const r = raw as { type?: string; request?: { subtype?: string; tool_name?: string; tool_use_id?: string; input?: unknown }; request_id?: string }
+      // Intercepta control_request can_use_tool antes do demux normal.
+      if (r.type === "control_request" && r.request?.subtype === "can_use_tool") {
+        handleCanUseTool(r as { request_id: string; request: { tool_name: string; tool_use_id: string; input: AskUserQuestionInput } })
+        continue
+      }
+      onMessage(raw as SDKMessage)
     }
   })
+
+  function handleCanUseTool(req: { request_id: string; request: { tool_name: string; tool_use_id: string; input: AskUserQuestionInput } }): void {
+    const { request_id: requestId, request } = req
+    const toolName = request.tool_name
+    if (toolName === "AskUserQuestion") {
+      // Roteia pro consumer.
+      if (!askUserQuestion) {
+        // Feature off — auto-deny pra nao travar o agente.
+        writeControlResponse(requestId, { behavior: "deny", message: "AskUserQuestion not enabled in this session" })
+        return
+      }
+      pendingAskUserQuestion.set(request.tool_use_id, { requestId, input: request.input })
+      const askReq: AskUserQuestionRequest = {
+        callId: request.tool_use_id,
+        requestId,
+        input: request.input,
+      }
+      if (askUserHandler) {
+        askUserHandler(askReq)
+      } else {
+        // Sem handler — auto-deny (UI nao registrou ainda).
+        pendingAskUserQuestion.delete(request.tool_use_id)
+        writeControlResponse(requestId, { behavior: "deny", message: "No askUserQuestion handler registered" })
+      }
+      return
+    }
+    // Outras tools que entraram no fluxo de permission por causa do
+    // permission-prompt-tool stdio: auto-allow pra preservar UX de
+    // bypassPermissions pras tools que NAO sao AskUserQuestion.
+    writeControlResponse(requestId, { behavior: "allow", updatedInput: request.input ?? {} })
+  }
+
+  function writeControlResponse(requestId: string, payload: { behavior: "allow"; updatedInput: unknown } | { behavior: "deny"; message: string; interrupt?: boolean }): void {
+    const msg = {
+      type: "control_response",
+      response: {
+        request_id: requestId,
+        subtype: "success",
+        response: payload,
+      },
+    }
+    try {
+      proc.stdin?.write(JSON.stringify(msg) + "\n")
+    } catch (err) {
+      console.warn("[persistent] writeControlResponse failed:", err)
+    }
+  }
 
   proc.stderr?.setEncoding("utf8")
   proc.stderr?.on("data", (s: string) => {
@@ -256,6 +373,10 @@ export function createPersistentSession(
       t.done = true
       while (t.waiters.length > 0) t.waiters.shift()!(null)
     }
+    // Limpa askUser pendentes — UI consumer fica responsavel por detectar
+    // que sessao morreu e atualizar visualmente. SDK nao tenta responder
+    // (proc esta morto, stdin fechado).
+    pendingAskUserQuestion.clear()
   }
 
   // ─── send ─────────────────────────────────────────────────────────────
@@ -398,6 +519,39 @@ export function createPersistentSession(
     })
   }
 
+  function onAskUserQuestion(handler: (req: AskUserQuestionRequest) => void): void {
+    askUserHandler = handler
+  }
+
+  function respondToAskUserQuestion(callId: string, response: AskUserQuestionResponse): void {
+    const pending = pendingAskUserQuestion.get(callId)
+    if (!pending) {
+      console.warn(`[persistent] respondToAskUserQuestion: unknown callId "${callId}"`)
+      return
+    }
+    pendingAskUserQuestion.delete(callId)
+    // Reconstroi o updatedInput preservando questions originais + answers.
+    const updatedInput: Record<string, unknown> = {
+      ...pending.input,
+      answers: response.answers,
+      ...(response.annotations ? { annotations: response.annotations } : {}),
+    }
+    writeControlResponse(pending.requestId, { behavior: "allow", updatedInput })
+  }
+
+  function cancelAskUserQuestion(callId: string, message?: string): void {
+    const pending = pendingAskUserQuestion.get(callId)
+    if (!pending) {
+      console.warn(`[persistent] cancelAskUserQuestion: unknown callId "${callId}"`)
+      return
+    }
+    pendingAskUserQuestion.delete(callId)
+    writeControlResponse(pending.requestId, {
+      behavior: "deny",
+      message: message ?? "User cancelled the question",
+    })
+  }
+
   return {
     sessionId,
     spawnedAtMs,
@@ -405,6 +559,9 @@ export function createPersistentSession(
       return state
     },
     send,
+    onAskUserQuestion,
+    respondToAskUserQuestion,
+    cancelAskUserQuestion,
     close,
     async [Symbol.asyncDispose]() {
       await close()
