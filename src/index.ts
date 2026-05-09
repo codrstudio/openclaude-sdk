@@ -305,3 +305,29 @@ export type {
   PromptOptions,
   PromptResult,
 } from "./session-v2.js"
+
+// ---------------------------------------------------------------------------
+// Persistent Session — subprocess unico vivo entre turnos
+// ---------------------------------------------------------------------------
+
+export { createPersistentSession, DEFAULT_COMFORT_PHRASES } from "./session-persistent.js"
+export type {
+  PersistentSession,
+  CreatePersistentSessionOptions,
+  TurnStream,
+  ComfortConfig,
+} from "./session-persistent.js"
+
+// ---------------------------------------------------------------------------
+// Session Pool — pool de PersistentSession pre-aquecidas
+// ---------------------------------------------------------------------------
+
+export { createSessionPool } from "./session-pool.js"
+export type { SessionPool, SessionPoolOptions } from "./session-pool.js"
+
+export { createMultiSessionPool } from "./session-multi-pool.js"
+export type {
+  MultiSessionPool,
+  MultiSessionPoolOptions,
+  MultiPoolBaseOptions,
+} from "./session-multi-pool.js"
