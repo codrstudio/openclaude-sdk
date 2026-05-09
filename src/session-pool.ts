@@ -4,14 +4,15 @@
 // Uso tipico:
 //
 //   const pool = createSessionPool({ size: 2, cwd: "d:/nic" })
-//   await pool.start()
-//   const session = pool.acquire()      // pega uma quente; refila em background
+//   pool.start()
+//   const session = await pool.acquire()  // pega uma quente; refila em bg
 //   for await (const msg of session.send("oi")) { ... }
 //   await session.close()
 //
 // Combinado com persistent mode, a primeira mensagem de um chat novo paga
 // ~zero cold start (sessao ja foi spawnada antes); turnos seguintes pagam
 // apenas a latencia do modelo.
+//
 // ---------------------------------------------------------------------------
 
 import {
@@ -54,9 +55,13 @@ export function createSessionPool(opts: SessionPoolOptions = {}): SessionPool {
 
   function spawnOne(): void {
     if (closed) return
-    const s = createPersistentSession(sessionOpts)
-    log(`[pool] spawn ${s.sessionId.slice(0, 8)} (idle=${idle.length + 1}/${size})`)
-    idle.push(s)
+    try {
+      const s = createPersistentSession(sessionOpts)
+      idle.push(s)
+      log(`[pool] spawn ${s.sessionId.slice(0, 8)} (idle=${idle.length}/${size})`)
+    } catch (err) {
+      log(`[pool] spawn failed: ${err instanceof Error ? err.message : String(err)}`)
+    }
   }
 
   function reapStaleIfNeeded(): void {
@@ -81,17 +86,21 @@ export function createSessionPool(opts: SessionPoolOptions = {}): SessionPool {
 
     acquire(): PersistentSession {
       reapStaleIfNeeded()
-      // Prefere ready; aceita warming se for o que tem.
-      let pick = idle.find((s) => s.state === "ready")
-      if (!pick) pick = idle.find((s) => s.state === "warming")
-      if (pick) {
-        const i = idle.indexOf(pick)
-        idle.splice(i, 1)
-        log(`[pool] acquire ${pick.sessionId.slice(0, 8)} (was ${pick.state}, idle=${idle.length})`)
+      const pickIdx = idle.findIndex((s) => s.state === "ready")
+      if (pickIdx !== -1) {
+        const s = idle[pickIdx]!
+        idle.splice(pickIdx, 1)
+        log(`[pool] acquire ${s.sessionId.slice(0, 8)} (idle=${idle.length})`)
         spawnOne()
-        return pick
+        return s
       }
-      // Pool vazio — spawn ad-hoc e tambem refila.
+      // Sem ready — pega qualquer warming, ou spawn ad-hoc.
+      if (idle.length > 0) {
+        const s = idle.shift()!
+        log(`[pool] acquire (warming) ${s.sessionId.slice(0, 8)}`)
+        spawnOne()
+        return s
+      }
       log(`[pool] empty — spawning ad-hoc`)
       const s = createPersistentSession(sessionOpts)
       spawnOne()
@@ -121,7 +130,8 @@ export function createSessionPool(opts: SessionPoolOptions = {}): SessionPool {
 
     async shutdown() {
       closed = true
-      const tasks = idle.map((s) => s.close().catch(() => undefined))
+      const tasks: Promise<unknown>[] = []
+      for (const s of idle) tasks.push(s.close().catch(() => undefined))
       idle.length = 0
       await Promise.all(tasks)
     },

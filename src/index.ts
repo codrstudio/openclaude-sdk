@@ -219,61 +219,6 @@ export type {
 } from "./types/sessions.js"
 
 // ---------------------------------------------------------------------------
-// Display — Rich Output (richOutput: true)
-// ---------------------------------------------------------------------------
-
-export {
-  DisplayMetricSchema,
-  DisplayChartSchema,
-  DisplayTableSchema,
-  DisplayProgressSchema,
-  DisplayProductSchema,
-  DisplayComparisonSchema,
-  DisplayPriceSchema,
-  DisplayImageSchema,
-  DisplayGallerySchema,
-  DisplayCarouselSchema,
-  DisplaySourcesSchema,
-  DisplayLinkSchema,
-  DisplayMapSchema,
-  DisplayFileSchema,
-  DisplayCodeSchema,
-  DisplaySpreadsheetSchema,
-  DisplayStepsSchema,
-  DisplayAlertSchema,
-  DisplayChoicesSchema,
-  DisplayToolRegistry,
-  DisplayReactSchema,
-  DISPLAY_SYSTEM_PROMPT,
-  REACT_OUTPUT_SYSTEM_PROMPT,
-  mergeSystemPromptAppend,
-} from "./display/index.js"
-
-export type {
-  DisplayMetric,
-  DisplayChart,
-  DisplayTable,
-  DisplayProgress,
-  DisplayProduct,
-  DisplayComparison,
-  DisplayPrice,
-  DisplayImage,
-  DisplayGallery,
-  DisplayCarousel,
-  DisplaySources,
-  DisplayLink,
-  DisplayMap,
-  DisplayFile,
-  DisplayCode,
-  DisplaySpreadsheet,
-  DisplaySteps,
-  DisplayAlert,
-  DisplayChoices,
-  DisplayToolName,
-  DisplayReact,
-} from "./display/index.js"
-
-// ---------------------------------------------------------------------------
 // Locale
 // ---------------------------------------------------------------------------
 
@@ -330,3 +275,10 @@ export type {
   MultiSessionPoolOptions,
   MultiPoolBaseOptions,
 } from "./session-multi-pool.js"
+
+// ---------------------------------------------------------------------------
+// Artifacts — saída rica via tag <antArtifact> no TextBlock
+// ---------------------------------------------------------------------------
+
+export { buildSkillBody as buildArtifactsSkillBody } from "./artifacts/index.js"
+export type { ArtifactType, ArtifactsFeatures } from "./artifacts/index.js"

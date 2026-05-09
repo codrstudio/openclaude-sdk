@@ -218,31 +218,6 @@ export function query(params: {
       // Start SDK servers and build a local copy with _localPort injected (never mutate the original)
       let optionsForCli = resolvedOptions
 
-      // richOutput injection — zero overhead when false/absent
-      if (optionsForCli.richOutput) {
-        const { createDisplayMcpServer, DISPLAY_SYSTEM_PROMPT, REACT_OUTPUT_SYSTEM_PROMPT, mergeSystemPromptAppend } = await import("./display/index.js")
-        const displayServer = await createDisplayMcpServer()
-
-        const existingServers = optionsForCli.mcpServers ?? {}
-        if ("display" in existingServers) {
-          console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
-        }
-
-        let mergedPrompt = mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT)
-
-        // React output — nested gate: only has effect when richOutput is also enabled.
-        // Silent ignore when reactOutput comes without richOutput.
-        if (optionsForCli.reactOutput) {
-          mergedPrompt = mergeSystemPromptAppend(mergedPrompt, REACT_OUTPUT_SYSTEM_PROMPT)
-        }
-
-        optionsForCli = {
-          ...optionsForCli,
-          mcpServers: { ...existingServers, display: displayServer },
-          systemPrompt: mergedPrompt,
-        }
-      }
-
       if (optionsForCli.mcpServers) {
         const { running, portMap } = await startSdkServers(optionsForCli.mcpServers)
         runningServers = running

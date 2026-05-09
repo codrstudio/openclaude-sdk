@@ -110,7 +110,10 @@ export function createMultiSessionPool(
     },
 
     status() {
-      const perCwd: Record<string, { idle: Array<{ sessionId: string; state: PersistentSession["state"]; ageMs: number }> }> = {}
+      const perCwd: Record<
+        string,
+        { idle: Array<{ sessionId: string; state: PersistentSession["state"]; ageMs: number }> }
+      > = {}
       let total = 0
       for (const [cwd, sub] of subPools) {
         const s = sub.status()

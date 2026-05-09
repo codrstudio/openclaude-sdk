@@ -22,6 +22,8 @@ import { resolveExecutable, buildCliArgs } from "./process.js"
 import type { SDKMessage } from "./types/messages.js"
 import type { Options } from "./types/options.js"
 import type { AskUserQuestionInput } from "./types/tools.js"
+import { buildSkillBody } from "./artifacts/index.js"
+import type { ArtifactsFeatures } from "./artifacts/index.js"
 
 // ---------------------------------------------------------------------------
 // TurnStream — stream de mensagens de UM turno na sessao persistente
@@ -142,6 +144,13 @@ export interface CreatePersistentSessionOptions extends Partial<Options> {
    * roteada pro consumer).
    */
   askUserQuestion?: boolean
+  /**
+   * Habilita Artifacts (saída rica via tag `<antArtifact>` no texto do agente).
+   * Quando ligado, injeta skill body no system prompt ensinando o agente a
+   * emitir 6 tipos de artifact (code, markdown, html, svg, mermaid, react).
+   * O parsing acontece no chat — SDK só ensina o agente. Default: false.
+   */
+  artifacts?: ArtifactsFeatures | boolean
 }
 
 export function createPersistentSession(
@@ -152,6 +161,7 @@ export function createPersistentSession(
     comfort: defaultComfort,
     warmupMs = 8_000,
     askUserQuestion = false,
+    artifacts,
     cwd,
     model,
     permissionMode,
@@ -166,6 +176,14 @@ export function createPersistentSession(
   const isResume = typeof resume === "string" && resume.length > 0
   const sessionId = isResume ? resume : (providedSessionId ?? randomUUID())
 
+  // ─── Artifacts config ──────────────────────────────────────────────────
+  const artifactsEnabled = artifacts === true || (typeof artifacts === "object" && artifacts !== null)
+  const artifactsFeatures: ArtifactsFeatures = artifactsEnabled
+    ? typeof artifacts === "object" && artifacts !== null
+      ? artifacts
+      : {}
+    : {}
+
   // AskUserQuestion exige permissionMode "default" + --permission-prompt-tool
   // stdio. Em bypassPermissions/dontAsk a CLI auto-rejeita a tool. Quando
   // askUserQuestion estiver ligado, forcamos default e auto-aprovamos
@@ -175,6 +193,26 @@ export function createPersistentSession(
     : permissionMode === "bypassPermissions" || permissionMode === "dontAsk"
       ? permissionMode
       : "bypassPermissions"
+
+  // ─── Skill body (artifacts) — system prompt augmentation ───────────────
+  let systemPromptForCli = rest.systemPrompt
+  if (artifactsEnabled) {
+    const skillBody = buildSkillBody(artifactsFeatures)
+    if (typeof systemPromptForCli === "string") {
+      systemPromptForCli = systemPromptForCli + "\n\n" + skillBody
+    } else if (systemPromptForCli && typeof systemPromptForCli === "object" && systemPromptForCli.type === "preset") {
+      systemPromptForCli = {
+        ...systemPromptForCli,
+        append: (systemPromptForCli.append ?? "") + "\n\n" + skillBody,
+      }
+    } else {
+      systemPromptForCli = {
+        type: "preset",
+        preset: "claude_code",
+        append: skillBody,
+      }
+    }
+  }
 
   // Build CLI args — usa buildCliArgs do process.ts (sem prompt, --input-format
   // stream-json eh adicionado manualmente).
@@ -186,6 +224,7 @@ export function createPersistentSession(
     pathToClaudeCodeExecutable,
     executable,
     executableArgs,
+    systemPrompt: systemPromptForCli,
     ...(isResume ? { resume: sessionId } : { sessionId }),
   }
 

@@ -304,8 +304,6 @@ export interface Options {
   promptSuggestions?: boolean
   resume?: string
   resumeSessionAt?: string
-  richOutput?: boolean
-  reactOutput?: boolean
   /**
    * Locale BCP 47 (ex: "pt-BR", "en-US", "es-ES") usado por strings
    * narrativas que o SDK gera por conta propria (tool intentions, mensagens
