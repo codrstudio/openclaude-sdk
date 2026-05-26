@@ -282,3 +282,33 @@ export type {
 
 export { buildSkillBody as buildArtifactsSkillBody } from "./artifacts/index.js"
 export type { ArtifactType, ArtifactsFeatures } from "./artifacts/index.js"
+
+// ---------------------------------------------------------------------------
+// Auth — autenticação Anthropic (claude.ai Pro/Max + Console), fluxo manual
+// headless/web. Reimplementa o /login sem depender do CLI nem de localhost.
+// ---------------------------------------------------------------------------
+
+export {
+  startLogin,
+  exchangeManualCode,
+  refreshTokens,
+  completeLogin,
+  ensureFreshToken,
+  saveCredentials,
+  readCredentials,
+  getAuthStatus,
+  logout,
+  resolveConfigDir,
+  ALL_OAUTH_SCOPES,
+  CLAUDE_AI_OAUTH_SCOPES,
+  CLAUDE_AI_INFERENCE_SCOPE,
+  getOAuthEndpoints,
+} from "./auth/index.js"
+export type {
+  OAuthTokens,
+  LoginFlow,
+  StartLoginOptions,
+  StoredOAuth,
+  AuthStatus,
+  OAuthEndpoints,
+} from "./auth/index.js"
