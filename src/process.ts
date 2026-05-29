@@ -431,10 +431,19 @@ export function spawnAndStream(
   }
   options.signal?.addEventListener("abort", onAbort, { once: true })
 
-  // Timeout
+  // Timeout — espelha a escada de close()/onAbort: SIGTERM e, se o processo
+  // ignorar o sinal (CLI que captura SIGTERM), SIGKILL apos 5s. Sem essa
+  // escalada um timeout vira hang eterno quando o filho sobrevive ao SIGTERM.
   let timer: ReturnType<typeof setTimeout> | undefined
+  let timeoutSigkillTimer: ReturnType<typeof setTimeout> | undefined
   if (options.timeoutMs) {
-    timer = setTimeout(() => proc.kill("SIGTERM"), options.timeoutMs)
+    timer = setTimeout(() => {
+      if (proc.exitCode !== null) return
+      proc.kill("SIGTERM")
+      timeoutSigkillTimer = setTimeout(() => {
+        if (proc.exitCode === null) proc.kill("SIGKILL")
+      }, 5000)
+    }, options.timeoutMs)
   }
 
   // Enviar prompt via stdin
@@ -559,6 +568,7 @@ export function spawnAndStream(
     })
 
     if (timer) clearTimeout(timer)
+    if (timeoutSigkillTimer) clearTimeout(timeoutSigkillTimer)
     if (shutdownFallbackTimer) clearTimeout(shutdownFallbackTimer)
     options.signal?.removeEventListener("abort", onAbort)
 
