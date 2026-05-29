@@ -312,3 +312,57 @@ export type {
   AuthStatus,
   OAuthEndpoints,
 } from "./auth/index.js"
+
+// ---------------------------------------------------------------------------
+// Provider — profiles de provider (/provider) que o hammer lê no startup.
+// OpenAI-compat (+ presets xAI/Groq/DeepSeek/OpenRouter/NVIDIA), Gemini,
+// Mistral, Ollama, Codex, GitHub. Reimplementa standalone, sem depender do CLI.
+// ---------------------------------------------------------------------------
+
+export {
+  PROFILE_FILE_NAME,
+  writeProfile,
+  readProfile,
+  clearProfile,
+  getProviderStatus,
+  DEFAULT_OPENAI_BASE_URL,
+  DEFAULT_CODEX_BASE_URL,
+  DEFAULT_GEMINI_BASE_URL,
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_MISTRAL_BASE_URL,
+  DEFAULT_MISTRAL_MODEL,
+  DEFAULT_OLLAMA_BASE_URL,
+  DEFAULT_OLLAMA_MODEL,
+  sanitizeApiKey,
+  sanitizeValue,
+  buildOpenAIProfileEnv,
+  buildGeminiProfileEnv,
+  buildMistralProfileEnv,
+  buildOllamaProfileEnv,
+  buildCodexProfileEnv,
+  buildGithubProfileEnv,
+  PROVIDER_CATALOG,
+  getCatalogEntry,
+  saveProvider,
+  ProviderValidationError,
+  probeOllama,
+} from "./provider/index.js"
+export type {
+  ProviderProfile,
+  ProfileEnv,
+  ProfileFile,
+  ProviderStatus,
+  OpenAIProfileInput,
+  GeminiProfileInput,
+  MistralProfileInput,
+  OllamaProfileInput,
+  CodexProfileInput,
+  GithubProfileInput,
+  ProviderKind,
+  CatalogField,
+  CatalogOAuthMode,
+  CatalogEntry,
+  ProviderFields,
+  OllamaModel,
+  OllamaProbe,
+} from "./provider/index.js"
