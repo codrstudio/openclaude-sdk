@@ -1,4 +1,4 @@
-# openclaude-sdk - Integracao richOutput em Options e query.ts
+# hammer-sdk - Integracao richOutput em Options e query.ts
 
 Adicionar `richOutput?: boolean` a interface `Options` e integrar em `query()`: merge de MCP server display + append de system prompt cobrindo 3 formatos.
 
@@ -115,7 +115,7 @@ Adicionar bloco apos a propagacao de env de MCP stdio (linhas 132-146), antes de
 
     const existingServers = resolvedOptions.mcpServers ?? {}
     if ("display" in existingServers) {
-      console.warn('[openclaude-sdk] richOutput: overriding existing "display" MCP server')
+      console.warn('[hammer-sdk] richOutput: overriding existing "display" MCP server')
     }
 
     resolvedOptions = {
@@ -144,7 +144,7 @@ async function* lifecycleGenerator(): AsyncGenerator<SDKMessage, void> {
       const displayServer = await createDisplayMcpServer()
       const existingServers = opts.mcpServers ?? {}
       if ("display" in existingServers) {
-        console.warn('[openclaude-sdk] richOutput: overriding existing "display" MCP server')
+        console.warn('[hammer-sdk] richOutput: overriding existing "display" MCP server')
       }
       opts = {
         ...opts,

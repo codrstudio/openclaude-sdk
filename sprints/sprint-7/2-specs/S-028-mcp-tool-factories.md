@@ -1,4 +1,4 @@
-# openclaude-sdk - MCP Tool Factories: tool() e createSdkMcpServer()
+# hammer-sdk - MCP Tool Factories: tool() e createSdkMcpServer()
 
 Implementar `tool()` para definicao de MCP tools inline com Zod e `createSdkMcpServer()` para server in-process.
 
@@ -211,7 +211,7 @@ Adicionar ao `package.json`:
 ## Exemplo de Uso
 
 ```typescript
-import { tool, createSdkMcpServer, query } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query } from "hammer-sdk"
 import { z } from "zod"
 
 const weatherTool = tool(

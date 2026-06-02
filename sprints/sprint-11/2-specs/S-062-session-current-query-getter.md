@@ -1,4 +1,4 @@
-# openclaude-sdk - Getter currentQuery em SDKSession
+# hammer-sdk - Getter currentQuery em SDKSession
 
 Expor getter readonly `currentQuery` em `SDKSession` para acesso externo a `Query` ativa.
 

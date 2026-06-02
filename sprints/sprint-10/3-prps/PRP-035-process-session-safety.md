@@ -273,7 +273,7 @@ export function resolveExecutable(options?: Options): {
   command: string
   prependArgs: string[]
 } {
-  const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const base = options?.pathToClaudeCodeExecutable || "hammer"
 
   if (process.platform === "win32") {
     return {
@@ -292,7 +292,7 @@ export function resolveExecutable(options?: Options): {
   command: string
   prependArgs: string[]
 } {
-  const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const base = options?.pathToClaudeCodeExecutable || "hammer"
   const extraArgs = options?.executableArgs ?? []
 
   // Explicit executable: use it as command, base path as first script argument
@@ -339,9 +339,9 @@ Mudancas:
 | Mesmo `McpSdkServerConfig` em 2 queries | `_localPort` da query-1 vaza para query-2 | Cada query tem sua copia isolada |
 | `createSession().send("x", { resume: "old" })` | `resume: "old"` conflita com sessionId interno | `resume` filtrado, sessionId interno prevalece |
 | `resumeSession("id").send("x", { continue: true })` | `continue: true` conflita com `resume: id` | `continue` filtrado, `resume: id` prevalece |
-| `executable: "node", executableArgs: ["--experimental-vm-modules"]` | Ignorado, usa `openclaude` diretamente | `node --experimental-vm-modules openclaude ...` |
-| `executable: "bun"` no Windows | Ignorado | `cmd.exe /c bun openclaude ...` |
-| Sem `executable` nem `executableArgs` | `openclaude` | `openclaude` (identico) |
+| `executable: "node", executableArgs: ["--experimental-vm-modules"]` | Ignorado, usa `hammer` diretamente | `node --experimental-vm-modules hammer ...` |
+| `executable: "bun"` no Windows | Ignorado | `cmd.exe /c bun hammer ...` |
+| Sem `executable` nem `executableArgs` | `hammer` | `hammer` (identico) |
 
 ## Features
 

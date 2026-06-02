@@ -3,7 +3,7 @@
  * translate-locale.ts
  *
  * Gera um novo arquivo de locale JSON traduzindo do pt-BR como origem,
- * usando o proprio openclaude SDK como motor de traducao.
+ * usando o proprio hammer SDK como motor de traducao.
  *
  * Uso: npm run translate -- xx-YY [--force]
  */

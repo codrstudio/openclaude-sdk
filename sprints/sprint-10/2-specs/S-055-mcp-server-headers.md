@@ -1,4 +1,4 @@
-# openclaude-sdk - Transmitir Headers de MCP Servers Externos ao CLI
+# hammer-sdk - Transmitir Headers de MCP Servers Externos ao CLI
 
 Passar campo `headers` de `McpSSEServerConfig` e `McpHttpServerConfig` como argumento CLI.
 
@@ -59,7 +59,7 @@ Headers existem no tipo mas nao sao transmitidos.
 
 O formato `--mcp-server-header name:Header-Name:value` segue o padrao do CLI onde o primeiro segmento identifica o server e o restante e o par header:value.
 
-**Nota**: verificar a flag exata do OpenClaude CLI para headers de MCP servers. Se o CLI usar formato diferente (ex: `--mcp-header`), ajustar o nome da flag. O implementador deve confirmar consultando `openclaude --help` ou o codigo fonte do CLI.
+**Nota**: verificar a flag exata do Hammer CLI para headers de MCP servers. Se o CLI usar formato diferente (ex: `--mcp-header`), ajustar o nome da flag. O implementador deve confirmar consultando `hammer --help` ou o codigo fonte do CLI.
 
 ---
 

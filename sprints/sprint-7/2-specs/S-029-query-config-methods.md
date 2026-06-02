@@ -1,4 +1,4 @@
-# openclaude-sdk - Metodos de Configuracao Mid-Session no Query
+# hammer-sdk - Metodos de Configuracao Mid-Session no Query
 
 Implementar `setModel()`, `setPermissionMode()` e `setMaxThinkingTokens()` no objeto `Query` via protocolo de controle stdin.
 
@@ -36,7 +36,7 @@ Tres metodos. `respondToPermission()` ja demonstra o padrao de comunicacao via `
 
 ## Protocolo de Controle via stdin
 
-O CLI do OpenClaude aceita comandos JSON via stdin durante a execucao. O formato e:
+O CLI do Hammer aceita comandos JSON via stdin durante a execucao. O formato e:
 
 ```json
 {"type": "<command_type>", ...params}

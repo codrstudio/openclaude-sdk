@@ -115,7 +115,7 @@ async setModel(model?: string): Promise<void> {
 
 ### Investigacao necessaria
 
-Antes de implementar, investigar no source do OpenClaude CLI:
+Antes de implementar, investigar no source do Hammer CLI:
 
 1. Qual o formato exato dos comandos de controle via stdin?
 2. Quais comandos retornam resposta e quais sao fire-and-forget?
@@ -125,7 +125,7 @@ Antes de implementar, investigar no source do OpenClaude CLI:
 
 ## Prioridade
 
-**Alta** — Esses metodos sao o maior gap funcional entre OpenClaude SDK e Claude Code SDK. Sem eles, usuarios nao conseguem controle dinamico de sessoes.
+**Alta** — Esses metodos sao o maior gap funcional entre Hammer SDK e Claude Code SDK. Sem eles, usuarios nao conseguem controle dinamico de sessoes.
 
 ---
 

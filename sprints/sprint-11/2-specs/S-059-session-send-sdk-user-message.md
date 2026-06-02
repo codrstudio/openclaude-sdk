@@ -1,4 +1,4 @@
-# openclaude-sdk - Suporte a SDKUserMessage em SDKSession.send()
+# hammer-sdk - Suporte a SDKUserMessage em SDKSession.send()
 
 Permitir que `SDKSession.send()` aceite `string | SDKUserMessage` para conteudo multi-modal em sessoes V2.
 

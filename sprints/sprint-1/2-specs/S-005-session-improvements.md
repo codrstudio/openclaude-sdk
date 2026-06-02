@@ -1,4 +1,4 @@
-# openclaude-sdk - Melhorias de Session Management
+# hammer-sdk - Melhorias de Session Management
 
 Adicionar deep search em `listSessions()` e funcao de conveniencia `continueSession()`.
 

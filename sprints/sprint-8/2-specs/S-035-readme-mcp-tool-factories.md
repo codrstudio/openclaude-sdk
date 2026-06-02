@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao de MCP Tool Factories no README
+# hammer-sdk - Documentacao de MCP Tool Factories no README
 
 Adicionar secao ao README.md documentando `tool()` e `createSdkMcpServer()` com exemplo end-to-end.
 
@@ -83,7 +83,7 @@ Explicar que retorna um `McpSdkServerConfig` com `type: "sdk"` que pode ser pass
 
 ```typescript
 import { z } from "zod"
-import { tool, createSdkMcpServer, query, collectMessages } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query, collectMessages } from "hammer-sdk"
 
 // 1. Definir tools
 const weatherTool = tool(
@@ -130,7 +130,7 @@ import type {
   SdkMcpToolDefinition,
   ToolAnnotations,
   CallToolResult,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 #### 1.6. Tabela de `ToolAnnotations`

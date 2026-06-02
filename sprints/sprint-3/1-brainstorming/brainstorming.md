@@ -1,4 +1,4 @@
-# Brainstorming — openclaude-sdk (Sprint 3)
+# Brainstorming — hammer-sdk (Sprint 3)
 
 ## Contexto
 
@@ -12,7 +12,7 @@ O TASK.md desta wave é `fix-path-encoding` — reimplementar `encodeCwd()` em `
 A paridade algoritmica com o Python SDK é necessária para que a SDK TypeScript interopere corretamente com instâncias que usam o CLI Python como backend — ambos devem resolver o mesmo `cwd` para o mesmo diretório de sessão.
 
 A referência Python está disponível em:
-`D:/aw/context/workspaces/openclaude-sdk/repo/sprints/backlog/00-fix-path-encoding/ref/sessions.py`
+`D:/aw/context/workspaces/hammer-sdk/repo/sprints/backlog/00-fix-path-encoding/ref/sessions.py`
 
 Algoritmo Python relevante:
 ```python

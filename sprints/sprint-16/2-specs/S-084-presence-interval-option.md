@@ -1,4 +1,4 @@
-# openclaude-sdk - presenceIntervalMs: opcao de configuracao do heartbeat
+# hammer-sdk - presenceIntervalMs: opcao de configuracao do heartbeat
 
 Spec do campo `presenceIntervalMs` em `Options` para controlar o intervalo de heartbeat.
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Correcoes de Gerenciamento de Processo
+# hammer-sdk - Correcoes de Gerenciamento de Processo
 
 Corrigir sinal de interrupt (SIGINT vs SIGTERM) e deduplicar resolucao de comando.
 
@@ -76,7 +76,7 @@ Tres mecanismos sobrepostos para resolver o executavel:
 
 | Mecanismo | Local | Comportamento |
 |-----------|-------|---------------|
-| `resolveCommand()` | `registry.ts` | Sempre retorna `"openclaude"` |
+| `resolveCommand()` | `registry.ts` | Sempre retorna `"hammer"` |
 | `options.pathToClaudeCodeExecutable` | `query.ts` | Override do caminho |
 | Logica Windows `cmd /c` | `spawnAndStream()` | Wrapping para evitar ENOENT |
 
@@ -90,7 +90,7 @@ export function resolveExecutable(options: Options = {}): {
   command: string
   prependArgs: string[]
 } {
-  const base = options.pathToClaudeCodeExecutable || "openclaude"
+  const base = options.pathToClaudeCodeExecutable || "hammer"
 
   if (process.platform === "win32") {
     return {

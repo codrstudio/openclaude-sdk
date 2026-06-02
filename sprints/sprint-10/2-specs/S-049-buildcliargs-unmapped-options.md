@@ -1,4 +1,4 @@
-# openclaude-sdk - Mapear Options Ignoradas em buildCliArgs
+# hammer-sdk - Mapear Options Ignoradas em buildCliArgs
 
 Adicionar mapeamento CLI para 12 campos de `Options` que sao tipados mas silenciosamente ignorados por `buildCliArgs()`.
 

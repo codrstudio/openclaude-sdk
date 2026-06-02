@@ -1,4 +1,4 @@
-# openclaude-sdk - Hierarquia de Erros Tipados
+# hammer-sdk - Hierarquia de Erros Tipados
 
 Criar classes de erro tipadas para tratamento programatico de falhas da SDK.
 
@@ -13,7 +13,7 @@ Resolver D-005: falhas chegam como `SDKResultMessage` com `subtype: "error_*"` o
 ## Hierarquia de Classes
 
 ```
-OpenClaudeError (base)
+HammerError (base)
   ├── AuthenticationError      (assistant.error === "authentication_failed")
   ├── BillingError             (assistant.error === "billing_error")
   ├── RateLimitError           (assistant.error === "rate_limit")
@@ -30,7 +30,7 @@ OpenClaudeError (base)
 ## Classe Base
 
 ```typescript
-export class OpenClaudeError extends Error {
+export class HammerError extends Error {
   readonly code: string
   readonly sessionId: string | null
   readonly costUsd: number
@@ -74,7 +74,7 @@ export class OpenClaudeError extends Error {
 ### RateLimitError — campos extras
 
 ```typescript
-export class RateLimitError extends OpenClaudeError {
+export class RateLimitError extends HammerError {
   readonly resetsAt?: number      // timestamp quando o rate limit expira
   readonly utilization?: number   // 0-1, quanto do limite foi usado
 }
@@ -109,7 +109,7 @@ export async function collectMessages(q: Query): Promise<CollectResult> {
 ## Helper: isRecoverable()
 
 ```typescript
-export function isRecoverable(error: OpenClaudeError): boolean
+export function isRecoverable(error: HammerError): boolean
 ```
 
 | Retorna `true` | Retorna `false` |
@@ -131,7 +131,7 @@ export function isRecoverable(error: OpenClaudeError): boolean
 
 ## Criterios de Aceite
 
-- [ ] `OpenClaudeError` e base class com `code`, `sessionId`, `costUsd`, `durationMs`
+- [ ] `HammerError` e base class com `code`, `sessionId`, `costUsd`, `durationMs`
 - [ ] Todas as 9 subclasses estao implementadas e exportadas
 - [ ] `collectMessages()` lanca o erro tipado correto para cada `subtype` de erro
 - [ ] `query()` NAO lanca — apenas yielda mensagens

@@ -1,4 +1,4 @@
-# openclaude-sdk - Flatten Ergonomia de CreateSessionOptions
+# hammer-sdk - Flatten Ergonomia de CreateSessionOptions
 
 Eliminar nesting desnecessario em `CreateSessionOptions` promovendo campos frequentes ao nivel raiz.
 

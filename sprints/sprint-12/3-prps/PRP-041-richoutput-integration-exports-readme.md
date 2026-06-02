@@ -117,7 +117,7 @@ Novo:
         const displayServer = await createDisplayMcpServer()
         const existingServers = optionsForCli.mcpServers ?? {}
         if ("display" in existingServers) {
-          console.warn('[openclaude-sdk] richOutput: overriding existing "display" MCP server')
+          console.warn('[hammer-sdk] richOutput: overriding existing "display" MCP server')
         }
         optionsForCli = {
           ...optionsForCli,
@@ -240,7 +240,7 @@ When `richOutput` is disabled (default), there is zero overhead — no MCP serve
 ### Usage
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Compare the top 3 laptops under $1500 with specs and prices",
@@ -268,7 +268,7 @@ for await (const msg of q) {
 Use `DisplayToolRegistry` to validate `tool_use` inputs on the client:
 
 ```typescript
-import { DisplayToolRegistry } from "openclaude-sdk"
+import { DisplayToolRegistry } from "hammer-sdk"
 
 // Given a tool_use block from the stream:
 const schema = DisplayToolRegistry[block.name as keyof typeof DisplayToolRegistry]
@@ -293,8 +293,8 @@ if (schema) {
 | `query({ ..., options: { richOutput: true, systemPrompt: undefined } })` | N/A | `{ type: "preset", preset: "claude_code", append: DISPLAY_PROMPT }` |
 | `query({ ..., options: { richOutput: true, systemPrompt: "Custom" } })` | N/A | `"Custom\n\n<display prompt>"` |
 | `query({ ..., options: { richOutput: true, systemPrompt: { type: "preset", preset: "claude_code", append: "X" } } })` | N/A | `{ type: "preset", preset: "claude_code", append: "X\n\n<display prompt>" }` |
-| `import { DisplayMetricSchema } from "openclaude-sdk"` | Erro | Funciona |
-| `import type { DisplayMetric } from "openclaude-sdk"` | Erro | Funciona |
+| `import { DisplayMetricSchema } from "hammer-sdk"` | Erro | Funciona |
+| `import type { DisplayMetric } from "hammer-sdk"` | Erro | Funciona |
 
 ## Features
 
@@ -311,8 +311,8 @@ if (schema) {
 - NAO alterar `src/display/schemas.ts`, `src/display/tools.ts`, `src/display/server.ts` — sao escopo de PRP-040
 - NAO alterar `src/mcp.ts` — escopo de PRP-039
 - NAO adicionar testes (nao ha framework de teste configurado)
-- NAO implementar renderizacao de widgets — responsabilidade do openclaude-chat
-- NAO deprecar `@codrstudio/openclaude-sdk` — task separada fora do escopo
+- NAO implementar renderizacao de widgets — responsabilidade do hammer-chat
+- NAO deprecar `@codrstudio/hammer-sdk` — task separada fora do escopo
 - NAO alterar `src/process.ts` (`buildCliArgs`) — system prompt ja e mapeado la
 
 ## Dependencias

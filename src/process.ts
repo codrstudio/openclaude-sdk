@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Gerenciamento de subprocesso openclaude e parse de JSONL
+// Gerenciamento de subprocesso hammer e parse de JSONL
 // ---------------------------------------------------------------------------
 
 import { spawn, type ChildProcess } from "node:child_process"
@@ -18,7 +18,7 @@ export function resolveExecutable(options?: Options): {
   command: string
   prependArgs: string[]
 } {
-  const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const base = options?.pathToClaudeCodeExecutable || "hammer"
   const extraArgs = options?.executableArgs ?? []
 
   // Explicit executable: use it as command, base path as first script argument
@@ -99,24 +99,24 @@ export function buildCliArgs(options: Options = {}): string[] {
   }
 
   // System prompt — passed via *-file variants to survive cmd.exe /c on Windows.
-  // Rationale: on Windows the SDK spawns the CLI through `cmd.exe /c openclaude ...`.
+  // Rationale: on Windows the SDK spawns the CLI through `cmd.exe /c hammer ...`.
   // When an arg contains literal `\n` (e.g. richOutput's multi-line DISPLAY_SYSTEM_PROMPT)
   // cmd.exe interprets the newline as a command separator and DROPS every flag after
   // it — including the `--mcp-config` that richOutput also depends on. Writing the
   // prompt text to a temp file and passing `--system-prompt-file` / `--append-system-prompt-file`
-  // bypasses the shell entirely. The openclaude CLI supports both *-file variants
+  // bypasses the shell entirely. The hammer CLI supports both *-file variants
   // (see `--bare` help: "--system-prompt[-file], --append-system-prompt[-file]").
-  // Note: `--system-prompt-preset` is NOT passed — the installed openclaude CLI
+  // Note: `--system-prompt-preset` is NOT passed — the installed hammer CLI
   // does not know that flag. When `type: "preset"`, the CLI defaults to
   // `claude_code` automatically.
   if (options.systemPrompt) {
     if (typeof options.systemPrompt === "string") {
-      const tmpDir = mkdtempSync(join(tmpdir(), "openclaude-sysprompt-"))
+      const tmpDir = mkdtempSync(join(tmpdir(), "hammer-sysprompt-"))
       const promptPath = join(tmpDir, "system-prompt.txt")
       writeFileSync(promptPath, options.systemPrompt)
       args.push("--system-prompt-file", promptPath)
     } else if (options.systemPrompt.append) {
-      const tmpDir = mkdtempSync(join(tmpdir(), "openclaude-sysprompt-"))
+      const tmpDir = mkdtempSync(join(tmpdir(), "hammer-sysprompt-"))
       const promptPath = join(tmpDir, "append-system-prompt.txt")
       writeFileSync(promptPath, options.systemPrompt.append)
       args.push("--append-system-prompt-file", promptPath)
@@ -244,7 +244,7 @@ export function buildCliArgs(options: Options = {}): string[] {
   }
 
   // MCP Servers
-  // The installed `openclaude` CLI does not support `--mcp-server` /
+  // The installed `hammer` CLI does not support `--mcp-server` /
   // `--mcp-server-sse` / `--mcp-server-header` flags. Instead it takes
   // `--mcp-config <json-string-or-file>` (same schema as .mcp.json /
   // Claude Desktop). We serialize all SDK-side MCP configs into a single
@@ -286,10 +286,10 @@ export function buildCliArgs(options: Options = {}): string[] {
     }
     if (Object.keys(mcpConfigJson.mcpServers).length > 0) {
       // Write to temp file instead of inline JSON: on Windows we spawn via
-      // `cmd.exe /c openclaude ...` which re-parses the command line and
+      // `cmd.exe /c hammer ...` which re-parses the command line and
       // mangles embedded quotes/braces in JSON strings. Passing a file path
       // avoids all shell-escaping issues across platforms.
-      const tmpDir = mkdtempSync(join(tmpdir(), "openclaude-mcp-"))
+      const tmpDir = mkdtempSync(join(tmpdir(), "hammer-mcp-"))
       const cfgPath = join(tmpDir, "mcp.json")
       writeFileSync(cfgPath, JSON.stringify(mcpConfigJson))
       args.push("--mcp-config", cfgPath)
@@ -388,8 +388,8 @@ export function spawnAndStream(
     ...(options.env ? filterEnv(options.env) : {}),
   }
 
-  if (process.env.OPENCLAUDE_DEBUG_SPAWN) {
-    console.error("[openclaude spawn]", JSON.stringify({ command, args }))
+  if (process.env.HAMMER_DEBUG_SPAWN) {
+    console.error("[hammer spawn]", JSON.stringify({ command, args }))
   }
   const proc: ChildProcess = spawn(command, args, {
     cwd: options.cwd || process.cwd(),
@@ -573,7 +573,7 @@ export function spawnAndStream(
     options.signal?.removeEventListener("abort", onAbort)
 
     if (stderr && !options.signal?.aborted) {
-      process.stderr.write(`[openclaude stderr] ${stderr.substring(0, 500)}\n`)
+      process.stderr.write(`[hammer stderr] ${stderr.substring(0, 500)}\n`)
     }
   }
 

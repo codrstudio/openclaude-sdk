@@ -2,7 +2,7 @@
 // session-persistent.ts — Sessao com subprocess unico vivo entre turnos
 //
 // Diferente de createSession() (V2), que re-spawna o CLI a cada send() com
-// --resume, esta variante mantem UM subprocess openclaude vivo e empurra
+// --resume, esta variante mantem UM subprocess hammer vivo e empurra
 // envelopes stream-json no stdin a cada turno. Resultado:
 //
 //   1° turno  →  paga cold start completo (~10s)
@@ -11,7 +11,7 @@
 // Trade-offs:
 // - Requer permissionMode: "bypassPermissions" ou "dontAsk" (CLI fecha stdin
 //   em outros modos quando o protocolo de permissoes pede resposta).
-// - O CLI deve suportar --input-format stream-json (openclaude >= 0.3).
+// - O CLI deve suportar --input-format stream-json (hammer >= 0.3).
 // - Cada turno termina ao receber message com type=="result"; o subprocess
 //   continua vivo aguardando o proximo envelope.
 // ---------------------------------------------------------------------------
@@ -78,7 +78,7 @@ function pickPhrase(arr: string[]): string {
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// AskUserQuestion — tool nativa do CLI openclaude
+// AskUserQuestion — tool nativa do CLI hammer
 //
 // Quando habilitada via `askUserQuestion: true`, a sessao spawna o CLI com
 // `--permission-prompt-tool stdio` e intercepta o protocolo can_use_tool pra
@@ -366,7 +366,7 @@ export function createPersistentSession(
 
   proc.stderr?.setEncoding("utf8")
   proc.stderr?.on("data", (s: string) => {
-    if (process.env.OPENCLAUDE_DEBUG_PERSISTENT) {
+    if (process.env.HAMMER_DEBUG_PERSISTENT) {
       console.error("[persistent stderr]", s.slice(0, 200))
     }
   })

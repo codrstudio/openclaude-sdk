@@ -1,4 +1,4 @@
-# openclaude-sdk - Corrigir Flags de Tools para kebab-case
+# hammer-sdk - Corrigir Flags de Tools para kebab-case
 
 Corrigir `--allowedTools` e `--disallowedTools` para `--allowed-tools` e `--disallowed-tools`.
 

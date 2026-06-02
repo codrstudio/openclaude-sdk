@@ -1,4 +1,4 @@
-# openclaude-sdk - Tipos e Schema Zod do ask_user
+# hammer-sdk - Tipos e Schema Zod do ask_user
 
 Definir os tipos TypeScript e o schema Zod que formam o contrato da tool `ask_user` entre agente, SDK e cliente.
 

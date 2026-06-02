@@ -12,7 +12,7 @@ Referencia: specs S-049 (D-057), S-051 (D-062), S-054 (D-061), S-055 (D-063).
 
 ## Contexto
 
-`buildCliArgs()` em `src/process.ts` converte um objeto `Options` em flags CLI para o OpenClaude. Diversas opcoes sao aceitas pela interface TypeScript sem erro, mas nao geram nenhuma flag — o CLI nunca as recebe. Isso viola o principio de menor surpresa: o usuario configura algo, nao recebe erro, mas a opcao nao tem efeito.
+`buildCliArgs()` em `src/process.ts` converte um objeto `Options` em flags CLI para o Hammer. Diversas opcoes sao aceitas pela interface TypeScript sem erro, mas nao geram nenhuma flag — o CLI nunca as recebe. Isso viola o principio de menor surpresa: o usuario configura algo, nao recebe erro, mas a opcao nao tem efeito.
 
 Estado atual do codigo relevante:
 
@@ -191,7 +191,7 @@ Mudancas:
 - Formato da flag: `--mcp-server-header <server-name>:<header-name>:<value>`
 - Sem headers, comportamento identico ao atual
 
-**Nota**: o formato exato da flag `--mcp-server-header` deve ser verificado contra o CLI do OpenClaude. Se o formato divergir, ajustar conforme a documentacao do CLI.
+**Nota**: o formato exato da flag `--mcp-server-header` deve ser verificado contra o CLI do Hammer. Se o formato divergir, ajustar conforme a documentacao do CLI.
 
 ### Comportamento por cenario
 

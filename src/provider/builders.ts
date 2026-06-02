@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // provider/builders.ts — montagem do ProfileEnv por provider.
 //
-// Espelha os `build*ProfileEnv` do openclaude (`src/utils/providerProfile.ts`),
+// Espelha os `build*ProfileEnv` do hammer (`src/utils/providerProfile.ts`),
 // mas puros: leem só os campos passados explicitamente (não tocam process.env),
 // porque o caller é um backend que recebe os campos do formulário.
 // ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao dos Query Introspection e Operation Methods no README
+# hammer-sdk - Documentacao dos Query Introspection e Operation Methods no README
 
 Documentar metodos avancados de introspecao e operacao do Query no README.
 

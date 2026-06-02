@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// auth/store.ts — persistência de credenciais no formato do openclaude.
+// auth/store.ts — persistência de credenciais no formato do hammer.
 //
 // Grava `$CLAUDE_CONFIG_DIR/.credentials.json` → `{ claudeAiOauth: {...} }`,
 // idêntico ao que o CLI lê (`utils/auth.ts:1238`, `:1344`). Assim a sessão

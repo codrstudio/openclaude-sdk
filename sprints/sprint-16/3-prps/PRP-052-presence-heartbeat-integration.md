@@ -121,7 +121,7 @@ Regras:
 - Campos no `data` JSON: `ts`, `seq`, `elapsedMs` — mesmos do hot-patch
 - Campo `type: "presence"` NAO vai no JSON do data — event name `ping` ja identifica
 - `lastEmitAt` removido — SDK emite incondicionalmente, server faz relay direto
-- Zero mudanca no cliente `openclaude-chat` — wire format identico
+- Zero mudanca no cliente `hammer-chat` — wire format identico
 
 **Manter no server.mjs:**
 - `httpServer.requestTimeout = 0` — protecao contra timeout Node 18+ (default 300s)
@@ -149,7 +149,7 @@ Regras:
 
 | Cenario | Antes | Depois |
 |---------|-------|--------|
-| `import type { SDKPresenceMessage } from "openclaude-sdk"` | Erro | Funciona |
+| `import type { SDKPresenceMessage } from "hammer-sdk"` | Erro | Funciona |
 | `node .tmp/demo/test-heartbeat.mjs` (gap 40s) | N/A | 7-8 linhas PRESENCE intercaladas |
 | SSE wire format via server.mjs | `event: ping` (hot-patch local) | `event: ping` (relay SDK) — identico |
 | `pipeQueryToSSE` — `setInterval` local | Presente | Removido |
@@ -171,7 +171,7 @@ Regras:
 - NAO alterar `src/types/messages.ts` — escopo de PRP-051
 - NAO alterar `src/types/options.ts` — escopo de PRP-051
 - NAO alterar `src/query.ts` — escopo de PRP-051
-- NAO alterar o cliente `openclaude-chat` — wire format preservado, zero mudanca necessaria
+- NAO alterar o cliente `hammer-chat` — wire format preservado, zero mudanca necessaria
 - NAO adicionar testes unitarios (nao ha framework de teste configurado)
 - NAO implementar logica condicional de gap no relay (`lastEmitAt`) — relay direto e mais simples
 

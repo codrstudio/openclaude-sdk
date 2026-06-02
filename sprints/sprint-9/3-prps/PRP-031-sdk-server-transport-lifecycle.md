@@ -132,7 +132,7 @@ async function stopSdkServers(servers: RunningServer[]): Promise<void> {
   )
   for (const result of results) {
     if (result.status === "rejected") {
-      console.error("[openclaude-sdk] Failed to stop SDK server:", result.reason)
+      console.error("[hammer-sdk] Failed to stop SDK server:", result.reason)
     }
   }
 }

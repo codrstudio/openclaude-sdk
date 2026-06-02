@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Provider/Model Registry — resolve env vars para openclaude CLI
+// Provider/Model Registry — resolve env vars para hammer CLI
 // ---------------------------------------------------------------------------
 
 import type { Provider, Model, ProviderRegistry, ProviderType } from "./types/provider.js"
@@ -15,7 +15,7 @@ export const DEFAULT_MODEL = {
 } as const
 
 // ---------------------------------------------------------------------------
-// resolveModelEnv() — mapeia provider type para env vars do openclaude
+// resolveModelEnv() — mapeia provider type para env vars do hammer
 // ---------------------------------------------------------------------------
 
 function envForProviderType(
@@ -149,7 +149,7 @@ export function createOpenRouterRegistry(config: {
 }
 
 // ---------------------------------------------------------------------------
-// resolveCommand() — sempre "openclaude" (nao usamos claude CLI)
+// resolveCommand() — sempre "hammer" (nao usamos claude CLI)
 // ---------------------------------------------------------------------------
 
 /**
@@ -159,5 +159,5 @@ export function resolveCommand(
   _registry: ProviderRegistry,
   _modelId: string,
 ): string {
-  return "openclaude"
+  return "hammer"
 }

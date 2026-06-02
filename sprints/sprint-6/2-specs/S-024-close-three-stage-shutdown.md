@@ -1,4 +1,4 @@
-# openclaude-sdk - Shutdown de 3 Estagios em close()
+# hammer-sdk - Shutdown de 3 Estagios em close()
 
 Implementar shutdown gracioso em `close()` com 3 estagios sequenciais: fechar stdin (EOF), SIGTERM, SIGKILL.
 

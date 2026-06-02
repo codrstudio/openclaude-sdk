@@ -1,4 +1,4 @@
-# openclaude-sdk - Flag stdinClosed para Prevenir EPIPE em writeStdin()
+# hammer-sdk - Flag stdinClosed para Prevenir EPIPE em writeStdin()
 
 Adicionar flag `stdinClosed` em `spawnAndStream()` que previne escrita em stdin apos `close()` ou `onAbort`.
 

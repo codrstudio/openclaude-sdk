@@ -16,7 +16,7 @@
       "Nenhuma funcao e exportada publicamente",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
     "completed_at": "2026-04-09T04:56:53.571Z"
   },
   {
@@ -39,7 +39,7 @@
       "Tie-breaking escolhe entry com maior indice no array original",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
     "completed_at": "2026-04-09T05:10:00.000Z"
   },
   {
@@ -62,7 +62,7 @@
       "npm run typecheck passa sem erros",
       "npm run build compila sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-021-session-chain-reconstruction.md",
     "completed_at": "2026-04-09T05:25:00.000Z"
   },
   {
@@ -83,7 +83,7 @@
       "Mensagens normais passam pelo wrapStream sem alteracao",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md",
     "completed_at": "2026-04-09T06:45:00.000Z"
   },
   {
@@ -103,7 +103,7 @@
       "Todos usam writeStdin(payload + newline)",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md",
     "completed_at": "2026-04-09T07:00:00.000Z"
   },
   {
@@ -123,7 +123,7 @@
       "tool() retorna SdkMcpToolDefinition com type inference do inputSchema",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
     "completed_at": "2026-04-09T07:15:00.000Z"
   },
   {
@@ -145,7 +145,7 @@
       "Mensagem de erro menciona que in-process transport nao e suportado",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
     "completed_at": "2026-04-09T07:30:00.000Z"
   },
   {
@@ -167,7 +167,7 @@
       "Tipos exportados em src/index.ts",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-023-query-config-introspection.md"
   },
   {
     "id": "F-056",
@@ -185,7 +185,7 @@
       "stopTask envia JSON com type e taskId",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
     "completed_at": "2026-04-09T08:20:00Z"
   },
   {
@@ -207,7 +207,7 @@
       "Tipos exportados em src/index.ts",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
     "completed_at": "2026-04-09T08:40:00Z"
   },
   {
@@ -226,7 +226,7 @@
       "Apos iteracao completa, envia {type: 'stream_input_end'}",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-024-query-operation-methods.md",
     "completed_at": "2026-04-09T09:00:00Z"
   },
   {
@@ -249,7 +249,7 @@
       "npm run typecheck passa sem erros",
       "npm run build compila sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-022-mcp-tool-factories.md",
     "completed_at": "2026-04-09T09:30:00Z"
   },
   {
@@ -271,7 +271,7 @@
       "collect() retorna messages, result, costUsd, durationMs",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
     "completed_at": "2026-04-09T10:00:00.000Z"
   },
   {
@@ -293,7 +293,7 @@
       "close() e Symbol.asyncDispose funcionam identicamente a createSession",
       "npm run typecheck passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
     "completed_at": "2026-04-09T10:00:00.000Z"
   },
   {
@@ -317,7 +317,7 @@
       "npm run typecheck passa sem erros",
       "npm run build compila sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-7/worktree/sprints/sprint-7/3-prps/PRP-025-v2-session-api.md",
     "completed_at": "2026-04-09T10:00:00.000Z"
   }
 ]

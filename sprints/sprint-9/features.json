@@ -15,7 +15,7 @@
       "npm run typecheck passa sem erros",
       "npm run build passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
   },
   {
     "id": "F-068",
@@ -35,7 +35,7 @@
       "npm run typecheck passa sem erros",
       "npm run build passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
   },
   {
     "id": "F-069",
@@ -54,7 +54,7 @@
       "npm run typecheck passa sem erros",
       "npm run build passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-030-mcp-sdk-server-bugfixes.md"
   },
   {
     "id": "F-070",
@@ -79,7 +79,7 @@
       "npm run typecheck passa sem erros",
       "npm run build passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-031-sdk-server-transport-lifecycle.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-031-sdk-server-transport-lifecycle.md"
   },
   {
     "id": "F-071",
@@ -103,7 +103,7 @@
       "npm run typecheck passa sem erros",
       "npm run build passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-031-sdk-server-transport-lifecycle.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-031-sdk-server-transport-lifecycle.md"
   },
   {
     "id": "F-076",
@@ -122,7 +122,7 @@
       "npm run typecheck passa sem erros",
       "npm run build passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-033-buildconversationchain-empty-mainleaves.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-033-buildconversationchain-empty-mainleaves.md"
   },
   {
     "id": "F-072",
@@ -144,7 +144,7 @@
       "Tabela comparação V1 vs V2 presente",
       "Seções existentes do README não foram removidas ou reorganizadas"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
   },
   {
     "id": "F-073",
@@ -162,7 +162,7 @@
       "Nota sobre fire-and-forget presente",
       "Seções existentes do README não foram removidas ou reorganizadas"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
   },
   {
     "id": "F-075",
@@ -181,7 +181,7 @@
       "Tipos exportados mencionados (SlashCommand, ModelInfo, AgentInfo, McpServerStatusInfo, AccountInfo, InitializationResult)",
       "Seções existentes do README não foram removidas ou reorganizadas"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md"
   },
   {
     "id": "F-074",
@@ -204,7 +204,7 @@
       "Nota sobre peerDependencies opcionais presente",
       "Seções existentes do README não foram removidas ou reorganizadas"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-9/worktree/sprints/sprint-9/3-prps/PRP-032-readme-documentation.md",
     "completed_at": "2026-04-09T00:09:00Z"
   }
 ]

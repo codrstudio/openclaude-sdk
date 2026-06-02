@@ -1,4 +1,4 @@
-# openclaude-sdk - Barrel, exports publicos e integracao no lifecycleGenerator
+# hammer-sdk - Barrel, exports publicos e integracao no lifecycleGenerator
 
 Spec do barrel do modulo tool-intention, exports publicos e integracao do filtro no `query.ts`.
 

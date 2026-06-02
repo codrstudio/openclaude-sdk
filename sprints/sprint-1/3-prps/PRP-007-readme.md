@@ -21,8 +21,8 @@ O TASK.md define `README.md` como artefato obrigatorio. A SDK precisa de documen
 O README deve conter as seguintes secoes, nesta ordem:
 
 #### 1. Header
-- Titulo: `openclaude-sdk`
-- Descricao de uma linha: "TypeScript SDK wrapper for the OpenClaude CLI"
+- Titulo: `hammer-sdk`
+- Descricao de uma linha: "TypeScript SDK wrapper for the Hammer CLI"
 
 #### 2. Installation
 
@@ -30,10 +30,10 @@ O README deve conter as seguintes secoes, nesta ordem:
 ## Installation
 
 \`\`\`bash
-npm install openclaude-sdk
+npm install hammer-sdk
 \`\`\`
 
-Requires Node.js >= 20 and the [OpenClaude CLI](https://github.com/Gitlawb/openclaude) installed.
+Requires Node.js >= 20 and the [Hammer CLI](https://github.com/Gitlawb/hammer) installed.
 ```
 
 #### 3. Quick Start
@@ -41,7 +41,7 @@ Requires Node.js >= 20 and the [OpenClaude CLI](https://github.com/Gitlawb/openc
 Exemplo minimo com `query()` + `for await`:
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({ prompt: "Hello, world!" })
 
@@ -105,7 +105,7 @@ Exemplo de `respondToPermission()` em plan mode.
 |-------|---------|
 | Idioma | Ingles |
 | Exemplos | TypeScript com imports explicitos |
-| Links | Link para repo OpenClaude nos pre-requisitos |
+| Links | Link para repo Hammer nos pre-requisitos |
 | Localizacao | `README.md` na raiz do repositorio |
 
 ## Features

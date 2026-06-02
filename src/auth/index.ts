@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // auth — autenticação Anthropic (claude.ai Pro/Max + Console) standalone.
 //
-// Reimplementa o fluxo do `/login` do Claude Code SEM depender do CLI openclaude
+// Reimplementa o fluxo do `/login` do Claude Code SEM depender do CLI hammer
 // nem de listener em localhost: só o fluxo MANUAL (contracódigo), que funciona
 // headless (servidor) e dirigido por web UI.
 //

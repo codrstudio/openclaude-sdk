@@ -1,4 +1,4 @@
-# openclaude-sdk - Validacao typecheck e build
+# hammer-sdk - Validacao typecheck e build
 
 Spec dos criterios de validacao final: typecheck e build devem passar com todas as mudancas do sprint.
 

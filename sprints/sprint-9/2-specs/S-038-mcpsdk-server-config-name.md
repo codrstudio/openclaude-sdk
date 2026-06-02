@@ -1,4 +1,4 @@
-# openclaude-sdk - Adicionar Campo name a McpSdkServerConfig
+# hammer-sdk - Adicionar Campo name a McpSdkServerConfig
 
 Adicionar campo `name: string` a interface `McpSdkServerConfig` e ao retorno de `createSdkMcpServer()`.
 

@@ -6,14 +6,14 @@ Built-in opcional que permite ao agente **pausar e perguntar algo ao usuario** n
 
 ## Contexto
 
-O openclaude-sdk hoje suporta dois mecanismos de interacao durante a execucao:
+O hammer-sdk hoje suporta dois mecanismos de interacao durante a execucao:
 
 1. **Plan mode** (`permissionMode: "plan"` + `respondToPermission()`) — aprovar/negar tool uses antes de executar. E controle de execucao, nao dialogo.
 2. **`streamInput()`** — empurrar texto via stdin, mas e unidirecional e nao se amarra a um ponto especifico da execucao.
 
 Falta a ponte: o **agente parar, fazer uma pergunta, esperar a resposta do cliente, receber a resposta e continuar raciocinando sobre ela**. Essa capacidade e fundamental para agentes conversacionais que precisam desambiguacao ("voce quis dizer X ou Y?"), preenchimento progressivo de formulario ("falta o endereco") ou confirmacao explicita antes de executar acao cara.
 
-O `@codrstudio/openclaude-sdk` tinha `createAskUserTool` baseado em callback local, mas o modelo de callback nao se aplica aqui — o openclaude-sdk spawna um subprocesso e a comunicacao com o cliente e assincrona via stream.
+O `@codrstudio/hammer-sdk` tinha `createAskUserTool` baseado em callback local, mas o modelo de callback nao se aplica aqui — o hammer-sdk spawna um subprocesso e a comunicacao com o cliente e assincrona via stream.
 
 ---
 
@@ -179,7 +179,7 @@ Nao precisa exportar schemas Zod porque nao ha valor em validacao client-side pa
 ## Exemplo end-to-end
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Book a meeting for next week with the marketing team",
@@ -209,7 +209,7 @@ for await (const msg of q) {
 
 `richOutput` e `askUser` sao **ortogonais** — podem ser ligadas juntas ou separadas. Quando ambas estao `true`, os MCP servers sao registrados independentemente sob chaves diferentes (`"display"` e `"ask_user"`).
 
-Existe uma oportunidade de **unificar a experiencia visual**: quando `askUser` gera uma pergunta com `inputType === "choice"`, o openclaude-chat pode renderizar como `display_highlight` com action `choices` (reusando o renderer que ja existe). Mas isso e decisao do cliente — o SDK apenas emite o `tool_use` de `ask_user`, nao traduz para display.
+Existe uma oportunidade de **unificar a experiencia visual**: quando `askUser` gera uma pergunta com `inputType === "choice"`, o hammer-chat pode renderizar como `display_highlight` com action `choices` (reusando o renderer que ja existe). Mas isso e decisao do cliente — o SDK apenas emite o `tool_use` de `ask_user`, nao traduz para display.
 
 ---
 
@@ -254,7 +254,7 @@ Existe uma oportunidade de **unificar a experiencia visual**: quando `askUser` g
 
 ## Prioridade
 
-**Media** — segundo passo do milestone-02 depois de `richOutput`. Desbloqueia agentes conversacionais de verdade (multi-turn com desambiguacao). Nao bloqueia a deprecation do `openclaude-sdk` (task 01 ja basta para isso).
+**Media** — segundo passo do milestone-02 depois de `richOutput`. Desbloqueia agentes conversacionais de verdade (multi-turn com desambiguacao). Nao bloqueia a deprecation do `hammer-sdk` (task 01 ja basta para isso).
 
 ---
 
@@ -262,8 +262,8 @@ Existe uma oportunidade de **unificar a experiencia visual**: quando `askUser` g
 
 | Origem | Referencia |
 |--------|-----------|
-| Gap analysis openclaude-sdk vs openclaude-sdk | Conversa de design 2026-04-10 |
-| Source historico | `D:\aw\context\workspaces\openclaude-sdk\repo\src\tools\ask-user.ts` (baseado em callback local, nao reaproveitavel) |
+| Gap analysis hammer-sdk vs hammer-sdk | Conversa de design 2026-04-10 |
+| Source historico | `D:\aw\context\workspaces\hammer-sdk\repo\src\tools\ask-user.ts` (baseado em callback local, nao reaproveitavel) |
 | Dep de `tool()` e `createSdkMcpServer()` | `sprints/backlog/milestone-01/06-mcp-tool-factories/TASK.md` |
 | Precedente de flag + built-in | `sprints/backlog/milestone-02/01-rich-output-display-tools/TASK.md` |
-| Consumidor final | `D:\aw\context\workspaces\openclaude-chat\repo` |
+| Consumidor final | `D:\aw\context\workspaces\hammer-chat\repo` |

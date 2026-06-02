@@ -15,7 +15,7 @@
       "AskUserAnswer is discriminated union by 'type' with 5 variants: text, number, boolean, choice, cancelled",
       "npx tsc --noEmit passes"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
   },
   {
     "id": "F-105",
@@ -34,7 +34,7 @@
       "AskUserInput type is exported as z.infer<typeof askUserSchema>",
       "npx tsc --noEmit passes"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
   },
   {
     "id": "F-106",
@@ -52,7 +52,7 @@
       "Prompt text mentions ask_user tool, clarification, missing info, confirmation",
       "Prompt mentions inputType='choice' for discrete options"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
   },
   {
     "id": "F-110",
@@ -70,7 +70,7 @@
       "Fields are placed after richOutput in the interface",
       "npx tsc --noEmit passes"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
   },
   {
     "id": "F-108",
@@ -95,7 +95,7 @@
       "AskUserEmitter type is exported",
       "Uses tool() and createSdkMcpServer() from ../mcp.js"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-043-ask-user-server.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-043-ask-user-server.md"
   },
   {
     "id": "F-109",
@@ -119,7 +119,7 @@
       "formatAnswer({ type: 'cancelled' }, 30000) returns 'User did not respond within 30s.'",
       "formatAnswer({ type: 'cancelled' }) returns 'User cancelled the question.'"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-043-ask-user-server.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-043-ask-user-server.md"
   },
   {
     "id": "F-107",
@@ -146,7 +146,7 @@
       "All import paths use .js extension",
       "npx tsc --noEmit passes"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-042-ask-user-types-schema-prompt-barrel.md"
   },
   {
     "id": "F-111",
@@ -169,7 +169,7 @@
       "q.respondToAskUser with unknown callId logs console.warn and returns without throwing",
       "npx tsc --noEmit passes"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
   },
   {
     "id": "F-112",
@@ -196,7 +196,7 @@
       "Both askUser and richOutput can be true simultaneously (orthogonal)",
       "npx tsc --noEmit passes"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-044-askuser-integration.md"
   },
   {
     "id": "F-113",
@@ -217,7 +217,7 @@
       "Uses 'export type' (not 'export') for tree-shaking",
       "npx tsc --noEmit passes"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-045-ask-user-exports-readme.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-045-ask-user-exports-readme.md"
   },
   {
     "id": "F-114",
@@ -240,6 +240,6 @@
       "Shows cancellation example with { type: 'cancelled' }",
       "Mentions orthogonality with richOutput"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-045-ask-user-exports-readme.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-13/worktree/sprints/sprint-13/3-prps/PRP-045-ask-user-exports-readme.md"
   }
 ]

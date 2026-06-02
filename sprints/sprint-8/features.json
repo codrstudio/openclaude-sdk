@@ -15,7 +15,7 @@
       "Quando todos os leaves sao sidechain: buildConversationChain retorna []",
       "Quando todos os leaves sao team messages: buildConversationChain retorna []"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-029-buildconversationchain-empty-mainleaves.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-029-buildconversationchain-empty-mainleaves.md",
     "completed_at": "2026-04-09T05:51:09.799Z"
   },
   {
@@ -35,7 +35,7 @@
       "Comparacao V1 vs V2 em formato tabular esta presente",
       "Tipos exportados (SDKSession, CreateSessionOptions, ResumeSessionOptions, PromptOptions) listados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-026-readme-v2-session-api.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-026-readme-v2-session-api.md",
     "completed_at": "2026-04-09T06:30:00.000Z"
   },
   {
@@ -55,7 +55,7 @@
       "Nota sobre protocolo fire-and-forget vs request/response presente",
       "Tipos de introspection exportados listados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-027-readme-query-methods.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-027-readme-query-methods.md",
     "completed_at": "2026-04-09T07:10:00.000Z"
   },
   {
@@ -76,7 +76,7 @@
       "Peer dependencies mencionadas (zod, @modelcontextprotocol/sdk)",
       "Tipos exportados (SdkMcpToolDefinition, ToolAnnotations, CallToolResult) listados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-028-readme-mcp-tool-factories.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-028-readme-mcp-tool-factories.md",
     "completed_at": "2026-04-09T08:00:00.000Z"
   },
   {
@@ -99,7 +99,7 @@
       "Exemplo de streamInput() com AsyncIterable presente",
       "Tipos exportados (RewindFilesResult, McpSetServersResult) listados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-027-readme-query-methods.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-8/worktree/sprints/sprint-8/3-prps/PRP-027-readme-query-methods.md",
     "completed_at": "2026-04-09T09:00:00.000Z"
   }
 ]

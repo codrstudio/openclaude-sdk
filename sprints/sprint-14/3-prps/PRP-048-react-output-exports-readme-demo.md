@@ -110,7 +110,7 @@ For visually rich responses (dashboards, animated explainers, interactive
 layouts), enable both `richOutput` and `reactOutput`:
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Build an animated dashboard with 4 sales KPIs",
@@ -204,9 +204,9 @@ Ambos devem passar sem erro. Se houver falhas:
 
 | Cenario | Antes | Depois |
 |---------|-------|--------|
-| `import { DisplayReactSchema } from "openclaude-sdk"` | Erro | Funciona |
-| `import type { DisplayReact } from "openclaude-sdk"` | Erro | Funciona |
-| `import { REACT_OUTPUT_SYSTEM_PROMPT } from "openclaude-sdk"` | Erro | Erro (intencional — interno) |
+| `import { DisplayReactSchema } from "hammer-sdk"` | Erro | Funciona |
+| `import type { DisplayReact } from "hammer-sdk"` | Erro | Funciona |
+| `import { REACT_OUTPUT_SYSTEM_PROMPT } from "hammer-sdk"` | Erro | Erro (intencional — interno) |
 | `import { REACT_OUTPUT_SYSTEM_PROMPT } from "./display/index.js"` (interno) | Erro | Funciona |
 | `GET /display` no demo | 5 actions em visual | 6 actions em visual (inclui react) |
 | `tsc --noEmit` | Passa | Passa |

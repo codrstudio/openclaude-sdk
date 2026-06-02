@@ -15,7 +15,7 @@
       "Bloco closeAfterPrompt seta stdinClosed = true antes de proc.stdin?.end()",
       "Compilacao sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
   },
   {
     "id": "F-045",
@@ -40,7 +40,7 @@
       "Tipo Query em types/index.ts reflete close: () => Promise<void> se exposto",
       "Compilacao sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
   },
   {
     "id": "F-046",
@@ -65,6 +65,6 @@
       "interrupt() NAO foi alterado — continua usando SIGINT",
       "Compilacao sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-6/worktree/sprints/sprint-6/3-prps/PRP-020-shutdown-three-stage-graceful.md"
   }
 ]

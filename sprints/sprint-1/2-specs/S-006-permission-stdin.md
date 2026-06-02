@@ -1,4 +1,4 @@
-# openclaude-sdk - Suporte a Permission Mid-Stream via stdin
+# hammer-sdk - Suporte a Permission Mid-Stream via stdin
 
 Expor canal stdin do subprocess para permitir respostas a permission requests em plan mode.
 

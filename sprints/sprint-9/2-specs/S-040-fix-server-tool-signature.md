@@ -1,4 +1,4 @@
-# openclaude-sdk - Fix Assinatura server.tool() no McpServer
+# hammer-sdk - Fix Assinatura server.tool() no McpServer
 
 Corrigir a chamada `server.tool()` em `createSdkMcpServer()` para usar a assinatura correta do `@modelcontextprotocol/sdk`.
 

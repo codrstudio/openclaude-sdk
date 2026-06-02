@@ -130,7 +130,7 @@ if (optionsForCli.richOutput) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("display" in existingServers) {
-    console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+    console.warn("[hammer-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
   }
 
   let mergedPrompt = mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT)

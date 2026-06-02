@@ -1,4 +1,4 @@
-# openclaude-sdk - README, demo endpoint e validacao de build para React Rich Output
+# hammer-sdk - README, demo endpoint e validacao de build para React Rich Output
 
 Spec da documentacao no README, atualizacao do demo server e verificacao de typecheck/build.
 
@@ -62,7 +62,7 @@ layouts), enable both `richOutput` and `reactOutput`:
 #### Example
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Build an animated dashboard with 4 sales KPIs",

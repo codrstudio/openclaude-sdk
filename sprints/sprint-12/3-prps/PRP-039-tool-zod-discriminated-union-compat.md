@@ -43,7 +43,7 @@ O `createSdkMcpServer()` (linha 29) aceita `Array<SdkMcpToolDefinition<any>>` e 
 
 As 4 display meta-tools do PRP-040 usam `z.discriminatedUnion("action", [...])` que retorna `ZodDiscriminatedUnion` — **nao** e `ZodRawShape`. Sem esta correcao, as meta-tools nao compilam.
 
-O `server.tool()` do `@modelcontextprotocol/sdk` aceita tanto `ZodRawShape` (converte internamente para `z.object()`) quanto schemas Zod completos. O problema e apenas na tipagem do openclaude-sdk.
+O `server.tool()` do `@modelcontextprotocol/sdk` aceita tanto `ZodRawShape` (converte internamente para `z.object()`) quanto schemas Zod completos. O problema e apenas na tipagem do hammer-sdk.
 
 ## Especificacao
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Completar buildCliArgs e Structured Output
+# hammer-sdk - Completar buildCliArgs e Structured Output
 
 Mapear todas as flags CLI ausentes em `buildCliArgs()` e implementar suporte a structured output via `--json-schema`.
 

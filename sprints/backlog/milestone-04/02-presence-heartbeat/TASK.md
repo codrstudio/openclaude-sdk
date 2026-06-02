@@ -13,7 +13,7 @@ mas passando por gaps naturais do modelo.
 **Contexto**: um bug de producao (usuario caindo com "Tempo esgotado
 aguardando resposta do servidor" durante turnos longos) forcou um hot-patch
 antes desta task ser formalmente implementada no SDK. O hot-patch vive no
-**demo server** em `.tmp/demo/server.mjs` e no cliente `openclaude-chat`. Esta
+**demo server** em `.tmp/demo/server.mjs` e no cliente `hammer-chat`. Esta
 secao documenta o que existe hoje e o **contrato de wire format que o
 implementador desta task DEVE preservar** para nao quebrar os dois lados.
 
@@ -39,7 +39,7 @@ implementador desta task DEVE preservar** para nao quebrar os dois lados.
   Motivo: Node 18+ tem default 300s que mata turnos longos independente
   de heartbeat.
 
-**Lado cliente (`openclaude-chat/src/hooks/useOpenClaudeChat.ts`)**:
+**Lado cliente (`hammer-chat/src/hooks/useHammerChat.ts`)**:
 - `STALL_MS` subiu de 45s pra **90s** (watchdog folgado, reseta a cada chunk)
 - `HARD_LIMIT_MS` (60s) **removido inteiro** — nao existe mais hard cap de turno
 - Handler SSE ignora silenciosamente `event: ping`, `event: keepalive`,
@@ -99,7 +99,7 @@ Quando esta task for executada:
    O `lastEmitAt`/`heartbeatSeq`/`heartbeatTimer` locais podem ser
    removidos — a responsabilidade migra pro SDK.
 
-3. **Cliente (`openclaude-chat`)**: **ZERO mudanca** se o wire format for
+3. **Cliente (`hammer-chat`)**: **ZERO mudanca** se o wire format for
    respeitado. O handler existente continua funcionando exatamente igual.
 
 4. **Manter os fixes de Node http.Server**: `requestTimeout = 0` e
@@ -127,24 +127,24 @@ Vantagem: mais simples, mais previsivel, cliente nao muda. Desvantagem:
 
 ### Arquivos tocados pelo hot-patch (nao commitar como da task)
 
-- `D:/aw/context/workspaces/openclaude-sdk/repo/.tmp/demo/server.mjs`
+- `D:/aw/context/workspaces/hammer-sdk/repo/.tmp/demo/server.mjs`
   - `HEARTBEAT_INTERVAL_MS` constant
   - heartbeat logic in `pipeQueryToSSE`
   - `httpServer.requestTimeout = 0` / `httpServer.headersTimeout = 0`
-- `D:/aw/context/workspaces/openclaude-chat/repo/src/hooks/useOpenClaudeChat.ts`
+- `D:/aw/context/workspaces/hammer-chat/repo/src/hooks/useHammerChat.ts`
   - `STALL_MS: 45000 → 90000`
   - `HARD_LIMIT_MS` removido
   - handler de `event: ping|keepalive|heartbeat`
 
 Ao implementar a task, os tres arquivos podem ser revisitados para remover
-o hot-patch (server.mjs) ou deixa-los intocados (openclaude-chat — so ganha
+o hot-patch (server.mjs) ou deixa-los intocados (hammer-chat — so ganha
 que nao precisa de mudanca).
 
 ---
 
 ## Contexto
 
-O `openclaude` CLI tem dois tipos de gap previsiveis em que nenhum byte flui:
+O `hammer` CLI tem dois tipos de gap previsiveis em que nenhum byte flui:
 
 1. **Gap inicial** entre o spawn e o primeiro `assistant` chunk — pode chegar
    a 30-120s com providers baratos (rate limit backoff, context assembly,
@@ -153,7 +153,7 @@ O `openclaude` CLI tem dois tipos de gap previsiveis em que nenhum byte flui:
    `Bash` longo, um `WebFetch` lento, etc. Pode durar minutos.
 
 Clientes de chat tipicamente implementam **watchdogs** que abortam a conexao
-se nao chegar nada por N segundos (o `useOpenClaudeChat.ts` do `openclaude-chat`
+se nao chegar nada por N segundos (o `useHammerChat.ts` do `hammer-chat`
 tem `STALL_MS = 45_000` e `HARD_LIMIT_MS = 60_000`). Esses watchdogs estao
 certos — detectam conexao morta de verdade. O problema e que hoje eles nao
 conseguem distinguir "servidor crashou" de "modelo pensando".
@@ -462,6 +462,6 @@ junto com a task 01 e antes da 03.
 | Origem | Referencia |
 |--------|-----------|
 | Conversa de design abril 2026 | Discussao sobre state-of-the-art SSE heartbeat |
-| Bug observado no consumer | `useOpenClaudeChat.ts:161` `STALL_MS = 45_000` aborting durante gaps validos |
+| Bug observado no consumer | `useHammerChat.ts:161` `STALL_MS = 45_000` aborting durante gaps validos |
 | Padrao de referencia | SSE comment lines `:heartbeat\n\n` (RFC 7230, ex: Stripe, OpenAI, Vercel AI SDK) |
-| Consumidor final | `D:\aw\context\workspaces\openclaude-chat\repo` |
+| Consumidor final | `D:\aw\context\workspaces\hammer-chat\repo` |

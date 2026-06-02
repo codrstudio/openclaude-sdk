@@ -1,4 +1,4 @@
-# openclaude-sdk - pickIntention: selecao de frase de intencao por tool e locale
+# hammer-sdk - pickIntention: selecao de frase de intencao por tool e locale
 
 Spec da funcao `pickIntention` que seleciona aleatoriamente uma frase de intencao de um dicionario por locale.
 

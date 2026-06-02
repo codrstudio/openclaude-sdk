@@ -1,4 +1,4 @@
-# openclaude-sdk - Modulo locale: tipos e constantes
+# hammer-sdk - Modulo locale: tipos e constantes
 
 Spec dos tipos fundamentais do modulo `src/locale/` — tipo `SupportedLocale` e constante `SUPPORTED_LOCALES`.
 

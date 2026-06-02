@@ -1,4 +1,4 @@
-# openclaude-sdk - Metodos de Introspeccao no Query
+# hammer-sdk - Metodos de Introspeccao no Query
 
 Implementar 6 metodos de introspeccao no `Query` para debugging e construcao de UIs dinamicas.
 
@@ -240,7 +240,7 @@ async function* wrapStream(
 
 ## Investigacao Necessaria
 
-Antes de implementar, o coder agent deve verificar no source do OpenClaude CLI:
+Antes de implementar, o coder agent deve verificar no source do Hammer CLI:
 
 1. O formato exato dos comandos de controle (nomes dos tipos)
 2. Se `requestId`/`responseId` e o mecanismo correto de correlacao

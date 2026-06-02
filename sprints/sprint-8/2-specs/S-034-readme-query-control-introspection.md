@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao de Query Control e Introspection Methods no README
+# hammer-sdk - Documentacao de Query Control e Introspection Methods no README
 
 Atualizar a tabela de metodos do `Query` no README para incluir metodos de configuracao mid-session e introspection.
 
@@ -65,7 +65,7 @@ Substituir a tabela atual por uma tabela organizada em categorias:
 Adicionar exemplo apos a tabela:
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Analyze this codebase",
@@ -99,7 +99,7 @@ Adicionar nota explicando que:
 
 ### 4. Tipos de introspection exportados
 
-Mencionar que os tipos abaixo sao exportados de `openclaude-sdk`:
+Mencionar que os tipos abaixo sao exportados de `hammer-sdk`:
 
 ```typescript
 import type {
@@ -109,7 +109,7 @@ import type {
   AgentInfo,
   McpServerStatusInfo,
   AccountInfo,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 ---

@@ -2,7 +2,7 @@
   {
     "id": "D-001",
     "type": "feature",
-    "description": "Configurar o package para distribuição: package.json com nome correto (openclaude-sdk), campo exports, build tsup (ESM + CJS + DTS), main/module/types.",
+    "description": "Configurar o package para distribuição: package.json com nome correto (hammer-sdk), campo exports, build tsup (ESM + CJS + DTS), main/module/types.",
     "score": 9,
     "justification": "Pré-requisito absoluto. Sem package configurado corretamente a SDK não é instalável via npm nem utilizável fora do monorepo.",
     "sprint": 1,
@@ -38,7 +38,7 @@
   {
     "id": "D-005",
     "type": "feature",
-    "description": "Criar hierarquia de erros tipados: OpenClaudeError base class, AuthError, RateLimitError, BillingError, MaxTurnsError, ExecutionError — lançados quando SDKResultMessage.subtype é error_*.",
+    "description": "Criar hierarquia de erros tipados: HammerError base class, AuthError, RateLimitError, BillingError, MaxTurnsError, ExecutionError — lançados quando SDKResultMessage.subtype é error_*.",
     "score": 6,
     "justification": "DX: consumidores precisam distinguir erros recuperáveis (rate limit, retry) de fatais (auth, billing) sem parsear strings. Padrão esperado em SDKs de produção.",
     "sprint": 1,
@@ -515,9 +515,9 @@
   {
     "id": "D-058",
     "type": "improvement",
-    "description": "Implementar suporte a Options.executable e Options.executableArgs em resolveExecutable(): quando executable é 'bun', 'deno' ou 'node', usar esse runtime para invocar o CLI (ex: bun openclaude). executableArgs são inseridos entre o executable e o comando.",
+    "description": "Implementar suporte a Options.executable e Options.executableArgs em resolveExecutable(): quando executable é 'bun', 'deno' ou 'node', usar esse runtime para invocar o CLI (ex: bun hammer). executableArgs são inseridos entre o executable e o comando.",
     "score": 5,
-    "justification": "Options.executable e Options.executableArgs estão na interface mas resolveExecutable() nunca os usa. Usuários que querem invocar openclaude via Bun ou Deno não têm como fazê-lo.",
+    "justification": "Options.executable e Options.executableArgs estão na interface mas resolveExecutable() nunca os usa. Usuários que querem invocar hammer via Bun ou Deno não têm como fazê-lo.",
     "sprint": 10,
     "implemented": false
   },

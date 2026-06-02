@@ -6,7 +6,7 @@ Implementar as funcoes de criacao de MCP tools e servers in-process.
 
 ## Contexto
 
-O Claude Code SDK expoe `tool()` e `createSdkMcpServer()` para definir MCP tools programaticamente com type-safety via Zod. O OpenClaude SDK hoje so suporta MCP servers via configuracao estatica (`mcpServers` em Options). Falta a capacidade de criar tools e servers inline no codigo.
+O Claude Code SDK expoe `tool()` e `createSdkMcpServer()` para definir MCP tools programaticamente com type-safety via Zod. O Hammer SDK hoje so suporta MCP servers via configuracao estatica (`mcpServers` em Options). Falta a capacidade de criar tools e servers inline no codigo.
 
 ---
 
@@ -98,7 +98,7 @@ Ambas como `peerDependencies` para nao forccar versao no consumidor.
 ## Exemplo de uso
 
 ```typescript
-import { tool, createSdkMcpServer, query } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query } from "hammer-sdk"
 import { z } from "zod"
 
 const weatherTool = tool(
@@ -153,15 +153,15 @@ const q = query({
 
 # Projeto
 
-# openclaude-sdk
+# hammer-sdk
 
-Um SDK em TypeScript que permite usar o OpenClaude (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
+Um SDK em TypeScript que permite usar o Hammer (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
 
 ## Problema que resolve
 
-O OpenClaude CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
+O Hammer CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
 
-O openclaude-sdk faz essa ponte: transforma o CLI num componente controlável por código.
+O hammer-sdk faz essa ponte: transforma o CLI num componente controlável por código.
 
 ## O que permite fazer
 
@@ -177,4 +177,4 @@ Desenvolvedores que querem construir produtos ou automações em cima de agentes
 
 ## Relação com o ecossistema
 
-É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o OpenClaude. Mesma ideia, mesmo estilo de API, ecossistema diferente.
+É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o Hammer. Mesma ideia, mesmo estilo de API, ecossistema diferente.

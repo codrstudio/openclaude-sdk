@@ -16,7 +16,7 @@
       "findSessionFile nao e exportada em index.ts (helper privado)",
       "Typecheck passa sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-016-session-deep-search-delete.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-016-session-deep-search-delete.md"
   },
   {
     "id": "F-040",
@@ -34,7 +34,7 @@
       "query() com registry continua resolvendo env vars corretamente no child process",
       "Typecheck passa sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-017-query-options-safety-timeout.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-017-query-options-safety-timeout.md"
   },
   {
     "id": "F-041",
@@ -51,7 +51,7 @@
       "query() passa timeoutMs para spawnAndStream() no objeto de opcoes",
       "Typecheck passa sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-017-query-options-safety-timeout.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-017-query-options-safety-timeout.md"
   },
   {
     "id": "F-039",
@@ -72,7 +72,7 @@
       "Import de unlink existe em src/sessions.ts",
       "Typecheck passa sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-016-session-deep-search-delete.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-016-session-deep-search-delete.md"
   },
   {
     "id": "F-042",
@@ -94,7 +94,7 @@
       "Bloco MCP vem antes de extraArgs em buildCliArgs()",
       "Typecheck passa sem erros (npm run typecheck)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-018-mcp-servers-mapping.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-018-mcp-servers-mapping.md"
   },
   {
     "id": "F-043",
@@ -116,6 +116,6 @@
       "Secoes existentes do README nao foram alteradas",
       "Texto das novas secoes esta em ingles"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-019-readme-completion.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-5/worktree/sprints/sprint-5/3-prps/PRP-019-readme-completion.md"
   }
 ]

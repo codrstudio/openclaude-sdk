@@ -2,7 +2,7 @@
   {
     "id": "D-001",
     "type": "feature",
-    "description": "Configurar o package para distribuição: package.json com nome correto (openclaude-sdk), campo exports, build tsup (ESM + CJS + DTS), main/module/types.",
+    "description": "Configurar o package para distribuição: package.json com nome correto (hammer-sdk), campo exports, build tsup (ESM + CJS + DTS), main/module/types.",
     "score": 9,
     "justification": "Pré-requisito absoluto. Sem package configurado corretamente a SDK não é instalável via npm nem utilizável fora do monorepo.",
     "sprint": 1,
@@ -38,7 +38,7 @@
   {
     "id": "D-005",
     "type": "feature",
-    "description": "Criar hierarquia de erros tipados: OpenClaudeError base class, AuthError, RateLimitError, BillingError, MaxTurnsError, ExecutionError — lançados quando SDKResultMessage.subtype é error_*.",
+    "description": "Criar hierarquia de erros tipados: HammerError base class, AuthError, RateLimitError, BillingError, MaxTurnsError, ExecutionError — lançados quando SDKResultMessage.subtype é error_*.",
     "score": 6,
     "justification": "DX: consumidores precisam distinguir erros recuperáveis (rate limit, retry) de fatais (auth, billing) sem parsear strings. Padrão esperado em SDKs de produção.",
     "sprint": 1,

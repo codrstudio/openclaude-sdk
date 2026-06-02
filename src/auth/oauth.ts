@@ -1,11 +1,11 @@
 // ---------------------------------------------------------------------------
 // auth/oauth.ts — o dance OAuth 2.0 + PKCE (fluxo manual / contracódigo).
 //
-// Reimplementa, em TS puro, o que o CLI openclaude faz em
+// Reimplementa, em TS puro, o que o CLI hammer faz em
 // `services/oauth/client.ts` — mas sem listener em localhost: só o fluxo MANUAL,
 // que é o único que funciona headless/remoto (servidor) e por web UI.
 //
-// Não toca no openclaude. Usa `fetch` global (Node ≥ 20).
+// Não toca no hammer. Usa `fetch` global (Node ≥ 20).
 // ---------------------------------------------------------------------------
 
 import { getOAuthEndpoints, ALL_OAUTH_SCOPES, CLAUDE_AI_OAUTH_SCOPES, OAUTH_BETA_HEADER } from "./constants.js";

@@ -42,7 +42,7 @@ export interface McpHttpServerConfig {
 }
 ```
 
-Formato dos flags CLI do OpenClaude:
+Formato dos flags CLI do Hammer:
 
 | Tipo | Flag | Formato |
 |------|------|---------|

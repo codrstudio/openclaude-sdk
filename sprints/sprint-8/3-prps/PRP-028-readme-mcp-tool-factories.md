@@ -72,7 +72,7 @@ Explicar que retorna um `McpSdkServerConfig` com `type: "sdk"` que pode ser pass
 
 ```typescript
 import { z } from "zod"
-import { tool, createSdkMcpServer, query, collectMessages } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query, collectMessages } from "hammer-sdk"
 
 // 1. Definir tools
 const weatherTool = tool(
@@ -128,7 +128,7 @@ import type {
   SdkMcpToolDefinition,
   ToolAnnotations,
   CallToolResult,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 **3. Todos os exemplos de codigo devem ser compilaveis** (tipos corretos, imports presentes).

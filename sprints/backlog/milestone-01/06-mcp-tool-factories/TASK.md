@@ -6,7 +6,7 @@ Implementar as funcoes de criacao de MCP tools e servers in-process.
 
 ## Contexto
 
-O Claude Code SDK expoe `tool()` e `createSdkMcpServer()` para definir MCP tools programaticamente com type-safety via Zod. O OpenClaude SDK hoje so suporta MCP servers via configuracao estatica (`mcpServers` em Options). Falta a capacidade de criar tools e servers inline no codigo.
+O Claude Code SDK expoe `tool()` e `createSdkMcpServer()` para definir MCP tools programaticamente com type-safety via Zod. O Hammer SDK hoje so suporta MCP servers via configuracao estatica (`mcpServers` em Options). Falta a capacidade de criar tools e servers inline no codigo.
 
 ---
 
@@ -98,7 +98,7 @@ Ambas como `peerDependencies` para nao forccar versao no consumidor.
 ## Exemplo de uso
 
 ```typescript
-import { tool, createSdkMcpServer, query } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query } from "hammer-sdk"
 import { z } from "zod"
 
 const weatherTool = tool(

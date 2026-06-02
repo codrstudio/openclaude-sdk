@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao da V2 Session API no README
+# hammer-sdk - Documentacao da V2 Session API no README
 
 Adicionar secao ao README.md documentando `createSession()`, `resumeSession()` e `prompt()` com exemplos praticos.
 

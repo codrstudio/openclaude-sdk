@@ -1,4 +1,4 @@
-# openclaude-sdk - Dicionarios JSON de intencao por locale
+# hammer-sdk - Dicionarios JSON de intencao por locale
 
 Spec dos tres arquivos de dicionario JSON com frases de intencao para cada tool built-in.
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Barrel locale, campo Options.locale e exports publicos
+# hammer-sdk - Barrel locale, campo Options.locale e exports publicos
 
 Spec do barrel `src/locale/index.ts`, campo `locale?: string` em `Options`, e re-exports em `src/index.ts`.
 

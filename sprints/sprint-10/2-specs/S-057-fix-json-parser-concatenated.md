@@ -1,4 +1,4 @@
-# openclaude-sdk - Corrigir Parser JSON para Multiplos Objetos Concatenados
+# hammer-sdk - Corrigir Parser JSON para Multiplos Objetos Concatenados
 
 Tratar caso de multiplos JSONs completos na mesma linha do stdout.
 
@@ -141,7 +141,7 @@ function splitConcatenatedJson(buffer: string): SDKMessage[] | null {
 }
 ```
 
-**Nota**: esta heuristica nao trata strings JSON que contem `{` ou `}` literais. Porem, como o OpenClaude CLI emite JSONs de primeiro nivel simples (sem `{` literal em valores string de mensagens), a heuristica e suficiente para o caso de uso. Se no futuro o CLI emitir payloads com `{` em strings, sera necessario um parser mais robusto com tracking de aspas.
+**Nota**: esta heuristica nao trata strings JSON que contem `{` ou `}` literais. Porem, como o Hammer CLI emite JSONs de primeiro nivel simples (sem `{` literal em valores string de mensagens), a heuristica e suficiente para o caso de uso. Se no futuro o CLI emitir payloads com `{` em strings, sera necessario um parser mais robusto com tracking de aspas.
 
 ---
 

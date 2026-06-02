@@ -106,7 +106,7 @@ Inspecionar `buildCliArgs()` em `src/process.ts` e confirmar que `locale` NAO ap
 - Nao ha `args.push("--locale", ...)`
 - Nao ha mencao de `locale` em nenhum mapeamento de args
 
-`locale` e puramente SDK-side — o `openclaude` CLI nao tem flag `--locale`.
+`locale` e puramente SDK-side — o `hammer` CLI nao tem flag `--locale`.
 
 **2. Script de teste manual `.tmp/demo/test-locale.mjs`:**
 
@@ -163,9 +163,9 @@ node .tmp/demo/test-locale.mjs   # teste manual contra dist/
 
 | Cenario | Antes | Depois |
 |---------|-------|--------|
-| `import { normalizeLocale } from "openclaude-sdk"` | Erro | Funciona |
-| `import { SUPPORTED_LOCALES } from "openclaude-sdk"` | Erro | Funciona |
-| `import type { SupportedLocale } from "openclaude-sdk"` | Erro | Funciona |
+| `import { normalizeLocale } from "hammer-sdk"` | Erro | Funciona |
+| `import { SUPPORTED_LOCALES } from "hammer-sdk"` | Erro | Funciona |
+| `import type { SupportedLocale } from "hammer-sdk"` | Erro | Funciona |
 | `query({ prompt: "...", options: { locale: "pt-BR" } })` | TypeError | Aceito |
 | `locale` em `buildCliArgs()` output | N/A | NAO aparece |
 | `tsc --noEmit` | Passa | Passa |
@@ -187,7 +187,7 @@ node .tmp/demo/test-locale.mjs   # teste manual contra dist/
 - NAO alterar `src/locale/normalize.ts` — escopo de PRP-049
 - NAO alterar `src/process.ts` — apenas verificar por inspecao que `locale` nao aparece
 - NAO alterar `src/query.ts` — `locale` nao precisa de tratamento especial em query
-- NAO adicionar `locale` como flag CLI — o `openclaude` CLI nao tem essa flag
+- NAO adicionar `locale` como flag CLI — o `hammer` CLI nao tem essa flag
 - NAO exportar `normalizeLocale` de `src/locale/index.ts` como `default` — named export apenas
 - NAO adicionar testes unitarios (nao ha framework de teste configurado)
 

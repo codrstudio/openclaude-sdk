@@ -16,7 +16,7 @@
       "Tipo e union literal 'intention' | 'full', nao string generico",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
   },
   {
     "id": "F-140",
@@ -34,7 +34,7 @@
       "Campo _filtered tem tipo literal true (nao boolean)",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
   },
   {
     "id": "F-141",
@@ -55,7 +55,7 @@
       "Chave _fallback presente em todos os tres arquivos",
       "23 tools built-in cobertas: Task, AskUserQuestion, Bash, Edit, EnterPlanMode, EnterWorktree, ExitPlanMode, ExitWorktree, Glob, Grep, NotebookEdit, Read, SendMessage, Skill, TaskOutput, TaskStop, TeamCreate, TeamDelete, TodoWrite, ToolSearch, WebFetch, WebSearch, Write"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
   },
   {
     "id": "F-142",
@@ -79,7 +79,7 @@
       "Funcao e 100% sincrona — nenhum await no codigo",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-053-tool-intention-core.md"
   },
   {
     "id": "F-143",
@@ -104,7 +104,7 @@
       "Usa satisfies ToolIntentionPayload para garantir type safety",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
   },
   {
     "id": "F-144",
@@ -127,7 +127,7 @@
       "Extensoes .js nos import paths",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
   },
   {
     "id": "F-145",
@@ -148,7 +148,7 @@
       "Secao posicionada apos Locale exports",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
   },
   {
     "id": "F-146",
@@ -172,7 +172,7 @@
       "optionsForCli.locale passado como segundo argumento do filtro",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-054-tool-intention-filter-integration.md"
   },
   {
     "id": "F-147",
@@ -197,7 +197,7 @@
       "Fallback para pt-BR em falha persistente",
       "Imprime resumo com contagem de sucessos e falhas"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
   },
   {
     "id": "F-148",
@@ -216,7 +216,7 @@
       "tsx ja esta em devDependencies (nenhuma dependencia nova adicionada)",
       "npm run translate -- --help nao causa erro de resolucao de script"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
   },
   {
     "id": "F-149",
@@ -246,6 +246,6 @@
       "resolveJsonModule esta ativo em tsconfig.json (adicionar se necessario)",
       "Import assertions with { type: 'json' } funcionam corretamente"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-17/worktree/sprints/sprint-17/3-prps/PRP-055-translate-script-validation.md"
   }
 ]

@@ -1,4 +1,4 @@
-# openclaude-sdk - Buffering Acumulativo de JSONL Parcial
+# hammer-sdk - Buffering Acumulativo de JSONL Parcial
 
 Implementar buffer acumulativo no parser JSONL de `spawnAndStream()` para reconstruir mensagens JSON truncadas pelo OS pipe buffer.
 

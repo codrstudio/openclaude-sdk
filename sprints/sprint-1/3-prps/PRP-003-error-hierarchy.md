@@ -21,7 +21,7 @@ Falhas durante a query chegam como `SDKResultMessage` com `subtype: "error_*"` o
 Classe base e 9 subclasses:
 
 ```
-OpenClaudeError (base)
+HammerError (base)
   ├── AuthenticationError      (code: "authentication_failed")
   ├── BillingError             (code: "billing_error")
   ├── RateLimitError           (code: "rate_limit")
@@ -36,7 +36,7 @@ OpenClaudeError (base)
 #### Classe base
 
 ```typescript
-export class OpenClaudeError extends Error {
+export class HammerError extends Error {
   readonly code: string
   readonly sessionId: string | null
   readonly costUsd: number
@@ -56,7 +56,7 @@ export class OpenClaudeError extends Error {
 #### RateLimitError — campos extras
 
 ```typescript
-export class RateLimitError extends OpenClaudeError {
+export class RateLimitError extends HammerError {
   readonly resetsAt?: number
   readonly utilization?: number
 }
@@ -65,7 +65,7 @@ export class RateLimitError extends OpenClaudeError {
 ### 2. Helper isRecoverable()
 
 ```typescript
-export function isRecoverable(error: OpenClaudeError): boolean
+export function isRecoverable(error: HammerError): boolean
 ```
 
 Retorna `true` para: `RateLimitError`, `ServerError`, `MaxTurnsError`, `MaxBudgetError`, `StructuredOutputError`, `ExecutionError`.
@@ -90,7 +90,7 @@ Em `src/query.ts`, `collectMessages()` deve lancar o erro tipado correto quando 
 
 ### 4. Exportar via index.ts
 
-Exportar todas as classes de erro, `isRecoverable()`, e o tipo `OpenClaudeError` de `src/index.ts`.
+Exportar todas as classes de erro, `isRecoverable()`, e o tipo `HammerError` de `src/index.ts`.
 
 ## Features
 

@@ -1,15 +1,15 @@
 {
-  "name": "@codrstudio/openclaude-sdk",
-  "version": "0.7.1",
-  "description": "TypeScript SDK wrapper for the OpenClaude CLI",
+  "name": "@codrstudio/hammer-sdk",
+  "version": "0.7.2",
+  "description": "TypeScript SDK wrapper for the Hammer CLI",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/codrstudio/openclaude-sdk.git"
+    "url": "https://github.com/codrstudio/hammer-sdk.git"
   },
-  "homepage": "https://github.com/codrstudio/openclaude-sdk",
+  "homepage": "https://github.com/codrstudio/hammer-sdk",
   "bugs": {
-    "url": "https://github.com/codrstudio/openclaude-sdk/issues"
+    "url": "https://github.com/codrstudio/hammer-sdk/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -23,6 +23,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./catalog": {
+      "types": "./dist/catalog.d.ts",
+      "import": "./dist/catalog.js",
+      "require": "./dist/catalog.cjs"
     }
   },
   "files": [

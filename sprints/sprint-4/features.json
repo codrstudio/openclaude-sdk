@@ -16,7 +16,7 @@
       "Buffer acumulativo > 1 MB lanca Error com mensagem explicita sobre max buffer size",
       "Signal aborted mid-buffer continua causando break do loop normalmente"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-4/worktree/sprints/sprint-4/3-prps/PRP-015-jsonl-partial-buffering.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-4/worktree/sprints/sprint-4/3-prps/PRP-015-jsonl-partial-buffering.md",
     "completed_at": "2026-04-08T00:00:00.000Z"
   }
 ]

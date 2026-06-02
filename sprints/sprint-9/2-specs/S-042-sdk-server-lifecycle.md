@@ -1,4 +1,4 @@
-# openclaude-sdk - Lifecycle Management de SDK MCP Servers em query()
+# hammer-sdk - Lifecycle Management de SDK MCP Servers em query()
 
 Implementar start/stop automatico de MCP servers `type: "sdk"` no ciclo de vida da query.
 
@@ -70,7 +70,7 @@ async function stopSdkServers(servers: RunningServer[]): Promise<void> {
   for (const r of results) {
     if (r.status === "rejected") {
       // Log silencioso — nao propagar erro de cleanup
-      console.error("[openclaude-sdk] Failed to stop SDK server:", r.reason)
+      console.error("[hammer-sdk] Failed to stop SDK server:", r.reason)
     }
   }
 }

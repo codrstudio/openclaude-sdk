@@ -1,4 +1,4 @@
-# openclaude-sdk - applyToolIntentionFilter: filtro de tool_use e tool_result
+# hammer-sdk - applyToolIntentionFilter: filtro de tool_use e tool_result
 
 Spec da funcao `applyToolIntentionFilter` que transforma mensagens do stream substituindo `tool_use.input` e suprimindo `tool_result`.
 

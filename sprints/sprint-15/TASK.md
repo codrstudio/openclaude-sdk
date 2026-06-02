@@ -9,13 +9,13 @@ BCP 47, fallback chain, e helpers pra leitura em outros modulos.
 
 ## Contexto
 
-O SDK e neutro de idioma para o fluxo principal — o `openclaude` CLI
+O SDK e neutro de idioma para o fluxo principal — o `hammer` CLI
 responde no idioma do prompt do usuario, sem override. Mas **o SDK tambem
 gera conteudo por conta propria**: a task 03 (tool intention filter) vai
 substituir `tool_use.input` por uma frase humana que o SDK escreve, nao o
 modelo. Essa frase precisa sair no idioma certo.
 
-Hard-codar portugues seria errado — o `openclaude-chat` roda em pt-BR, en-US e
+Hard-codar portugues seria errado — o `hammer-chat` roda em pt-BR, en-US e
 es-ES (e possivelmente outros no futuro). Depender de heuristica (tentar
 adivinhar do prompt) e fragil. A solucao e receber o locale como **parametro
 explicito** vindo do aplicativo hospedeiro, que ja sabe seu contexto.
@@ -41,7 +41,7 @@ interface Options {
    * Locales nao suportados caem em "en-US" via fallback chain.
    *
    * Default: "pt-BR" quando ausente (motivo historico: o consumidor
-   * primeiro e `openclaude-chat` em pt-BR). Consumidores devem sempre passar
+   * primeiro e `hammer-chat` em pt-BR). Consumidores devem sempre passar
    * explicitamente em producao.
    */
   locale?: string
@@ -123,7 +123,7 @@ src/
 
 `query()`, `prompt()`, `createSession()`, `resumeSession()` todos recebem
 `options.locale` diretamente. Nao e propagado ao CLI (nao existe flag no
-`openclaude` pra isso — e puramente SDK-side).
+`hammer` pra isso — e puramente SDK-side).
 
 Documentar no JSDoc do campo que ele **nao** afeta o idioma do agente
 principal. Sem surpresas.
@@ -243,22 +243,22 @@ narrativas localizadas.
 | Origem | Referencia |
 |--------|-----------|
 | Conversa de design abril 2026 | Discussao sobre multi-lang em tool intentions |
-| Consumidor final | `D:\aw\context\workspaces\openclaude-chat\repo` |
+| Consumidor final | `D:\aw\context\workspaces\hammer-chat\repo` |
 | Task dependente | `milestone-04/03-tool-intention-filter` |
 
 ---
 
 # Projeto
 
-# openclaude-sdk
+# hammer-sdk
 
-Um SDK em TypeScript que permite usar o OpenClaude (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
+Um SDK em TypeScript que permite usar o Hammer (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
 
 ## Problema que resolve
 
-O OpenClaude CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
+O Hammer CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
 
-O openclaude-sdk faz essa ponte: transforma o CLI num componente controlável por código.
+O hammer-sdk faz essa ponte: transforma o CLI num componente controlável por código.
 
 ## O que permite fazer
 
@@ -274,4 +274,4 @@ Desenvolvedores que querem construir produtos ou automações em cima de agentes
 
 ## Relação com o ecossistema
 
-É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o OpenClaude. Mesma ideia, mesmo estilo de API, ecossistema diferente.
+É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o Hammer. Mesma ideia, mesmo estilo de API, ecossistema diferente.

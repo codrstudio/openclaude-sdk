@@ -1,6 +1,6 @@
 # WebSearch Providers — configuracao programatica via SDK
 
-Expoe os providers de web search do `openclaude` como uma opcao de primeira
+Expoe os providers de web search do `hammer` como uma opcao de primeira
 classe no SDK. O consumidor passa providers (com API keys) via `Options`,
 sem depender de variaveis de ambiente. Tambem exporta um registry tipado
 com metadata rica pra construcao de UIs que listam/selecionam providers.
@@ -9,13 +9,13 @@ com metadata rica pra construcao de UIs que listam/selecionam providers.
 
 ## Contexto
 
-O `openclaude` suporta 10 providers de web search (`firecrawl`, `tavily`,
+O `hammer` suporta 10 providers de web search (`firecrawl`, `tavily`,
 `exa`, `you`, `jina`, `bing`, `mojeek`, `linkup`, `ddg`, `custom`) em
 `src/tools/WebSearchTool/providers/`. Hoje **toda a configuracao vive em
 env vars**: `WEB_SEARCH_PROVIDER` pra escolher o modo e `*_API_KEY` pra
 cada provider. O SDK (`src/entrypoints/sdk/`) **nao expoe nada disso**.
 
-Isso e ruim pra consumidores da SDK (ex: `openclaude-chat`) que precisam:
+Isso e ruim pra consumidores da SDK (ex: `hammer-chat`) que precisam:
 
 1. Configurar providers programaticamente a partir de config do app
    (nao querem poluir env vars do processo)
@@ -353,7 +353,7 @@ export type {
 
 ## Documentacao
 
-**Obrigatorio**: atualizar o `README.md` da raiz do `openclaude` (ou o
+**Obrigatorio**: atualizar o `README.md` da raiz do `hammer` (ou o
 README do SDK, o que for o canonical) com uma nova secao **"WebSearch
 Providers"** contendo:
 
@@ -407,7 +407,7 @@ console.log("registry:", JSON.stringify(ids) === JSON.stringify(expected) ? "PAS
 // 2. Provider unico (precisa de TAVILY_API_KEY real pra rodar ponta-a-ponta)
 if (process.env.TAVILY_API_KEY) {
   const result = await query({
-    prompt: "search the web for 'openclaude sdk' and report the top 3 urls",
+    prompt: "search the web for 'hammer sdk' and report the top 3 urls",
     allowedTools: ["WebSearch"],
     webSearch: { name: "tavily", apiKey: process.env.TAVILY_API_KEY },
   })
@@ -475,7 +475,7 @@ Task independente. Nao depende de outros milestones.
 ## Prioridade
 
 **Media-alta** — desbloqueia consumidores que nao querem gerenciar env
-vars (`openclaude-chat` e outros apps que hospedam a SDK). Nao bloqueia
+vars (`hammer-chat` e outros apps que hospedam a SDK). Nao bloqueia
 nenhum outro milestone conhecido.
 
 ---
@@ -488,4 +488,4 @@ nenhum outro milestone conhecido.
 | Codigo fonte providers | `src/tools/WebSearchTool/providers/` |
 | Index atual | `src/tools/WebSearchTool/providers/index.ts` |
 | SDK entrypoint | `src/entrypoints/sdk/` |
-| Consumidor alvo | `openclaude-chat` |
+| Consumidor alvo | `hammer-chat` |

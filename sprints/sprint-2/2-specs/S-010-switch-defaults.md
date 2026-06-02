@@ -1,4 +1,4 @@
-# openclaude-sdk - Default Cases nos Switches de collectMessages
+# hammer-sdk - Default Cases nos Switches de collectMessages
 
 Adicionar tratamento de subtypes e erros desconhecidos em `collectMessages()`.
 

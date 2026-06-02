@@ -64,7 +64,7 @@ interface CreateSessionOptions {
 #### Exemplo multi-turn com streaming
 
 ```typescript
-import { createSession } from "openclaude-sdk"
+import { createSession } from "hammer-sdk"
 
 await using session = createSession({ model: "sonnet" })
 
@@ -167,7 +167,7 @@ async function createSdkMcpServer(options: {
 **5. Exemplo end-to-end:**
 
 ```typescript
-import { tool, createSdkMcpServer, query } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query } from "hammer-sdk"
 import { z } from "zod"
 
 const weatherTool = tool(

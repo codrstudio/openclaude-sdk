@@ -17,7 +17,7 @@
       "simpleHash com string longa (300+ chars) retorna resultado valido em base36",
       "Resultado e sempre alfanumerico lowercase (base36)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-3/worktree/sprints/sprint-3/3-prps/PRP-014-path-encoding-python-compat.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-3/worktree/sprints/sprint-3/3-prps/PRP-014-path-encoding-python-compat.md"
   },
   {
     "id": "F-036",
@@ -45,6 +45,6 @@
       "getSessionDir() chama sanitizePath(resolve(dir)) em vez de encodeCwd",
       "SANITIZE_RE e MAX_SANITIZED_LENGTH sao constantes definidas no modulo"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-3/worktree/sprints/sprint-3/3-prps/PRP-014-path-encoding-python-compat.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-3/worktree/sprints/sprint-3/3-prps/PRP-014-path-encoding-python-compat.md"
   }
 ]

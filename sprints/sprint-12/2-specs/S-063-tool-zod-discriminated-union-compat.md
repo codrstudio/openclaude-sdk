@@ -1,4 +1,4 @@
-# openclaude-sdk - Compatibilidade de tool() com ZodDiscriminatedUnion
+# hammer-sdk - Compatibilidade de tool() com ZodDiscriminatedUnion
 
 Ajustar a assinatura de `tool()` e `SdkMcpToolDefinition` para aceitar `z.ZodTypeAny` alem de `z.ZodRawShape`, permitindo meta-tools com `z.discriminatedUnion()`.
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Corrigir Mapeamento de systemPrompt Preset
+# hammer-sdk - Corrigir Mapeamento de systemPrompt Preset
 
 Adicionar tratamento do caso `{ type: "preset", preset: "claude_code" }` em `buildCliArgs()`.
 

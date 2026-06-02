@@ -1,4 +1,4 @@
-# openclaude-sdk - README e Documentacao da API Publica
+# hammer-sdk - README e Documentacao da API Publica
 
 Produzir README.md da SDK com documentacao completa da API publica.
 
@@ -15,7 +15,7 @@ Resolver D-002: o TASK.md define README.md como artefato obrigatorio. A SDK prec
 | Secao | Conteudo |
 |-------|----------|
 | Titulo + badge | Nome, versao, badge de build |
-| Instalacao | `npm install openclaude-sdk` |
+| Instalacao | `npm install hammer-sdk` |
 | Quick Start | Exemplo minimo com `query()` |
 | API Reference | Todas as funcoes exportadas |
 | Types | Tipos principais |
@@ -34,10 +34,10 @@ Resolver D-002: o TASK.md define README.md como artefato obrigatorio. A SDK prec
 ## Installation
 
 \`\`\`bash
-npm install openclaude-sdk
+npm install hammer-sdk
 \`\`\`
 
-Requires Node.js >= 20 and the [OpenClaude CLI](https://github.com/Gitlawb/openclaude) installed.
+Requires Node.js >= 20 and the [Hammer CLI](https://github.com/Gitlawb/hammer) installed.
 ```
 
 ### 2. Quick Start
@@ -45,7 +45,7 @@ Requires Node.js >= 20 and the [OpenClaude CLI](https://github.com/Gitlawb/openc
 Exemplo com `query()` + `for await`:
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({ prompt: "Hello, world!" })
 
@@ -101,7 +101,7 @@ Exemplo com OpenRouter mostrando `createOpenRouterRegistry()` + `query()`.
 | Idioma | Ingles (README e para consumo publico) |
 | Exemplos de codigo | TypeScript com imports explicitos |
 | Cada funcao | Pelo menos um exemplo de uso |
-| Links | Link para repo OpenClaude no pre-requisito |
+| Links | Link para repo Hammer no pre-requisito |
 
 ---
 
@@ -116,7 +116,7 @@ Exemplo com OpenRouter mostrando `createOpenRouterRegistry()` + `query()`.
 - [ ] Secao de provider registry com exemplo OpenRouter
 - [ ] Secao de session management
 - [ ] Idioma ingles
-- [ ] Pre-requisito: Node >= 20 + OpenClaude CLI
+- [ ] Pre-requisito: Node >= 20 + Hammer CLI
 
 ---
 

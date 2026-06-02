@@ -1,8 +1,8 @@
-# Brainstorming — openclaude-sdk (Sprint 6)
+# Brainstorming — hammer-sdk (Sprint 6)
 
 ## Contexto
 
-O TASK.md define o `openclaude-sdk` como um SDK TypeScript programático para o OpenClaude CLI. As waves 1–5 implementaram D-001 a D-034, cobrindo o feature set completo, polimento de bugs e MCP servers. O sprint 5 concluiu com F-038 a F-043 todas em status `passing`.
+O TASK.md define o `hammer-sdk` como um SDK TypeScript programático para o Hammer CLI. As waves 1–5 implementaram D-001 a D-034, cobrindo o feature set completo, polimento de bugs e MCP servers. O sprint 5 concluiu com F-038 a F-043 todas em status `passing`.
 
 O foco desta wave é **confiabilidade no shutdown de subprocessos**:
 
@@ -16,7 +16,7 @@ O backlog/04 (`stdin-write-lock`) é o complemento natural: uma vez que `close()
 
 ### `src/process.ts` — foco da wave
 
-**`resolveExecutable(options?)`** — resolve o comando `openclaude` com suporte Windows via `cmd /c`.
+**`resolveExecutable(options?)`** — resolve o comando `hammer` com suporte Windows via `cmd /c`.
 
 **`filterEnv(env)`** — filtra valores `undefined` de um env parcial antes de passar ao child process.
 

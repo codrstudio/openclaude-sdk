@@ -1,4 +1,4 @@
-# openclaude-sdk - Mapear executable e executableArgs em resolveExecutable
+# hammer-sdk - Mapear executable e executableArgs em resolveExecutable
 
 Implementar suporte a `Options.executable` e `Options.executableArgs` em `resolveExecutable()`.
 
@@ -6,7 +6,7 @@ Implementar suporte a `Options.executable` e `Options.executableArgs` em `resolv
 
 ## Objetivo
 
-Resolver D-058 (score 5): a interface `Options` tem `executable?: "bun" | "deno" | "node"` e `executableArgs?: string[]` mas `resolveExecutable()` nunca os usa. O CLI do OpenClaude pode ser invocado com runtimes alternativos (ex: `node --experimental-vm-modules openclaude`). Silenciosamente ignorado.
+Resolver D-058 (score 5): a interface `Options` tem `executable?: "bun" | "deno" | "node"` e `executableArgs?: string[]` mas `resolveExecutable()` nunca os usa. O CLI do Hammer pode ser invocado com runtimes alternativos (ex: `node --experimental-vm-modules hammer`). Silenciosamente ignorado.
 
 | # | Problema | Consequencia |
 |---|----------|--------------|
@@ -24,7 +24,7 @@ export function resolveExecutable(options?: Options): {
   command: string
   prependArgs: string[]
 } {
-  const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const base = options?.pathToClaudeCodeExecutable || "hammer"
 
   if (process.platform === "win32") {
     return {
@@ -50,7 +50,7 @@ export function resolveExecutable(options?: Options): {
   command: string
   prependArgs: string[]
 } {
-  const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const base = options?.pathToClaudeCodeExecutable || "hammer"
 
   if (process.platform === "win32") {
     return {
@@ -70,7 +70,7 @@ export function resolveExecutable(options?: Options): {
   command: string
   prependArgs: string[]
 } {
-  const base = options?.pathToClaudeCodeExecutable || "openclaude"
+  const base = options?.pathToClaudeCodeExecutable || "hammer"
   const extraArgs = options?.executableArgs ?? []
 
   if (options?.executable) {
@@ -104,9 +104,9 @@ Logica:
 
 ## Criterios de Aceite
 
-- [ ] `executable: "node"` gera `node openclaude` como comando
-- [ ] `executable: "bun"` gera `bun openclaude`
-- [ ] `executableArgs: ["--experimental-vm-modules"]` gera `node --experimental-vm-modules openclaude`
+- [ ] `executable: "node"` gera `node hammer` como comando
+- [ ] `executable: "bun"` gera `bun hammer`
+- [ ] `executableArgs: ["--experimental-vm-modules"]` gera `node --experimental-vm-modules hammer`
 - [ ] Sem `executable` nem `executableArgs`: comportamento identico ao atual
 - [ ] Windows: `cmd.exe /c` envolve corretamente em todos os cenarios
 - [ ] `npm run typecheck` passa sem erros

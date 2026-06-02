@@ -12,7 +12,7 @@ Referencia: specs S-069 (D-083, D-084), S-071 (D-086, D-087).
 
 ## Contexto
 
-O openclaude-sdk ja tem um modulo built-in analogo: `src/display/` (criado em PRP-040, sprint-12). O `src/ask-user/` segue o mesmo padrao de organizacao:
+O hammer-sdk ja tem um modulo built-in analogo: `src/display/` (criado em PRP-040, sprint-12). O `src/ask-user/` segue o mesmo padrao de organizacao:
 
 ```
 src/ask-user/

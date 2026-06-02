@@ -1,4 +1,4 @@
-# openclaude-sdk - Filtragem Segura de Environment Variables
+# hammer-sdk - Filtragem Segura de Environment Variables
 
 Eliminar valores `undefined` do env passado ao child process em todos os pontos de merge e cast.
 

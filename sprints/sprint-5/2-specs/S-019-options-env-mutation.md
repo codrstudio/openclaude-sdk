@@ -1,4 +1,4 @@
-# openclaude-sdk - Corrigir Mutacao de options.env em query()
+# hammer-sdk - Corrigir Mutacao de options.env em query()
 
 Eliminar a mutacao do objeto `options` passado pelo caller em `query()` quando registry e model sao fornecidos.
 

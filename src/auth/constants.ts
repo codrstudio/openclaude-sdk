@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // auth/constants.ts — configuração OAuth pública da Anthropic (claude.ai).
 //
-// Espelha os valores do CLI openclaude (`src/constants/oauth.ts`). São públicos:
+// Espelha os valores do CLI hammer (`src/constants/oauth.ts`). São públicos:
 // CLIENT_ID e URLs do fluxo OAuth do Claude Code, não são segredo. O segredo é
 // o PKCE code_verifier (efêmero, por tentativa) e os tokens resultantes — esses
 // nunca vivem aqui.

@@ -60,7 +60,7 @@ Nenhum desses metodos aparece no README.
 **3. Exemplo de uso mid-session:**
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Analyze this codebase",
@@ -101,7 +101,7 @@ import type {
   AgentInfo,
   McpServerStatusInfo,
   AccountInfo,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 ### Feature F-064 — Query Operation Methods no README
@@ -134,7 +134,7 @@ import type {
 **3. Exemplo de `rewindFiles()`:**
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Refactor the auth module",
@@ -162,7 +162,7 @@ for await (const msg of q) {
 **4. Exemplo de `streamInput()`:**
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({ prompt: "Process the following data:" })
 
@@ -186,7 +186,7 @@ for await (const msg of q) {
 import type {
   RewindFilesResult,
   McpSetServersResult,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 **6. Nota sobre timeouts:** Request/response operations usam timeout de 30s (maior que introspection) por envolverem operacoes de filesystem ou rede.

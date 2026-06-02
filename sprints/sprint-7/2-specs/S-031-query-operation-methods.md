@@ -1,4 +1,4 @@
-# openclaude-sdk - Metodos de Operacao Avancada no Query
+# hammer-sdk - Metodos de Operacao Avancada no Query
 
 Implementar 6 metodos de operacao avancada no `Query` para controle de sessoes em andamento.
 

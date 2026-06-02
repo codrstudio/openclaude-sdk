@@ -1,8 +1,8 @@
 // ---------------------------------------------------------------------------
 // provider/profile.ts — persistência do profile de provider que o hammer lê.
 //
-// Reimplementa, em TS puro e standalone, o formato do `/provider` do openclaude
-// (`src/utils/providerProfile.ts`). Grava `$CLAUDE_CONFIG_DIR/.openclaude-profile.json`
+// Reimplementa, em TS puro e standalone, o formato do `/provider` do hammer
+// (`src/utils/providerProfile.ts`). Grava `$CLAUDE_CONFIG_DIR/.hammer-profile.json`
 // no formato `{ profile, env, createdAt }`. No startup o CLI lê esse arquivo,
 // deriva o flag de compatibilidade (`CLAUDE_CODE_USE_*`) a partir do campo
 // `profile` e aplica `env` — então aqui basta gravar `{ profile, env }`.
@@ -14,7 +14,7 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, wri
 import { dirname, join } from "node:path";
 import { resolveConfigDir } from "../auth/store.js";
 
-export const PROFILE_FILE_NAME = ".openclaude-profile.json";
+export const PROFILE_FILE_NAME = ".hammer-profile.json";
 
 /** Provider persistido. Espelha o subconjunto do hammer que o SDK reimplementa. */
 export type ProviderProfile =
@@ -52,7 +52,7 @@ export interface ProfileEnv {
   MISTRAL_MODEL?: string;
 }
 
-/** Arquivo persistido em `.openclaude-profile.json`. */
+/** Arquivo persistido em `.hammer-profile.json`. */
 export interface ProfileFile {
   profile: ProviderProfile;
   env: ProfileEnv;

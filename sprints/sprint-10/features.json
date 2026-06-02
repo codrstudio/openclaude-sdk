@@ -13,7 +13,7 @@
       "devDependencies.zod permanece '^4.3.6' (nao alterado)",
       "Typecheck (npm run typecheck) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md",
     "completed_at": "2026-04-09T15:30:00.000Z"
   },
   {
@@ -31,7 +31,7 @@
       "buildCliArgs() recebe optionsForCli (nao resolvedOptions diretamente)",
       "Objeto McpSdkServerConfig original do usuario nao contem _localPort apos query"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md",
     "completed_at": "2026-04-09T16:00:00.000Z"
   },
   {
@@ -50,7 +50,7 @@
       "buildCliArgs({ systemPrompt: 'custom' }) continua gerando '--system-prompt custom' (regressao)",
       "buildCliArgs({ systemPrompt: { append: 'extra' } }) continua gerando '--append-system-prompt extra' sem preset (regressao)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
   },
   {
     "id": "F-082",
@@ -68,7 +68,7 @@
       "createSession().send('x', { model: 'gpt-4' }) propaga model normalmente (nao filtra campos legitimos)",
       "opts.options com resume/sessionId/continue tambem sao filtrados (nao apenas turnOptions)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md"
   },
   {
     "id": "F-079",
@@ -86,7 +86,7 @@
       "buildCliArgs({ thinking: { type: 'disabled' } }) continua gerando '--thinking disabled' (regressao)",
       "Sem thinking definido, nenhuma flag --thinking e gerada"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
   },
   {
     "id": "F-084",
@@ -105,7 +105,7 @@
       "JSON unico valido por linha continua funcionando sem passar pelo split (regressao)",
       "Chaves dentro de strings JSON nao confundem o parser: '{\"x\":\"{}\"}' e 1 objeto"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-036-json-parser-robustness.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-036-json-parser-robustness.md"
   },
   {
     "id": "F-077",
@@ -132,7 +132,7 @@
       "buildCliArgs({ tools: { type: 'preset', preset: 'claude_code' } }) inclui '--tools-preset claude_code'",
       "Campos undefined nao geram flags extras"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
   },
   {
     "id": "F-083",
@@ -145,12 +145,12 @@
     "task": "vibe-code",
     "dependencies": [],
     "tests": [
-      "executable: 'node', executableArgs: ['--experimental-vm-modules'] gera 'node --experimental-vm-modules openclaude ...'",
-      "executable: 'bun' no Windows gera 'cmd.exe /c bun openclaude ...'",
+      "executable: 'node', executableArgs: ['--experimental-vm-modules'] gera 'node --experimental-vm-modules hammer ...'",
+      "executable: 'bun' no Windows gera 'cmd.exe /c bun hammer ...'",
       "Sem executable nem executableArgs, comportamento identico ao atual (regressao)",
       "executableArgs sem executable sao prepended antes do base path"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-035-process-session-safety.md"
   },
   {
     "id": "F-080",
@@ -168,7 +168,7 @@
       "MCP SSE server sem headers gera apenas '--mcp-server-sse name:url' (regressao)",
       "MCP stdio e sdk servers nao sao afetados por esta mudanca"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-034-buildcliargs-option-mapping.md"
   },
   {
     "id": "F-085",
@@ -186,7 +186,7 @@
       "Mensagem de erro ao exceder limite mostra o valor configurado",
       "maxBufferSize e propagado de query() → spawnAndStream() → streamGen()"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-036-json-parser-robustness.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-036-json-parser-robustness.md"
   },
   {
     "id": "F-087",
@@ -209,6 +209,6 @@
       "Tabela de tipos (stdio, sse, http, sdk) com campos e uso presente",
       "Secoes existentes do README nao foram removidas ou reordenadas"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-10/worktree/sprints/sprint-10/3-prps/PRP-037-package-and-documentation.md"
   }
 ]

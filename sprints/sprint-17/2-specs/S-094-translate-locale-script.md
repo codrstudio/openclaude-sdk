@@ -1,4 +1,4 @@
-# openclaude-sdk - Script translate-locale para gerar novos dicionarios
+# hammer-sdk - Script translate-locale para gerar novos dicionarios
 
 Spec do script `scripts/translate-locale.ts` que gera dicionarios de novos locales usando o proprio SDK como tradutor.
 

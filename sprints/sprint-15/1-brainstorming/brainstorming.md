@@ -17,7 +17,7 @@ O TASK.md desta wave descreve o **Locale Options**: adição de um campo `locale
 
 ### Motivação
 
-O SDK já gera conteúdo por conta própria na task 03 (tool intention filter vai substituir `tool_use.input` por uma frase humana em linguagem natural). Hardcodar pt-BR seria errado — o `openclaude-chat` roda em pt-BR, en-US e es-ES. Heurísticas (detectar do prompt) são frágeis. A solução correta é receber o locale como parâmetro explícito do aplicativo hospedeiro.
+O SDK já gera conteúdo por conta própria na task 03 (tool intention filter vai substituir `tool_use.input` por uma frase humana em linguagem natural). Hardcodar pt-BR seria errado — o `hammer-chat` roda em pt-BR, en-US e es-ES. Heurísticas (detectar do prompt) são frágeis. A solução correta é receber o locale como parâmetro explícito do aplicativo hospedeiro.
 
 ---
 
@@ -26,7 +26,7 @@ O SDK já gera conteúdo por conta própria na task 03 (tool intention filter va
 ### Waves 1–13 (D-001 a D-093) — Núcleo do SDK
 - **package.json, tsup, tsconfig** — build, dist, exports (D-001)
 - **buildCliArgs()** em `process.ts` — mapeamento completo de Options → CLI flags (D-003, D-051, D-057)
-- **Hierarquia de erros tipados** — OpenClaudeError, AuthError, BillingError, etc. (D-005)
+- **Hierarquia de erros tipados** — HammerError, AuthError, BillingError, etc. (D-005)
 - **Sessions API** — createSession, resumeSession, listSessions, getSessionMessages, etc. (D-044, D-045, D-016, D-038)
 - **MCP SDK servers** — tool(), createSdkMcpServer(), lifecycle management em query.ts (D-039, D-040, D-055)
 - **richOutput** em Options + módulo `src/display/` completo — 19 schemas Zod, 4 meta-tools, DISPLAY_SYSTEM_PROMPT, createDisplayMcpServer() (D-071–D-081)
@@ -74,7 +74,7 @@ O módulo `src/locale/` encapsula toda lógica de locale em um único lugar, fá
 A task é completamente independente — não precisa de nenhuma nova dependência npm. Qualquer string BCP 47 é aceita sem throw; a normalização é puramente de string.
 
 ### Oportunidade: validação por inspeção
-A não-propagação de `locale` para o CLI pode ser verificada por inspeção de `buildCliArgs()` — `locale` não é uma flag do `openclaude` CLI, então não deve aparecer nos args. Isso garante que o comportamento SDK-side-only está correto.
+A não-propagação de `locale` para o CLI pode ser verificada por inspeção de `buildCliArgs()` — `locale` não é uma flag do `hammer` CLI, então não deve aparecer nos args. Isso garante que o comportamento SDK-side-only está correto.
 
 ### Oportunidade: test script completo
 O TASK.md já fornece 18 casos de teste para `normalizeLocale()` (undefined, null, "", variações de pt-BR/en-US/es-ES, locales desconhecidos). Implementar o script `.tmp/demo/test-locale.mjs` permite validação imediata sem framework de testes.

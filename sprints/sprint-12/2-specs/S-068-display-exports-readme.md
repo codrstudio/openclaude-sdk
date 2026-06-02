@@ -1,4 +1,4 @@
-# openclaude-sdk - Exports Publicos de Display + README
+# hammer-sdk - Exports Publicos de Display + README
 
 Adicionar reexports de display no barrel principal `src/index.ts` e documentar a feature "Rich Output" no README.
 
@@ -111,7 +111,7 @@ Enable with `richOutput: true` — zero overhead when disabled.
 ### Example
 
 ‍```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Compare the top 3 laptops under $1500 with specs and prices",
@@ -135,13 +135,13 @@ for await (const msg of q) {
 ‍```
 
 Each display tool takes an `action` field that selects the content type.
-The client (e.g., openclaude-chat) detects `block.name.startsWith("display_")`
+The client (e.g., hammer-chat) detects `block.name.startsWith("display_")`
 and dispatches to the appropriate renderer using `block.input`.
 
 Schemas are exported for client-side validation:
 
 ‍```typescript
-import { DisplayToolRegistry } from "openclaude-sdk"
+import { DisplayToolRegistry } from "hammer-sdk"
 
 const schema = DisplayToolRegistry[block.name]
 const parsed = schema.parse(block.input)

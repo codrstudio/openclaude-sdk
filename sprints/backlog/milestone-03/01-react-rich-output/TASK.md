@@ -221,7 +221,7 @@ if (optionsForCli.richOutput) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("display" in existingServers) {
-    console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+    console.warn("[hammer-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
   }
 
   optionsForCli = {
@@ -246,7 +246,7 @@ if (optionsForCli.richOutput) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("display" in existingServers) {
-    console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+    console.warn("[hammer-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
   }
 
   let mergedPrompt = mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT)
@@ -333,7 +333,7 @@ Esta documentacao e **normativa** — hosts que nao seguem o passo 3 (sandbox) e
 ## Exemplo end-to-end
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Monta um dashboard animado com 4 KPIs de vendas e um chart de linha",
@@ -388,7 +388,7 @@ for await (const msg of q) {
 | `tool()` / `createSdkMcpServer()` | Ja implementado (milestone-01/06) |
 | `zod` peer dep | Ja peer dep |
 
-Nenhuma dep nova no SDK. O **host** (openclaude-chat ou equivalente) precisa de Babel standalone ou sucrase + iframe sandbox, mas isso fica fora deste repo.
+Nenhuma dep nova no SDK. O **host** (hammer-chat ou equivalente) precisa de Babel standalone ou sucrase + iframe sandbox, mas isso fica fora deste repo.
 
 ---
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Reconstrucao de Conversation Chain em getSessionMessages()
+# hammer-sdk - Reconstrucao de Conversation Chain em getSessionMessages()
 
 Reimplementar `getSessionMessages()` com algoritmo de reconstrucao de chain via `parentUuid`, alinhando com o Python SDK.
 

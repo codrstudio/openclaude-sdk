@@ -56,8 +56,8 @@ Inserir apos a secao "Rich Output", seguindo o mesmo formato.
 Enable `askUser` to let the agent pause and ask the user structured questions mid-task:
 
 \`\`\`typescript
-import { query } from "openclaude-sdk"
-import type { AskUserRequest } from "openclaude-sdk"
+import { query } from "hammer-sdk"
+import type { AskUserRequest } from "hammer-sdk"
 
 const q = query({
   prompt: "Book a meeting for next week with the marketing team",
@@ -108,9 +108,9 @@ q.respondToAskUser(req.callId, { type: "cancelled" })
 
 | Cenario | Antes | Depois |
 |---------|-------|--------|
-| `import type { AskUserRequest } from "openclaude-sdk"` | Erro | Funciona |
-| `import type { AskUserAnswer } from "openclaude-sdk"` | Erro | Funciona |
-| `import { askUserSchema } from "openclaude-sdk"` | Erro | Erro (intencional — interno) |
+| `import type { AskUserRequest } from "hammer-sdk"` | Erro | Funciona |
+| `import type { AskUserAnswer } from "hammer-sdk"` | Erro | Funciona |
+| `import { askUserSchema } from "hammer-sdk"` | Erro | Erro (intencional — interno) |
 
 ## Features
 
@@ -125,7 +125,7 @@ q.respondToAskUser(req.callId, { type: "cancelled" })
 - NAO alterar `src/ask-user/*` — ja completo por PRP-042 e PRP-043
 - NAO alterar `src/query.ts` — ja completo por PRP-044
 - NAO adicionar testes (nao ha framework de teste configurado)
-- NAO implementar renderizacao de UI para perguntas — responsabilidade do cliente (ex: openclaude-chat)
+- NAO implementar renderizacao de UI para perguntas — responsabilidade do cliente (ex: hammer-chat)
 
 ## Dependencias
 

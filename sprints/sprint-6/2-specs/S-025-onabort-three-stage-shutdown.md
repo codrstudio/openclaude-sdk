@@ -1,4 +1,4 @@
-# openclaude-sdk - Shutdown de 3 Estagios em onAbort
+# hammer-sdk - Shutdown de 3 Estagios em onAbort
 
 Atualizar o handler `onAbort` em `spawnAndStream()` para usar 3 estagios: fechar stdin, SIGTERM, SIGKILL.
 

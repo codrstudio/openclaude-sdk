@@ -1,4 +1,4 @@
-# openclaude-sdk - Campo toolOutputMode em Options
+# hammer-sdk - Campo toolOutputMode em Options
 
 Spec do novo campo `toolOutputMode` na interface `Options` para controlar exposicao de conteudo de `tool_use` blocks.
 

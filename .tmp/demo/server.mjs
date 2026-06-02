@@ -44,7 +44,7 @@ const mcpEcho = await createSdkMcpServer({
 const defaultMcpServers = { "demo-echo": mcpEcho }
 
 // ---------------------------------------------------------------------------
-// Stderr ring buffer — captura output do CLI `claude` (prefixado `[openclaude
+// Stderr ring buffer — captura output do CLI `claude` (prefixado `[hammer
 // stderr]` pelo SDK) pra incluir em respostas de erro quando o CLI morre sem
 // emitir SDKMessage algum.
 // ---------------------------------------------------------------------------
@@ -130,7 +130,7 @@ api.get("/models", (c) => {
 // ---- stateless chat -------------------------------------------------------
 
 // Helper: options base comuns a todos os endpoints.
-// Defaults escolhidos pq o CLI `openclaude` instalado nao conhece:
+// Defaults escolhidos pq o CLI `hammer` instalado nao conhece:
 //   - `--system-prompt-preset` (SDK injeta quando richOutput=true)
 //   - `--mcp-server-sse` (SDK injeta quando ha SDK MCP server)
 // E porque o SDK (process.ts:400) so fecha stdin do CLI quando
@@ -140,7 +140,7 @@ api.get("/models", (c) => {
 // comeca a gerar output e a request pendura ate timeout.
 // Rich output pipeline — manual, bypassing the SDK's built-in richOutput flag.
 // Rationale: `options.richOutput: true` uses StreamableHTTPServerTransport under
-// the hood to host the display MCP server in-process, and the openclaude CLI's
+// the hood to host the display MCP server in-process, and the hammer CLI's
 // MCP client fails to establish that transport (status: "failed" in init message).
 // Instead we spawn a standalone stdio MCP server (mcp-display-stdio.mjs) as a
 // subprocess via the CLI's --mcp-config, which uses the well-tested
@@ -401,7 +401,7 @@ app.onError((err, c) => {
 
 const port = 9500
 const httpServer = serve({ fetch: app.fetch, port }, (info) => {
-  console.log(`openclaude-sdk demo listening on http://localhost:${info.port}/api/v1/ai`)
+  console.log(`hammer-sdk demo listening on http://localhost:${info.port}/api/v1/ai`)
 })
 
 // Desabilita os timeouts do Node http.Server que matariam turnos longos:

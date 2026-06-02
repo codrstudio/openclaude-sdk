@@ -15,7 +15,7 @@
       "tool('x', 'd', z.discriminatedUnion('action', [...]), handler) compila sem erro de tipo",
       "SdkMcpToolDefinition<z.ZodDiscriminatedUnion<...>> compila sem erro de tipo"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-039-tool-zod-discriminated-union-compat.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-039-tool-zod-discriminated-union-compat.md"
   },
   {
     "id": "F-093",
@@ -34,12 +34,12 @@
       "createSdkMcpServer({ name: 'test', tools: [toolComDiscriminatedUnion] }) compila sem erro",
       "server.tool() do MCP SDK aceita ZodDiscriminatedUnion no terceiro parametro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-039-tool-zod-discriminated-union-compat.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-039-tool-zod-discriminated-union-compat.md"
   },
   {
     "id": "F-094",
     "name": "Display schemas Zod",
-    "description": "Criar src/display/schemas.ts com 19 schemas Zod portados de openclaude-sdk/src/display-schemas.ts, 4 primitivos internos (MoneySchema, SourceRefSchema, ImageItemSchema, BadgeSchema nao exportados), DisplayToolRegistry (Record<nome, schema>), DisplayToolName (keyof) e 19 tipos inferidos.",
+    "description": "Criar src/display/schemas.ts com 19 schemas Zod portados de hammer-sdk/src/display-schemas.ts, 4 primitivos internos (MoneySchema, SourceRefSchema, ImageItemSchema, BadgeSchema nao exportados), DisplayToolRegistry (Record<nome, schema>), DisplayToolName (keyof) e 19 tipos inferidos.",
     "status": "passing",
     "completed_at": "2026-04-11T01:10:00Z",
     "priority": 3,
@@ -54,7 +54,7 @@
       "tsc --noEmit passa sem erros",
       "Primitivos MoneySchema, SourceRefSchema, ImageItemSchema, BadgeSchema NAO sao exportados"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
   },
   {
     "id": "F-095",
@@ -76,7 +76,7 @@
       "Handler retorna { content: [{ type: 'text', text: JSON.stringify(args) }] }",
       "tsc --noEmit passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
   },
   {
     "id": "F-096",
@@ -95,7 +95,7 @@
       "Menciona campo 'action'",
       "tsc --noEmit passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
   },
   {
     "id": "F-097",
@@ -115,7 +115,7 @@
       "Retorno tem type/name compativel com McpSdkServerConfig",
       "tsc --noEmit passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
   },
   {
     "id": "F-098",
@@ -138,7 +138,7 @@
       "import type { DisplayMetric, DisplayToolName } from './display/index.js' compila",
       "tsc --noEmit passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-040-display-module.md"
   },
   {
     "id": "F-099",
@@ -156,7 +156,7 @@
       "query({ prompt: '...', options: {} }) continua compilando (backward compat)",
       "tsc --noEmit passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
   },
   {
     "id": "F-100",
@@ -178,7 +178,7 @@
       "mergeSystemPromptAppend({ type: 'preset', preset: 'claude_code', append: 'Y' }, 'X') retorna { type: 'preset', preset: 'claude_code', append: 'Y\\n\\nX' }",
       "tsc --noEmit passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
   },
   {
     "id": "F-101",
@@ -205,7 +205,7 @@
       "tsc --noEmit passa sem erros",
       "tsup build passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
   },
   {
     "id": "F-102",
@@ -220,13 +220,13 @@
       "F-098"
     ],
     "tests": [
-      "import { DisplayMetricSchema, DisplayToolRegistry } from 'openclaude-sdk' compila",
-      "import type { DisplayMetric, DisplayToolName } from 'openclaude-sdk' compila",
+      "import { DisplayMetricSchema, DisplayToolRegistry } from 'hammer-sdk' compila",
+      "import type { DisplayMetric, DisplayToolName } from 'hammer-sdk' compila",
       "Todos os 19 schemas estao exportados",
       "Todos os 19 tipos estao exportados",
       "tsc --noEmit passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md"
   },
   {
     "id": "F-103",
@@ -246,7 +246,7 @@
       "Exemplo mostra deteccao de display_ tools no stream",
       "Exemplo mostra uso de DisplayToolRegistry para validacao client-side"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md",
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-12/worktree/sprints/sprint-12/3-prps/PRP-041-richoutput-integration-exports-readme.md",
     "completed_at": "2026-04-10T07:00:00.000Z"
   }
 ]

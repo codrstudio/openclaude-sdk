@@ -1,4 +1,4 @@
-# openclaude-sdk - Configuracao de Package para Distribuicao
+# hammer-sdk - Configuracao de Package para Distribuicao
 
 Configurar o package para publicacao npm com build ESM + CJS + DTS via tsup.
 
@@ -14,7 +14,7 @@ Resolver D-001: o prototipo esta como `@claude-chat/sdk-3` (private). A SDK prec
 
 | Item | Valor |
 |------|-------|
-| Nome do package | `openclaude-sdk` |
+| Nome do package | `hammer-sdk` |
 | Diretorio raiz | `/` (raiz do repo) |
 | Source | `src/` |
 | Output | `dist/` |
@@ -26,9 +26,9 @@ Resolver D-001: o prototipo esta como `@claude-chat/sdk-3` (private). A SDK prec
 
 | Campo | Valor |
 |-------|-------|
-| `name` | `"openclaude-sdk"` |
+| `name` | `"hammer-sdk"` |
 | `version` | `"0.1.0"` |
-| `description` | `"TypeScript SDK wrapper for the OpenClaude CLI"` |
+| `description` | `"TypeScript SDK wrapper for the Hammer CLI"` |
 | `license` | `"MIT"` |
 | `type` | `"module"` |
 | `main` | `"./dist/index.cjs"` |
@@ -96,7 +96,7 @@ Resolver D-001: o prototipo esta como `@claude-chat/sdk-3` (private). A SDK prec
 
 | De (prototipo) | Para (producao) |
 |-----------------|-----------------|
-| `@claude-chat/sdk-3` | `openclaude-sdk` |
+| `@claude-chat/sdk-3` | `hammer-sdk` |
 | `"private": true` | remover |
 | Imports com `.js` extension | Manter (bundler resolution) |
 | Arquivos em `proto/sdk/src/` | Copiar para `src/` |
@@ -107,8 +107,8 @@ Resolver D-001: o prototipo esta como `@claude-chat/sdk-3` (private). A SDK prec
 
 - [ ] `npm run build` produz `dist/index.js` (ESM), `dist/index.cjs` (CJS), `dist/index.d.ts` (DTS)
 - [ ] `npm run typecheck` passa sem erros
-- [ ] `import { query } from "openclaude-sdk"` funciona em ESM
-- [ ] `const { query } = require("openclaude-sdk")` funciona em CJS
+- [ ] `import { query } from "hammer-sdk"` funciona em ESM
+- [ ] `const { query } = require("hammer-sdk")` funciona em CJS
 - [ ] `npm pack` produz tarball com apenas `dist/`, `README.md`, `LICENSE`
 - [ ] Nenhuma dependencia de runtime no `dependencies`
 

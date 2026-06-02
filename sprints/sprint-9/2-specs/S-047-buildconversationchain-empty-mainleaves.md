@@ -1,4 +1,4 @@
-# openclaude-sdk - Edge Case em buildConversationChain: mainLeaves Vazio
+# hammer-sdk - Edge Case em buildConversationChain: mainLeaves Vazio
 
 Corrigir fallback de `buildConversationChain()` quando todos os leaves sao sidechain/team/meta.
 

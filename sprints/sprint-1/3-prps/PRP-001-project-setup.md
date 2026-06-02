@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Configurar o projeto `openclaude-sdk` para distribuicao npm: copiar fontes do prototipo, configurar package.json, tsconfig.json, tsup, e validar que o build produz ESM + CJS + DTS.
+Configurar o projeto `hammer-sdk` para distribuicao npm: copiar fontes do prototipo, configurar package.json, tsconfig.json, tsup, e validar que o build produz ESM + CJS + DTS.
 
 Referencia: spec S-001 (D-001).
 
@@ -28,7 +28,7 @@ O prototipo usa `@claude-chat/sdk-3` como nome e esta marcado como `private`. Pr
 
 Copiar `proto/sdk/src/` (do diretorio de artefatos do projeto) para `src/` na raiz do repositorio. Manter a estrutura de arquivos intacta.
 
-O diretorio de artefatos do projeto e: o diretorio declarado em `project.json` como `target_folder`, ou se ausente, o caminho `D:/aw/context/projects/openclaude-sdk/artifacts/`.
+O diretorio de artefatos do projeto e: o diretorio declarado em `project.json` como `target_folder`, ou se ausente, o caminho `D:/aw/context/projects/hammer-sdk/artifacts/`.
 
 ### 2. package.json
 
@@ -36,9 +36,9 @@ Criar `package.json` na raiz com:
 
 | Campo | Valor |
 |-------|-------|
-| `name` | `"openclaude-sdk"` |
+| `name` | `"hammer-sdk"` |
 | `version` | `"0.1.0"` |
-| `description` | `"TypeScript SDK wrapper for the OpenClaude CLI"` |
+| `description` | `"TypeScript SDK wrapper for the Hammer CLI"` |
 | `license` | `"MIT"` |
 | `type` | `"module"` |
 | `main` | `"./dist/index.cjs"` |

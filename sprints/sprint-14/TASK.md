@@ -221,7 +221,7 @@ if (optionsForCli.richOutput) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("display" in existingServers) {
-    console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+    console.warn("[hammer-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
   }
 
   optionsForCli = {
@@ -246,7 +246,7 @@ if (optionsForCli.richOutput) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("display" in existingServers) {
-    console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+    console.warn("[hammer-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
   }
 
   let mergedPrompt = mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT)
@@ -333,7 +333,7 @@ Esta documentacao e **normativa** — hosts que nao seguem o passo 3 (sandbox) e
 ## Exemplo end-to-end
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Monta um dashboard animado com 4 KPIs de vendas e um chart de linha",
@@ -388,7 +388,7 @@ for await (const msg of q) {
 | `tool()` / `createSdkMcpServer()` | Ja implementado (milestone-01/06) |
 | `zod` peer dep | Ja peer dep |
 
-Nenhuma dep nova no SDK. O **host** (openclaude-chat ou equivalente) precisa de Babel standalone ou sucrase + iframe sandbox, mas isso fica fora deste repo.
+Nenhuma dep nova no SDK. O **host** (hammer-chat ou equivalente) precisa de Babel standalone ou sucrase + iframe sandbox, mas isso fica fora deste repo.
 
 ---
 
@@ -424,15 +424,15 @@ Nenhuma dep nova no SDK. O **host** (openclaude-chat ou equivalente) precisa de 
 
 # Projeto
 
-# openclaude-sdk
+# hammer-sdk
 
-Um SDK em TypeScript que permite usar o OpenClaude (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
+Um SDK em TypeScript que permite usar o Hammer (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
 
 ## Problema que resolve
 
-O OpenClaude CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
+O Hammer CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
 
-O openclaude-sdk faz essa ponte: transforma o CLI num componente controlável por código.
+O hammer-sdk faz essa ponte: transforma o CLI num componente controlável por código.
 
 ## O que permite fazer
 
@@ -448,4 +448,4 @@ Desenvolvedores que querem construir produtos ou automações em cima de agentes
 
 ## Relação com o ecossistema
 
-É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o OpenClaude. Mesma ideia, mesmo estilo de API, ecossistema diferente.
+É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o Hammer. Mesma ideia, mesmo estilo de API, ecossistema diferente.

@@ -1,4 +1,4 @@
-# openclaude-sdk - Validacao: nao-propagacao CLI e teste manual
+# hammer-sdk - Validacao: nao-propagacao CLI e teste manual
 
 Spec da verificacao de nao-propagacao de `locale` para o CLI e do script de teste manual.
 
@@ -10,7 +10,7 @@ Resolve D-109, D-110, D-111.
 
 | Problema | Consequencia |
 |----------|-------------|
-| `locale` poderia vazar como flag CLI por engano | O `openclaude` CLI nao tem flag `--locale` — passaria como arg invalido |
+| `locale` poderia vazar como flag CLI por engano | O `hammer` CLI nao tem flag `--locale` — passaria como arg invalido |
 | Sem teste manual, regressoes na normalizacao passam despercebidas | 18 casos de teste do TASK.md precisam ser validados |
 | Build e typecheck podem quebrar com novos arquivos | Novos modulos precisam compilar corretamente |
 

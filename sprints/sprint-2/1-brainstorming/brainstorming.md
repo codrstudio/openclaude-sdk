@@ -1,4 +1,4 @@
-# Brainstorming — openclaude-sdk (Sprint 2)
+# Brainstorming — hammer-sdk (Sprint 2)
 
 ## Contexto
 

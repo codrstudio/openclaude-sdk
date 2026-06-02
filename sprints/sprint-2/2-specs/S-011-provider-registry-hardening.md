@@ -1,4 +1,4 @@
-# openclaude-sdk - Hardening do Provider Registry
+# hammer-sdk - Hardening do Provider Registry
 
 Tratar providers bedrock/vertex e validar inputs de `createOpenRouterRegistry()`.
 

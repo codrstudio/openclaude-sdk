@@ -17,12 +17,12 @@
       "src/sessions.ts existe e contem listSessions()",
       "src/types/ existe com tipos TypeScript"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
   },
   {
     "id": "F-002",
     "name": "Package config",
-    "description": "Criar package.json (name: openclaude-sdk, version: 0.1.0, type: module, exports ESM+CJS+DTS, engines.node >=20, devDeps tsup+typescript, SEM private:true), tsconfig.json (ES2022, ESNext, bundler, strict, noUncheckedIndexedAccess), tsup.config.ts (esm+cjs, dts, sourcemap), .gitignore (node_modules, dist, *.tgz), LICENSE (MIT).",
+    "description": "Criar package.json (name: hammer-sdk, version: 0.1.0, type: module, exports ESM+CJS+DTS, engines.node >=20, devDeps tsup+typescript, SEM private:true), tsconfig.json (ES2022, ESNext, bundler, strict, noUncheckedIndexedAccess), tsup.config.ts (esm+cjs, dts, sourcemap), .gitignore (node_modules, dist, *.tgz), LICENSE (MIT).",
     "status": "passing",
     "priority": 2,
     "completed_at": "2026-04-08T23:00:00Z",
@@ -30,14 +30,14 @@
     "task": "vibe-code",
     "dependencies": [],
     "tests": [
-      "package.json existe com name openclaude-sdk e NAO contem private:true",
+      "package.json existe com name hammer-sdk e NAO contem private:true",
       "package.json tem exports com .import, .require, .types",
       "tsconfig.json existe com target ES2022 e strict true",
       "tsup.config.ts existe com format esm+cjs e dts true",
       ".gitignore existe com node_modules e dist",
       "LICENSE existe com texto MIT"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
   },
   {
     "id": "F-003",
@@ -60,7 +60,7 @@
       "dist/index.cjs existe (CJS)",
       "dist/index.d.ts existe (DTS)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-001-project-setup.md"
   },
   {
     "id": "F-008",
@@ -80,7 +80,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
   },
   {
     "id": "F-004",
@@ -100,7 +100,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
   },
   {
     "id": "F-005",
@@ -121,7 +121,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
   },
   {
     "id": "F-006",
@@ -141,7 +141,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
   },
   {
     "id": "F-007",
@@ -162,12 +162,12 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-002-cli-args-structured-output.md"
   },
   {
     "id": "F-009",
     "name": "Error classes",
-    "description": "Criar src/errors.ts com: OpenClaudeError (base class extending Error, com propriedades readonly code, sessionId, costUsd, durationMs) e 9 subclasses: AuthenticationError (code: authentication_failed), BillingError (code: billing_error), RateLimitError (code: rate_limit, com resetsAt? e utilization? extras), InvalidRequestError (code: invalid_request), ServerError (code: server_error), MaxTurnsError (code: max_turns), MaxBudgetError (code: max_budget_usd), ExecutionError (code: execution_error), StructuredOutputError (code: structured_output_retries). Exportar tudo via src/index.ts.",
+    "description": "Criar src/errors.ts com: HammerError (base class extending Error, com propriedades readonly code, sessionId, costUsd, durationMs) e 9 subclasses: AuthenticationError (code: authentication_failed), BillingError (code: billing_error), RateLimitError (code: rate_limit, com resetsAt? e utilization? extras), InvalidRequestError (code: invalid_request), ServerError (code: server_error), MaxTurnsError (code: max_turns), MaxBudgetError (code: max_budget_usd), ExecutionError (code: execution_error), StructuredOutputError (code: structured_output_retries). Exportar tudo via src/index.ts.",
     "status": "passing",
     "completed_at": "2026-04-08T22:30:00Z",
     "priority": 9,
@@ -177,19 +177,19 @@
       "F-003"
     ],
     "tests": [
-      "src/errors.ts existe com OpenClaudeError e 9 subclasses",
-      "OpenClaudeError tem propriedades readonly code, sessionId, costUsd, durationMs",
+      "src/errors.ts existe com HammerError e 9 subclasses",
+      "HammerError tem propriedades readonly code, sessionId, costUsd, durationMs",
       "RateLimitError tem propriedades opcionais resetsAt e utilization",
       "Todas as classes e isRecoverable sao exportadas via src/index.ts",
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
   },
   {
     "id": "F-010",
     "name": "isRecoverable helper",
-    "description": "Em src/errors.ts, implementar e exportar isRecoverable(error: OpenClaudeError): boolean. Retorna true para RateLimitError, ServerError, MaxTurnsError, MaxBudgetError, StructuredOutputError, ExecutionError. Retorna false para AuthenticationError, BillingError, InvalidRequestError. Exportar via src/index.ts.",
+    "description": "Em src/errors.ts, implementar e exportar isRecoverable(error: HammerError): boolean. Retorna true para RateLimitError, ServerError, MaxTurnsError, MaxBudgetError, StructuredOutputError, ExecutionError. Retorna false para AuthenticationError, BillingError, InvalidRequestError. Exportar via src/index.ts.",
     "status": "passing",
     "priority": 10,
     "completed_at": "2026-04-08T22:30:00Z",
@@ -206,7 +206,7 @@
       "isRecoverable esta exportado via src/index.ts",
       "npm run typecheck passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
   },
   {
     "id": "F-011",
@@ -228,12 +228,12 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-003-error-hierarchy.md"
   },
   {
     "id": "F-013",
     "name": "resolveExecutable",
-    "description": "Criar e exportar funcao resolveExecutable(options?: Options) em src/process.ts que retorna { command: string, prependArgs: string[] }. Usa options.pathToClaudeCodeExecutable ou 'openclaude' como base. Em Windows (process.platform === 'win32'): retorna { command: process.env.ComSpec || 'C:\\\\Windows\\\\System32\\\\cmd.exe', prependArgs: ['/c', base] }. Em outros OS: retorna { command: base, prependArgs: [] }. Deprecar resolveCommand() em src/registry.ts com @deprecated JSDoc.",
+    "description": "Criar e exportar funcao resolveExecutable(options?: Options) em src/process.ts que retorna { command: string, prependArgs: string[] }. Usa options.pathToClaudeCodeExecutable ou 'hammer' como base. Em Windows (process.platform === 'win32'): retorna { command: process.env.ComSpec || 'C:\\\\Windows\\\\System32\\\\cmd.exe', prependArgs: ['/c', base] }. Em outros OS: retorna { command: base, prependArgs: [] }. Deprecar resolveCommand() em src/registry.ts com @deprecated JSDoc.",
     "status": "passing",
     "completed_at": "2026-04-08T23:50:00Z",
     "priority": 12,
@@ -243,13 +243,13 @@
       "F-003"
     ],
     "tests": [
-      "resolveExecutable() sem options retorna command 'openclaude' em non-Windows",
+      "resolveExecutable() sem options retorna command 'hammer' em non-Windows",
       "resolveExecutable com pathToClaudeCodeExecutable usa o path fornecido como base",
       "resolveCommand() em registry.ts tem @deprecated no JSDoc",
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
   },
   {
     "id": "F-012",
@@ -270,7 +270,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
   },
   {
     "id": "F-014",
@@ -292,7 +292,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-004-process-fixes.md"
   },
   {
     "id": "F-015",
@@ -315,7 +315,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-005-session-improvements.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-005-session-improvements.md"
   },
   {
     "id": "F-016",
@@ -337,7 +337,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-005-session-improvements.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-005-session-improvements.md"
   },
   {
     "id": "F-017",
@@ -357,7 +357,7 @@
       "PermissionResponse esta exportado via src/index.ts",
       "npm run typecheck passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
   },
   {
     "id": "F-020",
@@ -379,7 +379,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
   },
   {
     "id": "F-019",
@@ -400,7 +400,7 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
   },
   {
     "id": "F-018",
@@ -422,12 +422,12 @@
       "npm run typecheck passa",
       "npm run build passa"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-006-permission-stdin.md"
   },
   {
     "id": "F-021",
     "name": "README documentacao",
-    "description": "Criar README.md na raiz do repositorio com documentacao completa da API publica em ingles. Secoes: Installation (npm install openclaude-sdk, requisitos Node>=20 + OpenClaude CLI), Quick Start (query + for await), API Reference (query, collectMessages, continueSession, createOpenRouterRegistry, resolveModelEnv, listSessions, getSessionMessages, getSessionInfo, renameSession, tagSession — cada uma com assinatura e exemplo), Options (tabela por categoria: Execucao, Permissoes, Sessao, Prompt, Output, Avancado), Error Handling (classes + isRecoverable + tabela recuperavel/fatal), Provider Registry (exemplo OpenRouter), Session Management (deep search + continueSession), Plan Mode (respondToPermission).",
+    "description": "Criar README.md na raiz do repositorio com documentacao completa da API publica em ingles. Secoes: Installation (npm install hammer-sdk, requisitos Node>=20 + Hammer CLI), Quick Start (query + for await), API Reference (query, collectMessages, continueSession, createOpenRouterRegistry, resolveModelEnv, listSessions, getSessionMessages, getSessionInfo, renameSession, tagSession — cada uma com assinatura e exemplo), Options (tabela por categoria: Execucao, Permissoes, Sessao, Prompt, Output, Avancado), Error Handling (classes + isRecoverable + tabela recuperavel/fatal), Provider Registry (exemplo OpenRouter), Session Management (deep search + continueSession), Plan Mode (respondToPermission).",
     "status": "passing",
     "priority": 21,
     "completed_at": "2026-04-08T07:00:00Z",
@@ -443,7 +443,7 @@
     ],
     "tests": [
       "README.md existe na raiz do repositorio",
-      "README contem secao Installation com npm install openclaude-sdk",
+      "README contem secao Installation com npm install hammer-sdk",
       "README contem secao Quick Start com exemplo query() e for await",
       "README contem secao API Reference com todas as funcoes exportadas",
       "README contem secao Options com tabela de campos por categoria",
@@ -451,6 +451,6 @@
       "README contem secao Plan Mode com respondToPermission",
       "README esta inteiramente em ingles"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-007-readme.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-1/worktree/sprints/sprint-1/3-prps/PRP-007-readme.md"
   }
 ]

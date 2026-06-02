@@ -1,4 +1,4 @@
-# openclaude-sdk - Funcao normalizeLocale
+# hammer-sdk - Funcao normalizeLocale
 
 Spec da funcao `normalizeLocale()` que normaliza qualquer string BCP 47 para um `SupportedLocale`.
 

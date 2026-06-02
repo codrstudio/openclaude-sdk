@@ -1,4 +1,4 @@
-# openclaude-sdk - Modulo Display: MCP Server + Barrel
+# hammer-sdk - Modulo Display: MCP Server + Barrel
 
 Criar `createDisplayMcpServer()` que monta o MCP server com as 4 meta-tools, e o barrel `index.ts` do modulo display.
 

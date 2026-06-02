@@ -15,7 +15,7 @@
       "type e literal 'presence' (nao string generico)",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
   },
   {
     "id": "F-132",
@@ -33,7 +33,7 @@
       "JSDoc documenta semantica: undefined=15000ms, 0=desabilitado, negativo=desabilitado, positivo=intervalo customizado",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
   },
   {
     "id": "F-133",
@@ -58,7 +58,7 @@
       "Logica existente de control_response preservada intacta",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
   },
   {
     "id": "F-134",
@@ -78,7 +78,7 @@
       "session-v2.ts NAO foi alterado (herda filtro via collectMessages())",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-051-presence-heartbeat-core.md"
   },
   {
     "id": "F-135",
@@ -98,7 +98,7 @@
       "Import path usa extensao .js",
       "npx tsc --noEmit passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
   },
   {
     "id": "F-137",
@@ -119,7 +119,7 @@
       "httpServer.requestTimeout===0 e headersTimeout===0 mantidos",
       "Wire format preservado: event:ping, data com ts/seq/elapsedMs"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
   },
   {
     "id": "F-138",
@@ -142,7 +142,7 @@
       "npx tsup passa com zero erros e dist/ atualizado",
       "Nenhum erro de tipo introduzido pelas mudancas de presence heartbeat"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
   },
   {
     "id": "F-136",
@@ -163,6 +163,6 @@
       "Prompt forca gap de 40s via Bash sleep",
       "Loop imprime PRESENCE com seq e elapsedMs para tipo presence"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-16/worktree/sprints/sprint-16/3-prps/PRP-052-presence-heartbeat-integration.md"
   }
 ]

@@ -1,4 +1,4 @@
-# openclaude-sdk - System Prompt e Barrel do Modulo ask-user
+# hammer-sdk - System Prompt e Barrel do Modulo ask-user
 
 Criar a constante de system prompt injetada quando `askUser: true` e o barrel `index.ts` do modulo.
 

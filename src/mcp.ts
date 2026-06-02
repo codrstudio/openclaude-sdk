@@ -84,7 +84,7 @@ export async function startSdkServerTransport(
   })
 
   const server = http.createServer(async (req, res) => {
-    if (process.env.OPENCLAUDE_MCP_DEBUG) {
+    if (process.env.HAMMER_MCP_DEBUG) {
       console.error(`[mcp-http] ${req.method} ${req.url}`)
     }
     if (req.url === "/mcp") {
@@ -98,7 +98,7 @@ export async function startSdkServerTransport(
             chunks.push(chunk as Buffer)
           }
           const body = chunks.length > 0 ? JSON.parse(Buffer.concat(chunks).toString()) : undefined
-          if (process.env.OPENCLAUDE_MCP_DEBUG) {
+          if (process.env.HAMMER_MCP_DEBUG) {
             console.error(`[mcp-http] POST body:`, JSON.stringify(body)?.slice(0, 200))
           }
           await transport.handleRequest(req, res, body)
@@ -106,7 +106,7 @@ export async function startSdkServerTransport(
           await transport.handleRequest(req, res)
         }
       } catch (err) {
-        if (process.env.OPENCLAUDE_MCP_DEBUG) {
+        if (process.env.HAMMER_MCP_DEBUG) {
           console.error(`[mcp-http] handleRequest threw:`, err)
         }
         if (!res.headersSent) {

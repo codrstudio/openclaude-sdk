@@ -1,4 +1,4 @@
-# openclaude-sdk - Corrigir Colisoes de encodeCwd
+# hammer-sdk - Corrigir Colisoes de encodeCwd
 
 Substituir encoding que causa colisoes por separador reversivel.
 

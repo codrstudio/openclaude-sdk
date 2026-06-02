@@ -1,8 +1,8 @@
-# Brainstorming — openclaude-sdk (Sprint 7)
+# Brainstorming — hammer-sdk (Sprint 7)
 
 ## Contexto
 
-O TASK.md define o `openclaude-sdk` como um SDK TypeScript programático para o OpenClaude CLI. As waves 1–6 implementaram D-001 a D-037 (com exceção de D-027 e D-028, deliberadamente adiados por baixo impacto).
+O TASK.md define o `hammer-sdk` como um SDK TypeScript programático para o Hammer CLI. As waves 1–6 implementaram D-001 a D-037 (com exceção de D-027 e D-028, deliberadamente adiados por baixo impacto).
 
 O sprint 6 concluiu com F-044, F-045 e F-046 todas em status `passing`, entregando o shutdown de 3 estágios em `close()` e `onAbort`, além do guard `stdinClosed` em `writeStdin()`.
 
@@ -14,7 +14,7 @@ Esta wave foca nos **quatro backlog items ainda não mapeados como discoveries**
 
 ### `src/process.ts`
 
-- `resolveExecutable(options?)` — resolve comando `openclaude`, suporte Windows via `cmd /c`
+- `resolveExecutable(options?)` — resolve comando `hammer`, suporte Windows via `cmd /c`
 - `filterEnv(env)` — filtra valores `undefined` antes de passar ao child process
 - `buildCliArgs(options)` — mapeia `Options` completo para args do CLI (output format, permissões, sessão, system prompt, tools, modelo, maxTurns, additionalDirectories, betas, effort, thinking, maxBudgetUsd, debug, mcpServers, extraArgs)
 - `spawnAndStream(command, args, prompt, options)` — spawna processo, parse JSONL, buffer acumulativo 1MB, expõe:
@@ -47,7 +47,7 @@ Esta wave foca nos **quatro backlog items ainda não mapeados como discoveries**
 
 ### `src/errors.ts`
 
-- Hierarquia: `OpenClaudeError` → `AuthenticationError`, `BillingError`, `RateLimitError`, `InvalidRequestError`, `ServerError`, `MaxTurnsError`, `MaxBudgetError`, `ExecutionError`, `StructuredOutputError`
+- Hierarquia: `HammerError` → `AuthenticationError`, `BillingError`, `RateLimitError`, `InvalidRequestError`, `ServerError`, `MaxTurnsError`, `MaxBudgetError`, `ExecutionError`, `StructuredOutputError`
 - `isRecoverable(error)` — retorna true para RateLimitError e ServerError
 
 ### `src/types/`
@@ -109,7 +109,7 @@ Esta wave foca nos **quatro backlog items ainda não mapeados como discoveries**
 
 **Problema**: `Query` expõe apenas 3 métodos (`interrupt`, `close`, `respondToPermission`). O Claude Code SDK expõe 15+ métodos de controle dinâmico via stdin JSON. Os 3 métodos de configuração são os mais impactantes: `setModel()`, `setPermissionMode()`, `setMaxThinkingTokens()`.
 
-**Fix**: Implementar os 3 métodos de configuração via protocolo de controle stdin. Investigar formato exato dos comandos no source do OpenClaude CLI.
+**Fix**: Implementar os 3 métodos de configuração via protocolo de controle stdin. Investigar formato exato dos comandos no source do Hammer CLI.
 
 ### Gap 42 — Query sem métodos de introspecção (FEATURE)
 

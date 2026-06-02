@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // provider — profiles de provider (OpenAI-compat, Gemini, Mistral, Ollama,
-// Codex, GitHub) que o hammer lê no startup via `.openclaude-profile.json`.
+// Codex, GitHub) que o hammer lê no startup via `.hammer-profile.json`.
 //
 // Reimplementa, standalone, o `/provider` do CLI: grava o profile, e o hammer
 // deriva o flag de compatibilidade do campo `profile` e aplica o `env`.

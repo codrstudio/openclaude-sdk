@@ -1,4 +1,4 @@
-# openclaude-sdk - Guard de Processo Vivo em respondToPermission
+# hammer-sdk - Guard de Processo Vivo em respondToPermission
 
 Adicionar validacao de inputs e guard de processo vivo antes de escrever no stdin.
 

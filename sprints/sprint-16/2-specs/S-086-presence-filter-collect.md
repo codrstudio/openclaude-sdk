@@ -1,4 +1,4 @@
-# openclaude-sdk - Filtro de presence em collectMessages e session-v2
+# hammer-sdk - Filtro de presence em collectMessages e session-v2
 
 Spec do filtro que impede mensagens de presence de poluir a lista de mensagens coletadas.
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - REACT_OUTPUT_SYSTEM_PROMPT
+# hammer-sdk - REACT_OUTPUT_SYSTEM_PROMPT
 
 Spec da constante de system prompt que instrui o modelo sobre como emitir componentes React via `display_visual` action `react`.
 

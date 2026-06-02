@@ -1,4 +1,4 @@
-# openclaude-sdk - DisplayReactSchema e action react no visualSchema
+# hammer-sdk - DisplayReactSchema e action react no visualSchema
 
 Spec do schema Zod `DisplayReactSchema` e sua integracao como 6a action no `visualSchema` de `display_visual`.
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Fix buildCliArgs() para SDK Servers com Transporte Local
+# hammer-sdk - Fix buildCliArgs() para SDK Servers com Transporte Local
 
 Remover throw para `type: "sdk"` em `buildCliArgs()` e implementar transporte HTTP local para conectar McpServer in-process ao CLI.
 

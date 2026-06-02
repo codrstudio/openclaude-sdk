@@ -1,4 +1,4 @@
-# openclaude-sdk - Corrigir Mutacao de Objeto Compartilhado em startSdkServers
+# hammer-sdk - Corrigir Mutacao de Objeto Compartilhado em startSdkServers
 
 Eliminar side effect de `startSdkServers()` que muta o `McpSdkServerConfig` do usuario.
 

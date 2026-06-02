@@ -1,4 +1,4 @@
-# openclaude-sdk - Reimplementar encodeCwd como sanitizePath com Algoritmo Python
+# hammer-sdk - Reimplementar encodeCwd como sanitizePath com Algoritmo Python
 
 Substituir `encodeCwd()` por `sanitizePath()` usando single regex + truncacao com hash, identico a `_sanitize_path()` do Python SDK.
 

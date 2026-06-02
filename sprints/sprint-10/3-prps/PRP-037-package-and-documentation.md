@@ -61,7 +61,7 @@ Uma frase: alem de MCP tool factories (inline), o SDK suporta conexao a servidor
 #### Exemplo stdio
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Search for TypeScript best practices",
@@ -81,7 +81,7 @@ const q = query({
 #### Exemplo SSE com headers
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "List recent deployments",
@@ -102,7 +102,7 @@ const q = query({
 #### Exemplo HTTP com header
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Query the database",
@@ -123,7 +123,7 @@ const q = query({
 #### Exemplo multiplos servers combinados
 
 ```typescript
-import { query, tool, createSdkMcpServer } from "openclaude-sdk"
+import { query, tool, createSdkMcpServer } from "hammer-sdk"
 import { z } from "zod"
 
 // Inline SDK server

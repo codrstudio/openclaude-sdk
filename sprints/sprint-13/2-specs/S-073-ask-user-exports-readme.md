@@ -1,4 +1,4 @@
-# openclaude-sdk - Exports Publicos e README do ask_user
+# hammer-sdk - Exports Publicos e README do ask_user
 
 Exportar tipos publicos de `src/index.ts` e documentar a feature no README com exemplo end-to-end.
 
@@ -60,8 +60,8 @@ Inserir apos a secao "Rich Output", seguindo o mesmo formato.
 Enable `askUser` to let the agent pause and ask the user structured questions mid-task:
 
 \`\`\`typescript
-import { query } from "openclaude-sdk"
-import type { AskUserRequest } from "openclaude-sdk"
+import { query } from "hammer-sdk"
+import type { AskUserRequest } from "hammer-sdk"
 
 const q = query({
   prompt: "Book a meeting for next week with the marketing team",

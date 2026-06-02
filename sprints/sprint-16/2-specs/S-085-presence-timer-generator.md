@@ -1,4 +1,4 @@
-# openclaude-sdk - Timer de presenca integrado ao lifecycleGenerator
+# hammer-sdk - Timer de presenca integrado ao lifecycleGenerator
 
 Spec do timer de heartbeat, fila, Promise.race para emissao gap-aware, e cleanup no finally.
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao das MCP Tool Factories no README
+# hammer-sdk - Documentacao das MCP Tool Factories no README
 
 Documentar `tool()` e `createSdkMcpServer()` no README com exemplo end-to-end.
 
@@ -29,7 +29,7 @@ Resolver D-048 (score 6): `tool()` e `createSdkMcpServer()` sao o caminho para M
 5. Exemplo end-to-end: definir tool com Zod, criar server, passar para query
 
 ```typescript
-import { tool, createSdkMcpServer, query } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query } from "hammer-sdk"
 import { z } from "zod"
 
 const weatherTool = tool(

@@ -16,7 +16,7 @@
       "Ordem: pt-BR primeiro, en-US segundo, es-ES terceiro",
       "Arquivo nao importa nada (zero dependencias)"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-049-locale-module-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-049-locale-module-core.md"
   },
   {
     "id": "F-126",
@@ -44,7 +44,7 @@
       "normalizeLocale('  pt-br  ') retorna 'pt-BR' (trim)",
       "Import de SupportedLocale e type-only"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-049-locale-module-core.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-049-locale-module-core.md"
   },
   {
     "id": "F-127",
@@ -66,7 +66,7 @@
       "normalizeLocale exportado de ./normalize.js",
       "Extensao .js em todos os imports"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
   },
   {
     "id": "F-128",
@@ -85,7 +85,7 @@
       "Tipo e string, NAO SupportedLocale",
       "tsc --noEmit passa com a nova propriedade"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
   },
   {
     "id": "F-129",
@@ -106,7 +106,7 @@
       "Secao posicionada entre Ask User e V2 Session API",
       "Extensao .js nos imports"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
   },
   {
     "id": "F-130",
@@ -131,6 +131,6 @@
       "tsc --noEmit passa sem erro",
       "tsup build passa sem erro"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-15/worktree/sprints/sprint-15/3-prps/PRP-050-locale-integration-validation.md"
   }
 ]

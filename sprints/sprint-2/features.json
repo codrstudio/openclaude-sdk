@@ -15,7 +15,7 @@
       "O cast 'as Record<string, string>' foi removido de process.ts",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
   },
   {
     "id": "F-023",
@@ -34,7 +34,7 @@
       "options.env e passado diretamente sem transformacao em query.ts",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
   },
   {
     "id": "F-024",
@@ -52,7 +52,7 @@
       "Nenhuma ocorrencia de '--allowedTools' ou '--disallowedTools' existe em process.ts",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-008-process-env-safety.md"
   },
   {
     "id": "F-025",
@@ -70,7 +70,7 @@
       "Cases existentes nao foram alterados",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-009-error-handling-completeness.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-009-error-handling-completeness.md"
   },
   {
     "id": "F-026",
@@ -88,7 +88,7 @@
       "Cases existentes nao foram alterados",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-009-error-handling-completeness.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-009-error-handling-completeness.md"
   },
   {
     "id": "F-027",
@@ -106,7 +106,7 @@
       "Default usa pattern 'const _exhaustive: never = provider.type' para exhaustive check",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-010-provider-registry-hardening.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-010-provider-registry-hardening.md"
   },
   {
     "id": "F-028",
@@ -124,7 +124,7 @@
       "Validacao ocorre antes de qualquer outra logica da funcao",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-010-provider-registry-hardening.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-010-provider-registry-hardening.md"
   },
   {
     "id": "F-029",
@@ -143,7 +143,7 @@
       "Funcao usa resolve() para normalizar o path antes de encodar",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-011-session-encode-cwd.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-011-session-encode-cwd.md"
   },
   {
     "id": "F-030",
@@ -161,7 +161,7 @@
       "Validacao ocorre antes da serializacao JSON",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-012-permission-guard.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-012-permission-guard.md"
   },
   {
     "id": "F-031",
@@ -179,7 +179,7 @@
       "Verificacao ocorre antes de proc.stdin?.write()",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-012-permission-guard.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-012-permission-guard.md"
   },
   {
     "id": "F-032",
@@ -197,7 +197,7 @@
       "renameSession() e tagSession() usam appendFile diretamente",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
   },
   {
     "id": "F-033",
@@ -217,7 +217,7 @@
       "index.ts CONTINUA exportando query, collectMessages, createOpenRouterRegistry, resolveModelEnv",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
   },
   {
     "id": "F-034",
@@ -235,6 +235,6 @@
       "Outros tipos de erro sao re-thrown com 'throw err'",
       "Build (npm run build) passa sem erros"
     ],
-    "prp_path": "D:/aw/context/workspaces/openclaude-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
+    "prp_path": "D:/aw/context/workspaces/hammer-sdk/wave-2/worktree/sprints/sprint-2/3-prps/PRP-013-code-cleanup.md"
   }
 ]

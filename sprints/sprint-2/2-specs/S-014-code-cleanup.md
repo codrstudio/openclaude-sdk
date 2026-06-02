@@ -1,4 +1,4 @@
-# openclaude-sdk - Cleanup de Codigo: Imports, Exports e Catch
+# hammer-sdk - Cleanup de Codigo: Imports, Exports e Catch
 
 Mover dynamic imports para top-level, remover internals da API publica, e tornar catch especifico.
 
@@ -73,7 +73,7 @@ export { createOpenRouterRegistry, resolveModelEnv, resolveCommand } from "./reg
 export { createOpenRouterRegistry, resolveModelEnv } from "./registry.js"
 ```
 
-Usuarios avancados que precisem de acesso podem importar diretamente de `openclaude-sdk/process.js` — mas a SDK nao garante estabilidade dessas APIs.
+Usuarios avancados que precisem de acesso podem importar diretamente de `hammer-sdk/process.js` — mas a SDK nao garante estabilidade dessas APIs.
 
 ---
 

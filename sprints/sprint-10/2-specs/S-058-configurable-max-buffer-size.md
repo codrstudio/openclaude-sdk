@@ -1,4 +1,4 @@
-# openclaude-sdk - Tornar MAX_BUFFER_SIZE Configuravel via Options
+# hammer-sdk - Tornar MAX_BUFFER_SIZE Configuravel via Options
 
 Adicionar `Options.maxBufferSize` para permitir ajuste do limite de buffer do parser JSON.
 

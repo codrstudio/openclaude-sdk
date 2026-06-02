@@ -9,7 +9,7 @@ chega ao consumidor** nesse modo — eliminando leak de info sensivel.
 Inclui:
 - Dicionario por locale/tool em JSON (3 locales iniciais: pt-BR, en-US, es-ES)
 - Script `npm run translate xx-YY` que gera o JSON de um novo locale usando
-  o proprio `openclaude` como tradutor, usando pt-BR como origem
+  o proprio `hammer` como tradutor, usando pt-BR como origem
 - Bypass automatico para `mcp__display__*` (display tools nao sao filtradas)
 - Filtro sincrono sem await (preserva streaming 100%)
 
@@ -151,7 +151,7 @@ locale. Pick random em runtime.
 
 ### Tools built-in cobertas (v1)
 
-Lista extraida do init message do CLI `openclaude` 2.1.101:
+Lista extraida do init message do CLI `hammer` 2.1.101:
 
 ```
 Task, AskUserQuestion, Bash, Edit, EnterPlanMode, EnterWorktree,
@@ -263,7 +263,7 @@ Tudo sincrono. Nenhum `await`. Streaming 100% preservado.
 ## Script `npm run translate xx-YY`
 
 Gera um novo arquivo de locale JSON traduzindo do pt-BR como origem, usando
-o proprio `openclaude` como motor de traducao (modelo barato por default).
+o proprio `hammer` como motor de traducao (modelo barato por default).
 
 ### Localizacao
 
@@ -281,7 +281,7 @@ o proprio `openclaude` como motor de traducao (modelo barato por default).
    `--force`
 3. Carrega `pt-BR.json`
 4. Para cada entrada `toolName: string[]`:
-   - Chama `openclaude` CLI com um prompt estruturado pedindo traducao
+   - Chama `hammer` CLI com um prompt estruturado pedindo traducao
      das 5 variantes
    - Parseia a resposta JSON
    - Valida (array de 5 strings)
@@ -323,7 +323,7 @@ Traduza estas 5 variantes do portugues para {locale}:
 {JSON.stringify(ptBRVariants)}
 ```
 
-### Invocacao do `openclaude`
+### Invocacao do `hammer`
 
 Reutiliza o proprio SDK (`prompt()` helper) com:
 
@@ -524,24 +524,24 @@ Elimina o leak de info sensivel e da polish profissional ao chat.
 | Origem | Referencia |
 |--------|-----------|
 | Conversa de design abril 2026 | Discussao sobre intention vs full tool output |
-| Consumidor final | `D:\aw\context\workspaces\openclaude-chat\repo` |
+| Consumidor final | `D:\aw\context\workspaces\hammer-chat\repo` |
 | Task dependente | `milestone-04/01-locale-options` |
 | Padrao de referencia | Cursor, Cline, Claude.ai — todos mostram narrativa de intencao, nao comando bruto |
-| Bug observado | `openclaude` CLI hoje emite `tool_use.input` cru com paths absolutos e comandos literais |
+| Bug observado | `hammer` CLI hoje emite `tool_use.input` cru com paths absolutos e comandos literais |
 
 ---
 
 # Projeto
 
-# openclaude-sdk
+# hammer-sdk
 
-Um SDK em TypeScript que permite usar o OpenClaude (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
+Um SDK em TypeScript que permite usar o Hammer (fork open-source do Claude Code) de forma programática, dentro de aplicações Node.js.
 
 ## Problema que resolve
 
-O OpenClaude CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
+O Hammer CLI é uma ferramenta interativa de terminal — você digita prompts e o agente responde. Mas para quem quer **integrar um agente de código em seus próprios sistemas** (automações, pipelines, produtos), usar o terminal não serve. É preciso uma interface programática.
 
-O openclaude-sdk faz essa ponte: transforma o CLI num componente controlável por código.
+O hammer-sdk faz essa ponte: transforma o CLI num componente controlável por código.
 
 ## O que permite fazer
 
@@ -557,4 +557,4 @@ Desenvolvedores que querem construir produtos ou automações em cima de agentes
 
 ## Relação com o ecossistema
 
-É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o OpenClaude. Mesma ideia, mesmo estilo de API, ecossistema diferente.
+É o equivalente open-source do `@anthropic-ai/claude-code` SDK oficial da Anthropic, mas voltado para o Hammer. Mesma ideia, mesmo estilo de API, ecossistema diferente.

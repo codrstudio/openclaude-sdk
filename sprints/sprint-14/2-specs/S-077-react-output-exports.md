@@ -1,4 +1,4 @@
-# openclaude-sdk - Exports de DisplayReactSchema, DisplayReact e REACT_OUTPUT_SYSTEM_PROMPT
+# hammer-sdk - Exports de DisplayReactSchema, DisplayReact e REACT_OUTPUT_SYSTEM_PROMPT
 
 Spec dos re-exports nos barrels `display/index.ts` e `src/index.ts` para os novos artefatos React.
 

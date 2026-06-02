@@ -1,4 +1,4 @@
-# openclaude-sdk - Mapear mcpServers para Flags CLI
+# hammer-sdk - Mapear mcpServers para Flags CLI
 
 Implementar o mapeamento de `Options.mcpServers` para os flags `--mcp-server` e `--mcp-server-sse` em `buildCliArgs()`.
 
@@ -54,7 +54,7 @@ Nao ha nenhum bloco tratando `options.mcpServers`.
 
 ## Formato dos Flags CLI
 
-O OpenClaude CLI (herdado do Claude Code) aceita:
+O Hammer CLI (herdado do Claude Code) aceita:
 
 | Tipo | Flag | Formato |
 |------|------|---------|

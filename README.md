@@ -1,13 +1,13 @@
-# openclaude-sdk
+# hammer-sdk
 
-TypeScript SDK wrapper for the OpenClaude CLI.
+TypeScript SDK wrapper for the Hammer CLI.
 
 ## Installation
 
 ### npm (public registry)
 
 ```bash
-npm install @codrstudio/openclaude-sdk
+npm install @codrstudio/hammer-sdk
 ```
 
 ### GitHub Packages
@@ -16,25 +16,25 @@ Requires authentication with a GitHub token that has `read:packages` scope.
 
 ```bash
 echo "@codrstudio:registry=https://npm.pkg.github.com" >> .npmrc
-npm install @codrstudio/openclaude-sdk
+npm install @codrstudio/hammer-sdk
 ```
 
 ### Direct download (.tgz)
 
 ```bash
-npm install https://github.com/codrstudio/openclaude-sdk/releases/download/v0.4.0/codrstudio-openclaude-sdk-0.4.0.tgz
+npm install https://github.com/codrstudio/hammer-sdk/releases/download/v0.4.0/codrstudio-hammer-sdk-0.4.0.tgz
 ```
 
-Browse all versions at [Releases](https://github.com/codrstudio/openclaude-sdk/releases).
+Browse all versions at [Releases](https://github.com/codrstudio/hammer-sdk/releases).
 
 ---
 
-Requires Node.js >= 20 and the [OpenClaude CLI](https://github.com/Gitlawb/openclaude) installed and available in your `PATH`.
+Requires Node.js >= 20 and the [Hammer CLI](https://github.com/Gitlawb/hammer) installed and available in your `PATH`.
 
 ## Quick Start
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({ prompt: "Hello, world!" })
 
@@ -63,7 +63,7 @@ function query(params: {
 **Example:**
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "List files in the current directory",
@@ -114,7 +114,7 @@ Only available while the agent is active (during stream iteration).
 **Example — mid-session control and introspection:**
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Analyze this codebase",
@@ -151,7 +151,7 @@ import type {
   AgentInfo,
   McpServerStatusInfo,
   AccountInfo,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 #### Operation Methods
@@ -182,7 +182,7 @@ import type {
 **Example — `rewindFiles()` with dryRun:**
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Refactor the auth module",
@@ -211,7 +211,7 @@ for await (const msg of q) {
 **Example — `streamInput()` with AsyncIterable:**
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({ prompt: "Process the following data:" })
 
@@ -235,7 +235,7 @@ for await (const msg of q) {
 import type {
   RewindFilesResult,
   McpSetServersResult,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 ---
@@ -257,7 +257,7 @@ function collectMessages(q: Query): Promise<{
 **Example:**
 
 ```typescript
-import { query, collectMessages } from "openclaude-sdk"
+import { query, collectMessages } from "hammer-sdk"
 
 const q = query({ prompt: "What is 2 + 2?" })
 const { result, costUsd } = await collectMessages(q)
@@ -283,7 +283,7 @@ function continueSession(params: {
 **Example:**
 
 ```typescript
-import { continueSession } from "openclaude-sdk"
+import { continueSession } from "hammer-sdk"
 
 const q = continueSession({
   sessionId: "abc-123",
@@ -316,7 +316,7 @@ function createOpenRouterRegistry(config: {
 **Example:**
 
 ```typescript
-import { createOpenRouterRegistry, query } from "openclaude-sdk"
+import { createOpenRouterRegistry, query } from "hammer-sdk"
 
 const registry = createOpenRouterRegistry({
   apiKey: process.env.OPENROUTER_API_KEY!,
@@ -334,7 +334,7 @@ const q = query({
 
 ### `resolveModelEnv(registry, modelId)`
 
-Resolves a model ID within a registry to the environment variables required by the OpenClaude CLI (e.g., `OPENAI_API_KEY`, `CLAUDE_CODE_USE_OPENAI`).
+Resolves a model ID within a registry to the environment variables required by the Hammer CLI (e.g., `OPENAI_API_KEY`, `CLAUDE_CODE_USE_OPENAI`).
 
 ```typescript
 function resolveModelEnv(
@@ -346,7 +346,7 @@ function resolveModelEnv(
 **Example:**
 
 ```typescript
-import { createOpenRouterRegistry, resolveModelEnv } from "openclaude-sdk"
+import { createOpenRouterRegistry, resolveModelEnv } from "hammer-sdk"
 
 const registry = createOpenRouterRegistry({ apiKey: "...", models: [...] })
 const envVars = resolveModelEnv(registry, "anthropic/claude-3.5-sonnet")
@@ -372,7 +372,7 @@ interface ListSessionsOptions {
 **Example:**
 
 ```typescript
-import { listSessions } from "openclaude-sdk"
+import { listSessions } from "hammer-sdk"
 
 // Deep search across all projects (default)
 const all = await listSessions({ limit: 20 })
@@ -406,7 +406,7 @@ interface GetSessionMessagesOptions {
 **Example:**
 
 ```typescript
-import { getSessionMessages } from "openclaude-sdk"
+import { getSessionMessages } from "hammer-sdk"
 
 const messages = await getSessionMessages("abc-123", { limit: 50 })
 ```
@@ -427,7 +427,7 @@ function getSessionInfo(
 **Example:**
 
 ```typescript
-import { getSessionInfo } from "openclaude-sdk"
+import { getSessionInfo } from "hammer-sdk"
 
 const info = await getSessionInfo("abc-123")
 console.log(info?.summary, info?.lastModified)
@@ -450,7 +450,7 @@ function renameSession(
 **Example:**
 
 ```typescript
-import { renameSession } from "openclaude-sdk"
+import { renameSession } from "hammer-sdk"
 
 await renameSession("abc-123", "Refactor auth module")
 ```
@@ -472,7 +472,7 @@ function tagSession(
 **Example:**
 
 ```typescript
-import { tagSession } from "openclaude-sdk"
+import { tagSession } from "hammer-sdk"
 
 await tagSession("abc-123", "reviewed")
 await tagSession("abc-123", null) // remove tag
@@ -534,7 +534,7 @@ All `Options` fields are optional. They are passed via `query({ options })` or `
 | `extraArgs` | `Record<string, string \| null>` | Pass arbitrary CLI flags; `null` value emits a bare flag (e.g. `{ verbose: null }` → `--verbose`) |
 | `mcpServers` | `Record<string, McpServerConfig>` | MCP server definitions (stdio, SSE, or HTTP) to pass to the agent |
 | `env` | `Record<string, string>` | Additional environment variables for the subprocess |
-| `pathToClaudeCodeExecutable` | `string` | Override the path to the OpenClaude executable (default: `"openclaude"`) |
+| `pathToClaudeCodeExecutable` | `string` | Override the path to the Hammer executable (default: `"hammer"`) |
 
 ---
 
@@ -545,7 +545,7 @@ All `Options` fields are optional. They are passed via `query({ options })` or `
 ### Error Hierarchy
 
 ```
-OpenClaudeError
+HammerError
 ├── AuthenticationError      (fatal)
 ├── BillingError             (fatal)
 ├── InvalidRequestError      (fatal)
@@ -558,7 +558,7 @@ OpenClaudeError
 ```
 
 ```typescript
-import { query, collectMessages, isRecoverable, RateLimitError } from "openclaude-sdk"
+import { query, collectMessages, isRecoverable, RateLimitError } from "hammer-sdk"
 
 async function run(prompt: string) {
   const q = query({ prompt })
@@ -581,7 +581,7 @@ async function run(prompt: string) {
 
 ### Error Classes
 
-All errors extend `OpenClaudeError` which provides:
+All errors extend `HammerError` which provides:
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -612,7 +612,7 @@ All errors extend `OpenClaudeError` which provides:
 Use a `ProviderRegistry` to route requests through any OpenAI-compatible provider (e.g. OpenRouter) without managing environment variables manually.
 
 ```typescript
-import { createOpenRouterRegistry, DEFAULT_MODEL, query, collectMessages } from "openclaude-sdk"
+import { createOpenRouterRegistry, DEFAULT_MODEL, query, collectMessages } from "hammer-sdk"
 
 const registry = createOpenRouterRegistry({
   apiKey: process.env.OPENROUTER_API_KEY!,
@@ -648,7 +648,7 @@ The SDK automatically resolves the model to the correct CLI environment variable
 By default, `listSessions()` traverses all project subdirectories under `~/.claude/projects/` to aggregate sessions across every project:
 
 ```typescript
-import { listSessions, continueSession, collectMessages } from "openclaude-sdk"
+import { listSessions, continueSession, collectMessages } from "hammer-sdk"
 
 // Find the most recent session
 const [latest] = await listSessions({ limit: 1 })
@@ -667,7 +667,7 @@ console.log(result)
 ### Resume a known session
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Fix the bug we found earlier",
@@ -710,7 +710,7 @@ interface CreateSessionOptions {
 ### Exemplo: Multi-turn com streaming
 
 ```typescript
-import { createSession } from "openclaude-sdk"
+import { createSession } from "hammer-sdk"
 
 await using session = createSession({ model: "sonnet" })
 
@@ -741,7 +741,7 @@ interface ResumeSessionOptions {
 **Exemplo:**
 
 ```typescript
-import { resumeSession } from "openclaude-sdk"
+import { resumeSession } from "hammer-sdk"
 
 const session = resumeSession("abc-123-def")
 const result = await session.collect("Continue where we left off")
@@ -762,7 +762,7 @@ function prompt(text: string, opts?: PromptOptions): Promise<{
 **Exemplo:**
 
 ```typescript
-import { prompt } from "openclaude-sdk"
+import { prompt } from "hammer-sdk"
 
 const { result, costUsd } = await prompt("What is 2 + 2?")
 console.log(result) // "4"
@@ -789,7 +789,7 @@ import type {
   CreateSessionOptions,
   ResumeSessionOptions,
   PromptOptions,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 ---
@@ -799,7 +799,7 @@ import type {
 In `"plan"` permission mode the agent pauses before executing tools and emits a permission request. Use `respondToPermission()` on the `Query` object to approve or deny each request.
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Delete all .log files in /tmp",
@@ -848,7 +848,7 @@ for await (const msg of q) {
 When `permissionMode` is `"plan"`, the agent pauses before executing tools and waits for your decision. Call `respondToPermission()` on the `Query` object to approve or deny each request mid-stream.
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Create a new file called hello.txt",
@@ -921,7 +921,7 @@ Retorna um `Promise<McpSdkServerConfig>` com `type: "sdk"` que pode ser passado 
 
 ```typescript
 import { z } from "zod"
-import { tool, createSdkMcpServer, query, collectMessages } from "openclaude-sdk"
+import { tool, createSdkMcpServer, query, collectMessages } from "hammer-sdk"
 
 // 1. Definir tools
 const weatherTool = tool(
@@ -977,7 +977,7 @@ import type {
   SdkMcpToolDefinition,
   ToolAnnotations,
   CallToolResult,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 ## External MCP Servers
@@ -987,7 +987,7 @@ Além de MCP tool factories (inline), o SDK suporta conexão a servidores MCP ex
 ### Servidor stdio (processo local)
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Search for TypeScript best practices",
@@ -1007,7 +1007,7 @@ const q = query({
 ### Servidor SSE com autenticação
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "List recent deployments",
@@ -1028,7 +1028,7 @@ const q = query({
 ### Servidor HTTP com header de API
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Query the database",
@@ -1049,7 +1049,7 @@ const q = query({
 ### Combinando servidores inline e externos
 
 ```typescript
-import { query, tool, createSdkMcpServer } from "openclaude-sdk"
+import { query, tool, createSdkMcpServer } from "hammer-sdk"
 import { z } from "zod"
 
 // Servidor inline (in-process)
@@ -1093,9 +1093,9 @@ const q = query({
 
 O campo `env` de um servidor stdio é mesclado ao ambiente do processo filho — as variáveis do processo pai (`process.env`) já estão disponíveis automaticamente. Use `env` para adicionar ou sobrescrever variáveis específicas do servidor, como chaves de API.
 
-## Bridge para `@codrstudio/openclaude-chat`
+## Bridge para `@codrstudio/hammer-chat`
 
-`<Chat>` (do pacote `openclaude-chat`) fala um contrato HTTP+SSE
+`<Chat>` (do pacote `hammer-chat`) fala um contrato HTTP+SSE
 específico via `createDefaultTransport(endpoint)`. Este SDK não embute
 servidor — quem importa monta a ponte. Abaixo, um Hono completo de
 referência cobrindo todas as features (pool, persistent, comfort,
@@ -1127,13 +1127,13 @@ import {
   createPersistentSession,
   type MultiSessionPool,
   type PersistentSession,
-} from "@codrstudio/openclaude-sdk"
+} from "@codrstudio/hammer-sdk"
 
 const PORT = Number(process.env.PORT ?? 9500)
 const POOL_SIZE_PER_CWD = Number(process.env.POOL_SIZE_PER_CWD ?? 2)
 const IDLE_TIMEOUT_MS = Number(process.env.IDLE_TIMEOUT_MS ?? 5 * 60_000)
 
-// agentId → cwd. O cwd determina o que `openclaude` carrega
+// agentId → cwd. O cwd determina o que `hammer` carrega
 // (CLAUDE.md, skills, MCPs). Cada cwd vira um sub-pool independente.
 const AGENTS: Record<string, { cwd: string }> = {
   nic:    { cwd: "d:/nic" },
@@ -1358,7 +1358,7 @@ import { useEffect, useState, useMemo } from "react"
 import {
   Chat, HistoryProvider, HistorySidebar, HistoryTrigger,
   createDefaultTransport, type ChatTransport,
-} from "@codrstudio/openclaude-chat"
+} from "@codrstudio/hammer-chat"
 
 const ENDPOINT = "/api/v1/ai"
 

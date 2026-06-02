@@ -1,8 +1,8 @@
-# Brainstorming — openclaude-sdk (Sprint 5)
+# Brainstorming — hammer-sdk (Sprint 5)
 
 ## Contexto
 
-O TASK.md define o `openclaude-sdk` como um SDK TypeScript programático para o OpenClaude CLI: envio de prompts com streaming, controle de permissões mid-stream, gerenciamento de sessões, múltiplos providers via registry, e tratamento tipado de erros.
+O TASK.md define o `hammer-sdk` como um SDK TypeScript programático para o Hammer CLI: envio de prompts com streaming, controle de permissões mid-stream, gerenciamento de sessões, múltiplos providers via registry, e tratamento tipado de erros.
 
 Esta é a **wave 5 / sprint 5**. As waves 1–4 implementaram D-001 a D-026 (feature set completo conforme o TASK.md). O sprint 4 focou exclusivamente em JSONL partial buffering (D-026), que está implementado em `src/process.ts` linhas 247–274 com `jsonBuffer` persistente, skip de não-JSON, e limite de 1 MB.
 
@@ -13,7 +13,7 @@ O foco desta wave é **polimento e correção de gaps remanescentes** — bugs s
 ## Funcionalidades mapeadas (estado atual da codebase)
 
 ### `src/process.ts`
-- `resolveExecutable()` — resolve o comando `openclaude` com suporte Windows via `cmd /c`
+- `resolveExecutable()` — resolve o comando `hammer` com suporte Windows via `cmd /c`
 - `filterEnv()` — filtra `undefined` values de um env parcial antes de passar ao child process
 - `buildCliArgs()` — mapeia `Options` completo para args do CLI: output format, permissions, session, system prompt, allowed/disallowed tools, model, maxTurns, additionalDirectories, betas, effort, thinking, maxBudgetUsd, debug, extraArgs
 - `spawnAndStream()` — spawn do processo, SIGINT/SIGTERM abort handling, timeout, stdin para prompt, readline JSONL parser com buffer acumulativo (D-026), stderr forwarding
@@ -24,13 +24,13 @@ O foco desta wave é **polimento e correção de gaps remanescentes** — bugs s
 - `collectMessages()` — consome o generator completo, extrai sessionId/result/costUsd/durationMs, lança erros tipados para todos os subtypes conhecidos
 
 ### `src/errors.ts`
-- Hierarquia: `OpenClaudeError` → `AuthenticationError`, `BillingError`, `RateLimitError` (com resetsAt/utilization), `InvalidRequestError`, `ServerError`, `MaxTurnsError`, `MaxBudgetError`, `ExecutionError`, `StructuredOutputError`
+- Hierarquia: `HammerError` → `AuthenticationError`, `BillingError`, `RateLimitError` (com resetsAt/utilization), `InvalidRequestError`, `ServerError`, `MaxTurnsError`, `MaxBudgetError`, `ExecutionError`, `StructuredOutputError`
 - `isRecoverable()` — classifica erros recuperáveis vs. fatais
 
 ### `src/registry.ts`
 - `resolveModelEnv()` — mapeia provider type (openai, gemini, github, bedrock, vertex) para env vars do CLI. bedrock/vertex lançam erro explícito (não suportados)
 - `createOpenRouterRegistry()` — factory para OpenRouter com validação de apiKey e models
-- `resolveCommand()` — `@deprecated`, retorna "openclaude", ainda presente no arquivo mas não exportado pelo index.ts
+- `resolveCommand()` — `@deprecated`, retorna "hammer", ainda presente no arquivo mas não exportado pelo index.ts
 
 ### `src/sessions.ts`
 - `sanitizePath()` — algoritmo Python-compatível: regex `[^a-zA-Z0-9]` → '-', truncação com simpleHash djb2 para paths > 200 chars
@@ -92,7 +92,7 @@ const resolvedOptions: Options = { ...options, env: { ...options.env, ...envFrom
 
 **Problema**: `Options.mcpServers?: Record<string, McpServerConfig>` está tipado e documentado no tipo, mas `buildCliArgs()` não o mapeia para nenhum flag CLI. Usuários que configuram MCP servers via `options.mcpServers` não veem nenhum efeito.
 
-O OpenClaude CLI herda de Claude Code e suporta `--mcp-server` para servidores stdio e `--mcp-server-sse` para SSE. O mapeamento existe no código de referência Python.
+O Hammer CLI herda de Claude Code e suporta `--mcp-server` para servidores stdio e `--mcp-server-sse` para SSE. O mapeamento existe no código de referência Python.
 
 **Fix**: Implementar o mapeamento de `McpStdioServerConfig` e `McpSSEServerConfig` para os flags corretos do CLI.
 

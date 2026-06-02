@@ -200,7 +200,7 @@ Regras:
 | `toolOutputMode: undefined` + `tool_use` Bash | Tratado como `"intention"` — `input` substituido |
 | Mensagem `assistant` com texto e `tool_use` misturados | Texto preservado, apenas blocos `tool_use` tem input substituido |
 | Mensagem `user` com texto e `tool_result` misturados | Mensagem NAO suprimida (`isOnlyToolResult` retorna false) |
-| `import { applyToolIntentionFilter } from "openclaude-sdk"` | Funciona — export publico |
+| `import { applyToolIntentionFilter } from "hammer-sdk"` | Funciona — export publico |
 
 ## Features
 

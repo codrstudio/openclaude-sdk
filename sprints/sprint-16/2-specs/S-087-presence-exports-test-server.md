@@ -1,4 +1,4 @@
-# openclaude-sdk - Export publico, teste manual e refatoracao server.mjs
+# hammer-sdk - Export publico, teste manual e refatoracao server.mjs
 
 Spec dos exports publicos de `SDKPresenceMessage`, script de teste manual e refatoracao do server.mjs para relay de presence.
 

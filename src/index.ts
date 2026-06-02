@@ -12,7 +12,7 @@ export type { ToolAnnotations, CallToolResult, SdkMcpToolDefinition } from "./mc
 
 // Errors
 export {
-  OpenClaudeError,
+  HammerError,
   AuthenticationError,
   BillingError,
   RateLimitError,

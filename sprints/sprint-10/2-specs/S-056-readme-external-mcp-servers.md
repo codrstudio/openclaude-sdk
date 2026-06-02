@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentar Uso de MCP Servers Externos no README
+# hammer-sdk - Documentar Uso de MCP Servers Externos no README
 
 Adicionar secao com exemplos praticos de MCP servers externos (stdio, SSE, HTTP) ao README.md.
 

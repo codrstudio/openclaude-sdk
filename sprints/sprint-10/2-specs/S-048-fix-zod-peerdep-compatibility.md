@@ -1,4 +1,4 @@
-# openclaude-sdk - Corrigir Incompatibilidade de peerDependency Zod v3/v4
+# hammer-sdk - Corrigir Incompatibilidade de peerDependency Zod v3/v4
 
 Restringir peerDependency de Zod para `>=4.0.0` para alinhar com o codigo compilado contra Zod v4.
 

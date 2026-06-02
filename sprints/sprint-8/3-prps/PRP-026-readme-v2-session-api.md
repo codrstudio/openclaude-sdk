@@ -53,7 +53,7 @@ interface CreateSessionOptions {
 #### Exemplo: Multi-turn com streaming
 
 ```typescript
-import { createSession } from "openclaude-sdk"
+import { createSession } from "hammer-sdk"
 
 await using session = createSession({ model: "sonnet" })
 
@@ -86,7 +86,7 @@ interface ResumeSessionOptions {
 Exemplo:
 
 ```typescript
-import { resumeSession } from "openclaude-sdk"
+import { resumeSession } from "hammer-sdk"
 
 const session = resumeSession("abc-123-def")
 const result = await session.collect("Continue where we left off")
@@ -109,7 +109,7 @@ function prompt(text: string, opts?: PromptOptions): Promise<{
 Exemplo:
 
 ```typescript
-import { prompt } from "openclaude-sdk"
+import { prompt } from "hammer-sdk"
 
 const { result, costUsd } = await prompt("What is 2 + 2?")
 console.log(result) // "4"
@@ -130,7 +130,7 @@ Bloco explicando que `SDKSession` implementa `AsyncDisposable` — `await using`
 
 #### Tipos exportados
 
-Mencionar que os tipos abaixo sao exportados de `openclaude-sdk`:
+Mencionar que os tipos abaixo sao exportados de `hammer-sdk`:
 
 ```typescript
 import type {
@@ -138,7 +138,7 @@ import type {
   CreateSessionOptions,
   ResumeSessionOptions,
   PromptOptions,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 **3. Todos os exemplos de codigo devem ser compilaveis** (tipos corretos, imports presentes).

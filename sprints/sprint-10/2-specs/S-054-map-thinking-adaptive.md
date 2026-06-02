@@ -1,4 +1,4 @@
-# openclaude-sdk - Mapear thinking: adaptive em buildCliArgs
+# hammer-sdk - Mapear thinking: adaptive em buildCliArgs
 
 Adicionar mapeamento de `thinking: { type: "adaptive" }` para flag CLI.
 

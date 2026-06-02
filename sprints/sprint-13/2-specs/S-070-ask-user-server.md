@@ -1,4 +1,4 @@
-# openclaude-sdk - MCP Server ask_user com Pending Map e Concurrent Guard
+# hammer-sdk - MCP Server ask_user com Pending Map e Concurrent Guard
 
 Implementar `createAskUserMcpServer()` que registra a tool `ask_user` como MCP server in-process, com handler bloqueante via Promise, formatacao de resposta e guarda contra perguntas concorrentes.
 

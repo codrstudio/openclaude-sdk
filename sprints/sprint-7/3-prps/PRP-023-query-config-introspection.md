@@ -235,7 +235,7 @@ export type {
 
 ### Investigacao necessaria
 
-Antes de implementar F-054/F-055, o coder agent deve verificar no source do OpenClaude CLI:
+Antes de implementar F-054/F-055, o coder agent deve verificar no source do Hammer CLI:
 
 1. O formato exato dos comandos de controle (nomes dos tipos)
 2. Se `requestId`/`responseId` e o mecanismo correto de correlacao

@@ -1,8 +1,8 @@
-# Brainstorming — openclaude-sdk (Sprint 10)
+# Brainstorming — hammer-sdk (Sprint 10)
 
 ## Contexto
 
-O TASK.md do sprint-10 mantém o objetivo central do projeto: **SDK TypeScript programático sobre o OpenClaude CLI**, espelhando o `@anthropic-ai/claude-code` SDK oficial mas para o ecossistema OpenClaude.
+O TASK.md do sprint-10 mantém o objetivo central do projeto: **SDK TypeScript programático sobre o Hammer CLI**, espelhando o `@anthropic-ai/claude-code` SDK oficial mas para o ecossistema Hammer.
 
 Sprints 1–9 cobriram a implementação completa da API pública:
 - Core API (`query()`, `collectMessages()`, `continueSession()`)
@@ -35,7 +35,7 @@ Mapeia para flags CLI:
 
 ### `src/process.ts` — `resolveExecutable()`
 
-Usa `pathToClaudeCodeExecutable` ou `openclaude` como padrão. No Windows, envolve em `cmd.exe /c`.
+Usa `pathToClaudeCodeExecutable` ou `hammer` como padrão. No Windows, envolve em `cmd.exe /c`.
 
 ### `src/mcp.ts`
 
@@ -90,7 +90,7 @@ Usuários que configuram qualquer uma dessas opções assumem que funcionam — 
 
 ### Gap 58 — `resolveExecutable()` ignora `Options.executable` e `Options.executableArgs`
 
-A interface `Options` tem `executable?: "bun" | "deno" | "node"` e `executableArgs?: string[]` mas `resolveExecutable()` nunca os usa. O CLI do OpenClaude pode ser invocado com `node --experimental-vm-modules openclaude` por exemplo. Silenciosamente ignorado.
+A interface `Options` tem `executable?: "bun" | "deno" | "node"` e `executableArgs?: string[]` mas `resolveExecutable()` nunca os usa. O CLI do Hammer pode ser invocado com `node --experimental-vm-modules hammer` por exemplo. Silenciosamente ignorado.
 
 ### Gap 59 — `startSdkServers()` muta o objeto `McpSdkServerConfig` compartilhado
 
@@ -132,7 +132,7 @@ O README tem seção detalhada de "MCP Tool Factories" (servidores inline) mas n
 
 ### Gap 65 — Parser JSON não trata múltiplos JSONs concatenados na mesma linha
 
-O parser em `process.ts` acumula linhas e tenta `JSON.parse(jsonBuffer)`. Se o CLI emitir dois JSONs completos na mesma linha (ex: `{"type":"a"}{"type":"b"}`), o parse falha e o buffer continua crescendo até atingir `MAX_BUFFER_SIZE` e lançar erro. Embora raro com o OpenClaude CLI em modo normal, pode ocorrer em situações de flush agressivo ou em testes. (Re-introdução do gap identificado no sprint-8 e dropped no sprint-9.)
+O parser em `process.ts` acumula linhas e tenta `JSON.parse(jsonBuffer)`. Se o CLI emitir dois JSONs completos na mesma linha (ex: `{"type":"a"}{"type":"b"}`), o parse falha e o buffer continua crescendo até atingir `MAX_BUFFER_SIZE` e lançar erro. Embora raro com o Hammer CLI em modo normal, pode ocorrer em situações de flush agressivo ou em testes. (Re-introdução do gap identificado no sprint-8 e dropped no sprint-9.)
 
 ### Gap 66 — `MAX_BUFFER_SIZE` hardcoded (1MB) sem configuração via Options
 

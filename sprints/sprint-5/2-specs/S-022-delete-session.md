@@ -1,4 +1,4 @@
-# openclaude-sdk - Implementar deleteSession()
+# hammer-sdk - Implementar deleteSession()
 
 Adicionar funcao `deleteSession()` ao modulo de session management para remocao de sessoes via SDK.
 

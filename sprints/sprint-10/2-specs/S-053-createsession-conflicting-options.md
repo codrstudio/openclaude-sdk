@@ -1,4 +1,4 @@
-# openclaude-sdk - Filtrar Opcoes Conflitantes em createSession
+# hammer-sdk - Filtrar Opcoes Conflitantes em createSession
 
 Limpar campos `resume`, `sessionId` e `continue` das options do caller em `createSession()`.
 

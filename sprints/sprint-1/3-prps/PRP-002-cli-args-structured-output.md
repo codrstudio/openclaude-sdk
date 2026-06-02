@@ -12,7 +12,7 @@ Referencia: spec S-002 (D-003, D-004).
 
 ## Contexto
 
-`buildCliArgs()` em `src/process.ts` mapeia o objeto `Options` para flags CLI do OpenClaude. Varios campos existem nos tipos mas nao sao mapeados. Alem disso, ha um bug de `permissionMode` duplicado.
+`buildCliArgs()` em `src/process.ts` mapeia o objeto `Options` para flags CLI do Hammer. Varios campos existem nos tipos mas nao sao mapeados. Alem disso, ha um bug de `permissionMode` duplicado.
 
 ## Especificacao
 

@@ -1,4 +1,4 @@
-# openclaude-sdk - Expor timeoutMs na API Publica
+# hammer-sdk - Expor timeoutMs na API Publica
 
 Adicionar `timeoutMs` ao tipo `Options` e conecta-lo ao mecanismo de timeout ja existente em `spawnAndStream()`.
 

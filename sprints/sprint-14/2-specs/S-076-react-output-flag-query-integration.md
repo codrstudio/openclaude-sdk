@@ -1,4 +1,4 @@
-# openclaude-sdk - Flag reactOutput e integracao em query.ts
+# hammer-sdk - Flag reactOutput e integracao em query.ts
 
 Spec da flag `reactOutput?: boolean` em `Options` e sua integracao no bloco `richOutput` de `query.ts`.
 
@@ -41,7 +41,7 @@ if (optionsForCli.richOutput) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("display" in existingServers) {
-    console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+    console.warn("[hammer-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
   }
 
   optionsForCli = {
@@ -85,7 +85,7 @@ if (optionsForCli.richOutput) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("display" in existingServers) {
-    console.warn("[openclaude-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
+    console.warn("[hammer-sdk] mcpServers already has a 'display' key — overriding with built-in display server")
   }
 
   let mergedPrompt = mergeSystemPromptAppend(optionsForCli.systemPrompt, DISPLAY_SYSTEM_PROMPT)

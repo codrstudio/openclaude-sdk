@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao da V2 Session API no README
+# hammer-sdk - Documentacao da V2 Session API no README
 
 Adicionar secao ao README.md documentando `createSession()`, `resumeSession()` e `prompt()` com exemplos praticos.
 
@@ -69,7 +69,7 @@ interface CreateSessionOptions {
 #### 1.4. Exemplo: Multi-turn com streaming
 
 ```typescript
-import { createSession } from "openclaude-sdk"
+import { createSession } from "hammer-sdk"
 
 await using session = createSession({ model: "sonnet" })
 
@@ -102,7 +102,7 @@ interface ResumeSessionOptions {
 Exemplo:
 
 ```typescript
-import { resumeSession } from "openclaude-sdk"
+import { resumeSession } from "hammer-sdk"
 
 const session = resumeSession("abc-123-def")
 const result = await session.collect("Continue where we left off")
@@ -125,7 +125,7 @@ function prompt(text: string, opts?: PromptOptions): Promise<{
 Exemplo:
 
 ```typescript
-import { prompt } from "openclaude-sdk"
+import { prompt } from "hammer-sdk"
 
 const { result, costUsd } = await prompt("What is 2 + 2?")
 console.log(result) // "4"

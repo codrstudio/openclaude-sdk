@@ -1,4 +1,4 @@
-# openclaude-sdk - V2 Session API: createSession, resumeSession, prompt
+# hammer-sdk - V2 Session API: createSession, resumeSession, prompt
 
 Implementar API orientada a objeto para conversas multi-turn com `SDKSession` stateful.
 
@@ -271,7 +271,7 @@ export type {
 ### Multi-turn com createSession
 
 ```typescript
-import { createSession } from "openclaude-sdk"
+import { createSession } from "hammer-sdk"
 
 await using session = createSession({ model: "sonnet" })
 
@@ -288,7 +288,7 @@ console.log(result.result)
 ### Retomar sessao existente
 
 ```typescript
-import { resumeSession } from "openclaude-sdk"
+import { resumeSession } from "hammer-sdk"
 
 const session = resumeSession("abc-123-def")
 const result = await session.collect("Continue where we left off")
@@ -298,7 +298,7 @@ await session.close()
 ### One-shot
 
 ```typescript
-import { prompt } from "openclaude-sdk"
+import { prompt } from "hammer-sdk"
 
 const result = await prompt("What is 2 + 2?")
 console.log(result.result) // "4"

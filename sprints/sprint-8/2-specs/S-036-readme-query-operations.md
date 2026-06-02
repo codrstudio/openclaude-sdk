@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao de Query Operation Methods Avancados no README
+# hammer-sdk - Documentacao de Query Operation Methods Avancados no README
 
 Adicionar referencia tabular dos metodos de operacao avancada do `Query` no README.
 
@@ -63,7 +63,7 @@ Inserir apos a categoria "Introspection Methods" (S-034). Dividir em duas sub-ta
 ### 2. Exemplo de `rewindFiles()`
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Refactor the auth module",
@@ -91,7 +91,7 @@ for await (const msg of q) {
 ### 3. Exemplo de `streamInput()`
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({ prompt: "Process the following data:" })
 
@@ -117,7 +117,7 @@ Mencionar tipos de retorno:
 import type {
   RewindFilesResult,
   McpSetServersResult,
-} from "openclaude-sdk"
+} from "hammer-sdk"
 ```
 
 ---

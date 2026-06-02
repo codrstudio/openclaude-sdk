@@ -1,8 +1,8 @@
-# Brainstorming — openclaude-sdk (Sprint 1)
+# Brainstorming — hammer-sdk (Sprint 1)
 
 ## Contexto
 
-O projeto cria a `openclaude-sdk`: uma biblioteca TypeScript que encapsula o OpenClaude CLI (um coding-agent CLI) em uma API de alto nível, orientada a eventos, para consumo em aplicações Node.js/TypeScript.
+O projeto cria a `hammer-sdk`: uma biblioteca TypeScript que encapsula o Hammer CLI (um coding-agent CLI) em uma API de alto nível, orientada a eventos, para consumo em aplicações Node.js/TypeScript.
 
 O TASK.md define três artefatos finais:
 - `README.md` — documentação da interface pública da SDK
@@ -18,13 +18,13 @@ O protótipo (`proto/sdk/src/`) tem as seguintes funcionalidades validadas:
 ### Core
 - **`query()`** — função principal, retorna `AsyncGenerator<SDKMessage>` com métodos extras (`interrupt()`, `close()`). Aceita prompt, model, registry e Options.
 - **`collectMessages()`** — helper que coleta todas as mensagens de um generator e retorna resultado estruturado (messages, sessionId, result, costUsd, durationMs).
-- **`spawnAndStream()`** — gerencia subprocess do openclaude CLI, lê JSONL do stdout via readline, suporta abort via AbortController, timeout, Windows compat via `cmd /c`.
+- **`spawnAndStream()`** — gerencia subprocess do hammer CLI, lê JSONL do stdout via readline, suporta abort via AbortController, timeout, Windows compat via `cmd /c`.
 - **`buildCliArgs()`** — mapeia o objeto `Options` para flags CLI: `-p -`, `--verbose`, `--output-format stream-json`, `--dangerously-skip-permissions`, `--permission-mode`, `--resume`, `--continue`, `--session-id`, `--system-prompt`, `--append-system-prompt`, `--allowedTools`, `--disallowedTools`, `--model`, `--max-turns`, `--debug`.
 
 ### Provider/Model Registry
 - **`createOpenRouterRegistry()`** — factory para criar registry com OpenRouter como provider
-- **`resolveModelEnv()`** — mapeia provider type (openai/gemini/github) para env vars do openclaude CLI (CLAUDE_CODE_USE_OPENAI, OPENAI_BASE_URL, OPENAI_MODEL, etc.)
-- **`resolveCommand()`** — sempre retorna "openclaude"
+- **`resolveModelEnv()`** — mapeia provider type (openai/gemini/github) para env vars do hammer CLI (CLAUDE_CODE_USE_OPENAI, OPENAI_BASE_URL, OPENAI_MODEL, etc.)
+- **`resolveCommand()`** — sempre retorna "hammer"
 
 ### Session Management
 - **`listSessions()`** — lista sessões do diretório `~/.claude/projects/`, ordena por lastModified
@@ -51,7 +51,7 @@ Sistema completo de tipos TypeScript espelhando `@anthropic-ai/claude-agent-sdk`
 ## Lacunas e Oportunidades
 
 ### Gap 1 — Package não está configurado para distribuição
-O `package.json` do protótipo está como `@claude-chat/sdk-3` (private). A SDK de produção precisa de nome correto (`openclaude-sdk`), campo `exports` configurado, build com `tsup` (ESM + CJS + DTS), e um `package.json` completo com `main`, `module`, `types`.
+O `package.json` do protótipo está como `@claude-chat/sdk-3` (private). A SDK de produção precisa de nome correto (`hammer-sdk`), campo `exports` configurado, build com `tsup` (ESM + CJS + DTS), e um `package.json` completo com `main`, `module`, `types`.
 
 ### Gap 2 — Sem README da SDK
 O `README.md` do diretório de artefatos é de outro projeto (claude-chat). A SDK precisa de sua própria documentação de API pública: como instalar, como usar `query()`, exemplos básicos, referência de tipos principais.
@@ -82,7 +82,7 @@ A função só lê arquivos JSONL no diretório imediato de um projeto (encoding
 O `interrupt()` no `Query` chama `abortController.abort()` que mata o processo com SIGTERM. O CLI pode esperar SIGINT (Ctrl+C) para interromper graciosamente e salvar histórico. Precisa testar e ajustar o sinal.
 
 ### Gap 9 — Duplicação na resolução do comando Windows
-`resolveCommand()` retorna "openclaude" mas o `spawnAndStream()` tem sua própria lógica de Windows (cmd /c). `pathToClaudeCodeExecutable` em Options também pode sobrescrever. Essa sobreposição de três mecanismos é confusa e pode causar bugs.
+`resolveCommand()` retorna "hammer" mas o `spawnAndStream()` tem sua própria lógica de Windows (cmd /c). `pathToClaudeCodeExecutable` em Options também pode sobrescrever. Essa sobreposição de três mecanismos é confusa e pode causar bugs.
 
 ### Gap 10 — Sem `continueSession()` de alto nível
 O `query()` tem `options.resume` e `options.continue`, mas não há uma função de conveniência que carrega o sessionId de uma sessão existente e continua automaticamente. O demo gerencia isso manualmente com estado em memória.

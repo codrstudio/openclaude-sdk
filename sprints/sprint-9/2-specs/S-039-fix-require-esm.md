@@ -1,4 +1,4 @@
-# openclaude-sdk - Fix require() em Modulo ESM
+# hammer-sdk - Fix require() em Modulo ESM
 
 Substituir `require()` por `await import()` em `createSdkMcpServer()` para compatibilidade com ESM.
 

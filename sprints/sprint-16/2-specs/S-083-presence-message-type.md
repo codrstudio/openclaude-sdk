@@ -1,4 +1,4 @@
-# openclaude-sdk - SDKPresenceMessage: tipo e discriminated union
+# hammer-sdk - SDKPresenceMessage: tipo e discriminated union
 
 Spec do novo tipo `SDKPresenceMessage` e sua inclusao no union `SDKMessage`.
 

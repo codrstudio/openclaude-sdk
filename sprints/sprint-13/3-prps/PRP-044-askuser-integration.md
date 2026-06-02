@@ -105,7 +105,7 @@ q.onAskUser = (handler) => {
 q.respondToAskUser = (callId, answer) => {
   const resolve = pendingAskUserMap.get(callId)
   if (!resolve) {
-    console.warn(`[openclaude-sdk] respondToAskUser: unknown callId "${callId}"`)
+    console.warn(`[hammer-sdk] respondToAskUser: unknown callId "${callId}"`)
     return
   }
   pendingAskUserMap.delete(callId)
@@ -133,7 +133,7 @@ if (optionsForCli.askUser) {
       if (askUserHandler) {
         askUserHandler(request)
       } else {
-        console.warn("[openclaude-sdk] ask_user invoked but no onAskUser handler registered")
+        console.warn("[hammer-sdk] ask_user invoked but no onAskUser handler registered")
       }
     },
     pendingMap: pendingAskUserMap,
@@ -142,7 +142,7 @@ if (optionsForCli.askUser) {
 
   const existingServers = optionsForCli.mcpServers ?? {}
   if ("ask_user" in existingServers) {
-    console.warn('[openclaude-sdk] askUser: overriding existing "ask_user" MCP server')
+    console.warn('[hammer-sdk] askUser: overriding existing "ask_user" MCP server')
   }
 
   optionsForCli = {

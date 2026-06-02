@@ -1,4 +1,4 @@
-# openclaude-sdk - Implementar simpleHash() Compativel com Python
+# hammer-sdk - Implementar simpleHash() Compativel com Python
 
 Funcao auxiliar de hash 32-bit (djb2) com saida base36, identica a `_simple_hash()` do Python SDK.
 

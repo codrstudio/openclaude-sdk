@@ -1,4 +1,4 @@
-# openclaude-sdk - Documentacao dos Query Control Methods no README
+# hammer-sdk - Documentacao dos Query Control Methods no README
 
 Documentar `setModel()`, `setPermissionMode()` e `setMaxThinkingTokens()` na tabela do Query no README.
 

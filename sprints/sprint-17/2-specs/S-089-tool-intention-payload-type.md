@@ -1,4 +1,4 @@
-# openclaude-sdk - ToolIntentionPayload: shape do input filtrado
+# hammer-sdk - ToolIntentionPayload: shape do input filtrado
 
 Spec do tipo `ToolIntentionPayload` que define o formato do `input` substituido no modo `"intention"`.
 

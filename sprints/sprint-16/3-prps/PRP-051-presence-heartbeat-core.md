@@ -12,7 +12,7 @@ Referencia: specs S-083 (D-112), S-084 (D-113), S-085 (D-114, D-115, D-116), S-0
 
 ## Contexto
 
-O `openclaude` CLI tem gaps previsiveis em que nenhum byte flui (gap inicial de 30-120s, gap de tool execution de minutos). Clientes SSE implementam watchdogs que abortam conexoes vivas durante esses gaps. A solucao e emitir um `SDKMessage` de liveness periodico que o consumer trata como quiser.
+O `hammer` CLI tem gaps previsiveis em que nenhum byte flui (gap inicial de 30-120s, gap de tool execution de minutos). Clientes SSE implementam watchdogs que abortam conexoes vivas durante esses gaps. A solucao e emitir um `SDKMessage` de liveness periodico que o consumer trata como quiser.
 
 Um hot-patch existe no demo server (`server.mjs`) com logica local de `setInterval`. Este PRP move a responsabilidade para o SDK, tornando o heartbeat nativo do `query()`.
 

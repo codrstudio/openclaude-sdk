@@ -1,4 +1,4 @@
-# openclaude-sdk - Deep Search em getSessionMessages()
+# hammer-sdk - Deep Search em getSessionMessages()
 
 Corrigir `getSessionMessages()` para buscar sessoes em subdiretorios quando `dir` nao e fornecido, alinhando com o comportamento de `listSessions()`.
 

@@ -50,7 +50,7 @@ export function resolveExecutable(options: Options = {}): {
   command: string
   prependArgs: string[]
 } {
-  const base = options.pathToClaudeCodeExecutable || "openclaude"
+  const base = options.pathToClaudeCodeExecutable || "hammer"
 
   if (process.platform === "win32") {
     return {

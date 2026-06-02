@@ -27,7 +27,7 @@ Inserir apos a secao de Sessions. Conteudo obrigatorio:
 **Hierarquia de erros** (diagrama textual):
 
 ```
-OpenClaudeError
+HammerError
 ├── AuthenticationError      (fatal)
 ├── BillingError             (fatal)
 ├── RateLimitError           (recuperavel — tem resetsAt, utilization)
@@ -44,7 +44,7 @@ OpenClaudeError
 **Exemplo de captura** com `instanceof` e `isRecoverable()`:
 
 ```typescript
-import { query, collectMessages, isRecoverable, RateLimitError } from "openclaude-sdk"
+import { query, collectMessages, isRecoverable, RateLimitError } from "hammer-sdk"
 
 try {
   const result = await collectMessages(query({ prompt: "Hello" }))
@@ -89,7 +89,7 @@ Inserir apos Error Handling. Formato: tabela markdown com campos principais.
 Inserir apos Options Reference. Exemplo completo:
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Create a new file called hello.txt",

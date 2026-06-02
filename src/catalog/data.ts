@@ -24,7 +24,7 @@ export const BUILTIN_CATALOG: Catalog = {
   ],
 
   models: [
-    // ── Anthropic (aliases — openclaude CLI resolves to latest version) ──
+    // ── Anthropic (aliases — hammer CLI resolves to latest version) ──
     { id: "haiku",  label: "Claude Haiku",  provider: "anthropic" },
     { id: "sonnet", label: "Claude Sonnet", provider: "anthropic" },
     { id: "opus",   label: "Claude Opus",   provider: "anthropic" },

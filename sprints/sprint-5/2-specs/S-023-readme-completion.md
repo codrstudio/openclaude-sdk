@@ -1,4 +1,4 @@
-# openclaude-sdk - Completar README.md
+# hammer-sdk - Completar README.md
 
 Adicionar secoes ausentes ao README: Error Handling, Options Reference e Permission Mid-Stream.
 
@@ -22,7 +22,7 @@ Inserir apos a secao de Sessions. Conteudo:
 
 | Subsecao | Conteudo |
 |----------|----------|
-| Hierarquia | Diagrama textual: `OpenClaudeError` → subclasses |
+| Hierarquia | Diagrama textual: `HammerError` → subclasses |
 | Tabela de erros | Nome, tipo (fatal/recuperavel), quando ocorre |
 | Exemplo de captura | `try/catch` com `instanceof` e `isRecoverable()` |
 | `isRecoverable()` | Explicacao: retorna `true` para `RateLimitError`, `ServerError`; `false` para `AuthenticationError`, `BillingError`, etc. |
@@ -30,7 +30,7 @@ Inserir apos a secao de Sessions. Conteudo:
 #### Hierarquia de erros (estado atual em `src/errors.ts`)
 
 ```
-OpenClaudeError
+HammerError
 ├── AuthenticationError      (fatal)
 ├── BillingError             (fatal)
 ├── RateLimitError           (recuperavel — tem resetsAt, utilization)
@@ -45,7 +45,7 @@ OpenClaudeError
 #### Exemplo de codigo para o README
 
 ```typescript
-import { query, collectMessages, isRecoverable, RateLimitError } from "openclaude-sdk"
+import { query, collectMessages, isRecoverable, RateLimitError } from "hammer-sdk"
 
 try {
   const result = await collectMessages(query({ prompt: "Hello" }))
@@ -92,7 +92,7 @@ Nota: incluir `timeoutMs` e `mcpServers` assumindo que S-020 e S-021 serao imple
 Inserir apos Options Reference. Conteudo:
 
 ```typescript
-import { query } from "openclaude-sdk"
+import { query } from "hammer-sdk"
 
 const q = query({
   prompt: "Create a new file called hello.txt",

@@ -1,4 +1,4 @@
-# openclaude-sdk - Retornar SDKResultMessage Completo em prompt()
+# hammer-sdk - Retornar SDKResultMessage Completo em prompt()
 
 Ajustar `prompt()` one-shot para retornar `SDKResultMessage` completo em vez de subconjunto parcial.
 

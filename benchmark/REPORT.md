@@ -1,4 +1,4 @@
-# Benchmark: Modelos para openclaude-sdk
+# Benchmark: Modelos para hammer-sdk
 
 **Data:** 2026-04-09
 **Total de modelos testados:** 22
@@ -97,7 +97,7 @@ Os modelos GLM foram a maior surpresa deste benchmark.
 - Preco excelente
 
 ### GLM 4 32B — Falhou
-- 0% em tudo — modelo menor nao consegue tool calling com openclaude
+- 0% em tudo — modelo menor nao consegue tool calling com hammer
 
 ---
 
@@ -170,5 +170,5 @@ Sub-agente (tarefas simples):
 - **Code-Llama** so tem versao Solidity no OpenRouter (nicho)
 - **Groq como provider** teve alta taxa de falha — apenas Qwen3 32B e GPT-OSS funcionaram
 - **Tool calling e o gargalo principal** — maioria dos modelos gera texto otimo mas nao sabe chamar Write/Edit
-- Os scores de 0%* nao significam que o modelo e ruim em gerar conteudo — significa que nao sabe operar como agente via openclaude-sdk
+- Os scores de 0%* nao significam que o modelo e ruim em gerar conteudo — significa que nao sabe operar como agente via hammer-sdk
 - O benchmark mede capacidade **agentica** (tool use + qualidade), nao apenas qualidade de texto
